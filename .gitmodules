@@ -1,0 +1,6 @@
+[submodule "BOS"]
+	path = BOS
+	url = git@bitbucket.org:hexabitz/bos.git
+[submodule "Thirdparty"]
+	path = Thirdparty
+	url = git@bitbucket.org:hexabitz/thirdparty.git

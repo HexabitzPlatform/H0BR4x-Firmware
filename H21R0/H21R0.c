@@ -82,6 +82,15 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 
 /*-----------------------------------------------------------*/
 
+/* --- Register this module CLI Commands 
+*/
+void RegisterModuleCLICommands(void)
+{
+
+}
+
+/*-----------------------------------------------------------*/
+
 /* --- Get the port for a given UART. 
 */
 uint8_t GetPort(UART_HandleTypeDef *huart)

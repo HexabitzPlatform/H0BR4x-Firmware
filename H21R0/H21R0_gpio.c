@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * File Name          : H21R0_gpio.c
+  * File Name          : H0BR4_gpio.c
   * Description        : This file provides code for the configuration
   *                      of all used GPIO pins.
   ******************************************************************************

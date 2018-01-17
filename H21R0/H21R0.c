@@ -2,8 +2,8 @@
     BitzOS (BOS) V0.1.4 - Copyright (C) 2017 Hexabitz
     All rights reserved
 
-    File Name     : H21R0.c
-    Description   : Source code for module H21R0.
+    File Name     : H0BR4.c
+    Description   : Source code for module H0BR4.
 										IMU (ST LSM6DS3TR) + Digital Compass (ST LSM303AGRTR)
 		
 		Required MCU resources : 
@@ -43,7 +43,7 @@ UART_HandleTypeDef huart6;
    ----------------------------------------------------------------------- 
 */
 
-/* --- H21R0 module initialization. 
+/* --- H0BR4 module initialization. 
 */
 void Module_Init(void)
 {
@@ -62,18 +62,18 @@ void Module_Init(void)
 
 /*-----------------------------------------------------------*/
 
-/* --- H21R0 message processing task. 
+/* --- H0BR4 message processing task. 
 */
 Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst)
 {
-	Module_Status result = H21R0_OK;
+	Module_Status result = H0BR4_OK;
 	
 	switch (code)
 	{
 
 		
 		default:
-			result = H21R0_ERR_UnknownMessage;
+			result = H0BR4_ERR_UnknownMessage;
 			break;
 	}			
 

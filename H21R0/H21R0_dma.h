@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * File Name          : H21R0_dma.h
+  * File Name          : H0BR4_dma.h
   * Description        : This file contains all the functions prototypes for 
   *                      the DMA  
   ******************************************************************************

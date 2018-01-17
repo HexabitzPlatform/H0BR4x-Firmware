@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * File Name          : H21R0_DMA.c
+  * File Name          : H0BR4_DMA.c
   * Description        : This file provides code for the configuration
   *                      of the DMA instances.
   ******************************************************************************

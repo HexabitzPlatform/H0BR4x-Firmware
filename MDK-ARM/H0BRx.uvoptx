@@ -768,7 +768,7 @@
   </Group>
 
   <Group>
-    <GroupName>BITZ/H21R0</GroupName>
+    <GroupName>BITZ/H0BR4</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -780,8 +780,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H21R0\H21R0.c</PathWithFileName>
-      <FilenameWithoutPath>H21R0.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0BR4\H0BR4.c</PathWithFileName>
+      <FilenameWithoutPath>H0BR4.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -792,8 +792,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H21R0\H21R0_dma.c</PathWithFileName>
-      <FilenameWithoutPath>H21R0_dma.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0BR4\H0BR4_dma.c</PathWithFileName>
+      <FilenameWithoutPath>H0BR4_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -804,8 +804,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H21R0\H21R0_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>H21R0_gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0BR4\H0BR4_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>H0BR4_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -816,8 +816,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H21R0\H21R0_it.c</PathWithFileName>
-      <FilenameWithoutPath>H21R0_it.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0BR4\H0BR4_it.c</PathWithFileName>
+      <FilenameWithoutPath>H0BR4_it.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -828,8 +828,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H21R0\H21R0_uart.c</PathWithFileName>
-      <FilenameWithoutPath>H21R0_uart.c</FilenameWithoutPath>
+      <PathWithFileName>..\H0BR4\H0BR4_uart.c</PathWithFileName>
+      <FilenameWithoutPath>H0BR4_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -840,7 +840,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\H21R0\startup_stm32f091xc.s</PathWithFileName>
+      <PathWithFileName>..\H0BR4\startup_stm32f091xc.s</PathWithFileName>
       <FilenameWithoutPath>startup_stm32f091xc.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

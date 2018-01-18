@@ -2,24 +2,24 @@
     BitzOS (BOS) V0.1.4 - Copyright (C) 2017 Hexabitz
     All rights reserved
 		
-    File Name     : H21R0.c
-    Description   : Header file for module H21R0.
+    File Name     : H0BR4.c
+    Description   : Header file for module H0BR4.
 										IMU (ST LSM6DS3TR) + Digital Compass (ST LSM303AGRTR)
 */
 	
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef H21R0_H
-#define H21R0_H
+#ifndef H0BR4_H
+#define H0BR4_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "H21R0_uart.h"	
-#include "H21R0_gpio.h"	
-#include "H21R0_dma.h"		
+#include "H0BR4_uart.h"	
+#include "H0BR4_gpio.h"	
+#include "H0BR4_dma.h"		
 	
 /* Exported definitions -------------------------------------------------------*/
 
-#define	modulePN		_H21R0
+#define	modulePN		_H0BR4
 
 /* Port-related definitions */
 #define	NumOfPorts		6
@@ -107,11 +107,11 @@
 /* Module_Status Type Definition */  
 typedef enum 
 {
-  H21R0_OK = 0,
-	H21R0_ERR_UnknownMessage,
-  H21R0_ERR_WrongColor,
-	H21R0_ERR_WrongIntensity,
-	H21R0_ERROR = 255
+  H0BR4_OK = 0,
+	H0BR4_ERR_UnknownMessage,
+  H0BR4_ERR_WrongColor,
+	H0BR4_ERR_WrongIntensity,
+	H0BR4_ERROR = 255
 } Module_Status;
 
 /* Indicator LED */
@@ -156,6 +156,6 @@ extern void MX_USART6_UART_Init(void);
 
 
 
-#endif /* H21R0_H */
+#endif /* H0BR4_H */
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

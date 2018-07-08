@@ -32,10 +32,37 @@ UART_HandleTypeDef huart6;
 /* Private variables ---------------------------------------------------------*/
 
 
-/* Private function prototypes -----------------------------------------------*/	
+/* Private function prototypes -----------------------------------------------*/
+static void LSM6D3Init(void);
+static void LSM303Init(void);
 
 
 /* Create CLI commands --------------------------------------------------------*/
+static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+
+const CLI_Command_Definition_t LSM6DS3GyroCommandDefinition = {
+	(const int8_t *) "gyro",
+	(const int8_t *) "Command to get Gyro.\r\n",
+	LSM6DS3GetGyroCommand,
+	0
+};
+
+const CLI_Command_Definition_t LSM6DS3AccCommandDefinition = {
+	(const int8_t *) "acc",
+	(const int8_t *) "Command to get Accelerometer.\r\n",
+	LSM6DS3GetAccCommand,
+	0
+};
+
+const CLI_Command_Definition_t LSM6DS3TempCommandDefinition = {
+	(const int8_t *) "temperature",
+	(const int8_t *) "Command to get Temperature.\r\n",
+	LSM6DS3GetTempCommand,
+	0
+};
+
 
 
 /* -----------------------------------------------------------------------
@@ -57,6 +84,11 @@ void Module_Init(void)
   MX_USART5_UART_Init();
   MX_USART6_UART_Init();
 	
+	// TODO: Initialize I2C
+	
+	// TODO: Initialize Sensors
+	LSM6D3Init();
+	LSM303Init();
 
 }
 
@@ -86,7 +118,9 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 */
 void RegisterModuleCLICommands(void)
 {
-
+	FreeRTOS_CLIRegisterCommand(&LSM6DS3GyroCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&LSM6DS3AccCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&LSM6DS3TempCommandDefinition);
 }
 
 /*-----------------------------------------------------------*/
@@ -113,6 +147,15 @@ uint8_t GetPort(UART_HandleTypeDef *huart)
 
 /*-----------------------------------------------------------*/
 
+static void LSM6D3Init(void)
+{
+	
+}
+
+static void LSM303Init(void)
+{
+	
+}
 
 /* -----------------------------------------------------------------------
 	|																APIs	 																 	|
@@ -121,10 +164,32 @@ uint8_t GetPort(UART_HandleTypeDef *huart)
 
 
 
+
 /* -----------------------------------------------------------------------
 	|															Commands																 	|
    ----------------------------------------------------------------------- 
 */
+
+static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	// Make sure we return something 
+	*pcWriteBuffer = '\0';
+	return pdFALSE;
+}
+
+static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	// Make sure we return something 
+	*pcWriteBuffer = '\0';
+	return pdFALSE;
+}
+
+static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	// Make sure we return something 
+	*pcWriteBuffer = '\0';
+	return pdFALSE;
+}
 
 
 

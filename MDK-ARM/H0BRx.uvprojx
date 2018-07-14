@@ -481,6 +481,16 @@
               <FileType>1</FileType>
               <FilePath>..\thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_rtc_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f0xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_i2c_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -540,6 +550,26 @@
               <FileName>startup_stm32f091xc.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\H0BR4\startup_stm32f091xc.s</FilePath>
+            </File>
+            <File>
+              <FileName>H0BR4_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\H0BR4\H0BR4_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>H0BR4_LSM6DS3_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\H0BR4\H0BR4_LSM6DS3_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>H0BR4_LSM303AGR_ACC_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\H0BR4\H0BR4_LSM303AGR_ACC_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>H0BR4_LSM303AGR_MAG_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\H0BR4\H0BR4_LSM303AGR_MAG_driver.c</FilePath>
             </File>
           </Files>
         </Group>

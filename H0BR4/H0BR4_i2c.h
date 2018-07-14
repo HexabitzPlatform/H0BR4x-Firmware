@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : H0BR4_gpio.h
-  * Description        : This file contains all the functions prototypes for 
-  *                      the gpio  
+  * File Name          : H08R6_i2c.h
+  * Description        : This file contains all the functions prototypes for
+  *                      the i2c
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -31,15 +31,15 @@
   *
   ******************************************************************************
   */
-	
+
 /*
-		MODIFIED by Hexabitz for BitzOS (BOS) V0.1.4 - Copyright (C) 2017 Hexabitz
+		MODIFIED by Hexabitz for BitzOS (BOS) V0.1.4 - Copyright (C) 2018 Hexabitz
     All rights reserved
 */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __gpio_H
-#define __gpio_H
+#ifndef __i2c_H
+#define __i2c_H
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -47,17 +47,16 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f0xx_hal.h"
 
+extern I2C_HandleTypeDef hi2c2;
 
-extern void MX_GPIO_Init(void);
-extern void IND_LED_Init(void);
-extern void MEMS_Init(void);
-	 
 
+extern void MX_I2C_Init(void);
+extern void MX_I2C2_Init(void);
 
 #ifdef __cplusplus
 }
 #endif
-#endif /*__gpio_H */
+#endif /*__i2c_H */
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

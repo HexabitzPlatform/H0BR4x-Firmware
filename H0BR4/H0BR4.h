@@ -13,7 +13,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "H0BR4_uart.h"	
+#include "H0BR4_uart.h"
+#include "H0BR4_i2c.h"
 #include "H0BR4_gpio.h"	
 #include "H0BR4_dma.h"		
 	
@@ -87,21 +88,28 @@
 #define	USART6_AF				GPIO_AF5_USART6
 
 /* Module-specific Definitions */
-#define IMU_INT1_PORT						GPIOB
-#define IMU_INT1_PIN						GPIO_PIN_12
-#define IMU_INT1_GPIO_CLK()			__GPIOB_CLK_ENABLE();
-#define IMU_INT2_PORT						GPIOA
-#define IMU_INT2_PIN						GPIO_PIN_6
-#define IMU_INT2_GPIO_CLK()			__GPIOA_CLK_ENABLE();
-#define MAG_INT_PORT						GPIOA
-#define MAG_INT_PIN							GPIO_PIN_7
-#define MAG_INT_GPIO_CLK()			__GPIOA_CLK_ENABLE();
-#define XL_INT1_PORT						GPIOB
-#define XL_INT1_PIN							GPIO_PIN_1
-#define XL_INT1_GPIO_CLK()			__GPIOB_CLK_ENABLE();
-#define XL_INT2_PORT						GPIOB
-#define XL_INT2_PIN							GPIO_PIN_0
-#define XL_INT2_GPIO_CLK()			__GPIOB_CLK_ENABLE();
+#define IMU_INT1_PORT									GPIOB
+#define IMU_INT1_PIN									GPIO_PIN_12
+#define IMU_INT1_GPIO_CLK()						__GPIOB_CLK_ENABLE();
+#define IMU_INT2_PORT									GPIOA
+#define IMU_INT2_PIN									GPIO_PIN_6
+#define IMU_INT2_GPIO_CLK()						__GPIOA_CLK_ENABLE();
+#define MAG_INT_PORT									GPIOA
+#define MAG_INT_PIN										GPIO_PIN_7
+#define MAG_INT_GPIO_CLK()						__GPIOA_CLK_ENABLE();
+#define XL_INT1_PORT									GPIOB
+#define XL_INT1_PIN										GPIO_PIN_1
+#define XL_INT1_GPIO_CLK()						__GPIOB_CLK_ENABLE();
+#define XL_INT2_PORT									GPIOB
+#define XL_INT2_PIN										GPIO_PIN_0
+#define XL_INT2_GPIO_CLK()						__GPIOB_CLK_ENABLE();
+
+#define _MEMS_I2C2_SDA_PORT       		GPIOB
+#define _MEMS_I2C2_SDA_PIN            GPIO_PIN_14
+#define _MEMS_I2C2_SDA_GPIO_CLK()     __GPIOB_CLK_ENABLE();
+#define _MEMS_I2C2_SCL_PORT           GPIOB
+#define _MEMS_I2C2_SCL_PIN            GPIO_PIN_13
+#define _MEMS_I2C2_SCL_GPIO_CLK()     __GPIOB_CLK_ENABLE();
 
 
 /* Module_Status Type Definition */  
@@ -109,10 +117,13 @@ typedef enum
 {
   H0BR4_OK = 0,
 	H0BR4_ERR_UnknownMessage,
-  H0BR4_ERR_WrongColor,
-	H0BR4_ERR_WrongIntensity,
-	H0BR4_ERROR = 255
-} Module_Status;
+  H0BR4_ERR_GYRO,
+	H0BR4_ERR_ACC,
+	H0BR4_ERR_MAG,
+	H0BR4_ERR_LSM6DS3,
+	H0BR4_ERR_LSM303,
+	H0BR4_ERR_WrongParams,
+	H0BR4_ERROR = 25} Module_Status;
 
 /* Indicator LED */
 #define _IND_LED_PORT		GPIOA
@@ -140,6 +151,11 @@ extern void MX_USART6_UART_Init(void);
 	|														Message Codes	 														 	|
    ----------------------------------------------------------------------- 
 */
+
+#define CODE_H0BR4_GET_GYRO                 800
+#define CODE_H0BR4_GET_ACC                  801
+#define CODE_H0BR4_GET_MAG		              802
+#define CODE_H0BR4_GET_TEMP		              803
 
 
 	

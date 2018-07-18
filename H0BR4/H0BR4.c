@@ -22,7 +22,7 @@
 #include "H0BR4_LSM6DS3_driver.h"
 #include "H0BR4_LSM303AGR_ACC_driver.h"
 #include "H0BR4_LSM303AGR_MAG_driver.h"
-#include "utils.h"
+#include "BOS_utils.h"
 
 #include <math.h>
 
@@ -46,29 +46,47 @@ static Module_Status LSM6D3Init(void);
 static Module_Status LSM303AccInit(void);
 static Module_Status LSM303MagInit(void);
 
+static Module_Status LSM6D3GetGyro(int *gyroX, int *gyroY, int *gyroZ);
+static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ);
+
+static Module_Status LSM6D3GetAcc(int *accX, int *accY, int *accZ);
+static Module_Status LSM6D3GetAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ);
+
+static Module_Status LSM303MagGetAxes(int *magX, int *magY, int *magZ);
+static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *magZ);
+
 
 /* Create CLI commands --------------------------------------------------------*/
 static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+
 
 const CLI_Command_Definition_t LSM6DS3GyroCommandDefinition = {
 	(const int8_t *) "gyro",
-	(const int8_t *) "Command to get Gyro.\r\n",
+	(const int8_t *) "Command to get Filtered and calibrated Gyro X,Y,Z values in dps.\r\n",
 	LSM6DS3GetGyroCommand,
 	0
 };
 
 const CLI_Command_Definition_t LSM6DS3AccCommandDefinition = {
 	(const int8_t *) "acc",
-	(const int8_t *) "Command to get Accelerometer.\r\n",
+	(const int8_t *) "Command to get Filtered and calibrated Accelerometer X,Y,Z values in g.\r\n",
 	LSM6DS3GetAccCommand,
+	0
+};
+
+const CLI_Command_Definition_t LSM303MagCommandDefinition = {
+	(const int8_t *) "mag",
+	(const int8_t *) "Command to get Filtered and calibrated Magnetic strength X,Y,Z values.\r\n",
+	LSM303GetMagCommand,
 	0
 };
 
 const CLI_Command_Definition_t LSM6DS3TempCommandDefinition = {
 	(const int8_t *) "temperature",
-	(const int8_t *) "Command to get Temperature.\r\n",
+	(const int8_t *) "Command to get Filtered and calibrated Temperature values in Celsius.\r\n",
 	LSM6DS3GetTempCommand,
 	0
 };
@@ -98,7 +116,7 @@ void Module_Init(void)
 	MX_I2C_Init();
 	
 	// TODO: Initialize Sensors
-	//LSM6D3Init();
+	LSM6D3Init();
 	//LSM303AccInit();
 	//LSM303MagInit();
 
@@ -114,8 +132,82 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 	
 	switch (code)
 	{
-
-		
+		case CODE_H0BR4_GET_GYRO:
+		{
+			int gyroX = 0, gyroY = 0, gyroZ = 0;
+			if (LSM6D3GetGyro(&gyroX, &gyroY, &gyroZ) != H0BR4_OK)
+				return H0BR4_ERR_LSM6DS3;
+			
+			messageParams[0] = lowByte(gyroX); messageParams[1] = highByte(gyroX);
+			messageParams[2] = lowByte(gyroY); messageParams[3] = highByte(gyroY);
+			messageParams[4] = lowByte(gyroZ); messageParams[5] = highByte(gyroZ);
+			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_GYRO, 6);
+			break;
+		}
+		case CODE_H0BR4_GET_RAW_GYRO:
+		{
+			int16_t gyroX = 0, gyroY = 0, gyroZ = 0;
+			if (LSM6D3GetGyroRaw(&gyroX, &gyroY, &gyroZ) != H0BR4_OK)
+				return H0BR4_ERR_LSM6DS3;
+			
+			messageParams[0] = lowByte(gyroX); messageParams[1] = highByte(gyroX);
+			messageParams[2] = lowByte(gyroY); messageParams[3] = highByte(gyroY);
+			messageParams[4] = lowByte(gyroZ); messageParams[5] = highByte(gyroZ);
+			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_RAW_GYRO, 6);
+			break;
+		}
+		case CODE_H0BR4_GET_ACC:
+		{
+			int accX = 0, accY = 0, accZ = 0;
+			if (LSM6D3GetAcc(&accX, &accY, &accZ) != H0BR4_OK)
+				return H0BR4_ERR_LSM6DS3;
+			
+			messageParams[0] = lowByte(accX); messageParams[1] = highByte(accX);
+			messageParams[2] = lowByte(accY); messageParams[3] = highByte(accY);
+			messageParams[4] = lowByte(accZ); messageParams[5] = highByte(accZ);
+			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_ACC, 6);
+			break;
+		}
+		case CODE_H0BR4_GET_RAW_ACC:
+		{
+			int16_t accX = 0, accY = 0, accZ = 0;
+			if (LSM6D3GetAccRaw(&accX, &accY, &accZ) != H0BR4_OK)
+				return H0BR4_ERR_LSM6DS3;
+			
+			messageParams[0] = lowByte(accX); messageParams[1] = highByte(accX);
+			messageParams[2] = lowByte(accY); messageParams[3] = highByte(accY);
+			messageParams[4] = lowByte(accZ); messageParams[5] = highByte(accZ);
+			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_RAW_ACC, 6);
+			break;
+		}
+		case CODE_H0BR4_GET_MAG:
+		{
+			int magX = 0, magY = 0, magZ = 0;
+			if (LSM303MagGetAxes(&magX, &magY, &magZ) != H0BR4_OK)
+				return H0BR4_ERR_LSM303;
+			
+			messageParams[0] = lowByte(magX); messageParams[1] = highByte(magX);
+			messageParams[2] = lowByte(magY); messageParams[3] = highByte(magY);
+			messageParams[4] = lowByte(magZ); messageParams[5] = highByte(magZ);
+			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_MAG, 6);
+			break;
+		}
+		case CODE_H0BR4_GET_RAW_MAG:
+		{
+			int16_t magX = 0, magY = 0, magZ = 0;
+			if (LSM303MagGetRawAxes(&magX, &magY, &magZ) != H0BR4_OK)
+				return H0BR4_ERR_LSM303;
+			
+			messageParams[0] = lowByte(magX); messageParams[1] = highByte(magX);
+			messageParams[2] = lowByte(magY); messageParams[3] = highByte(magY);
+			messageParams[4] = lowByte(magZ); messageParams[5] = highByte(magZ);
+			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_RAW_MAG, 6);
+			break;
+		}
+		case CODE_H0BR4_GET_TEMP:
+		{
+			break;
+		}
 		default:
 			result = H0BR4_ERR_UnknownMessage;
 			break;
@@ -132,6 +224,7 @@ void RegisterModuleCLICommands(void)
 {
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3GyroCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3AccCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&LSM303MagCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3TempCommandDefinition);
 }
 
@@ -219,6 +312,8 @@ static Module_Status LSM6D3SetupAcc(void)
 	
 	return H0BR4_OK;
 }
+
+
 
 static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ)
 {
@@ -603,15 +698,49 @@ static Module_Status LSM303MagGetDRDYStatus(bool *status)
 
 static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	// Make sure we return something 
+	int gyroX = 0, gyroY = 0, gyroZ = 0;
+	
+	// Make sure we return something
 	*pcWriteBuffer = '\0';
+	
+	if (LSM6D3GetGyro(&gyroX, &gyroY, &gyroZ) != H0BR4_OK) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading gyro values\r\n");
+		return pdFALSE;
+	}
+	
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", gyroZ, gyroY, gyroZ);
 	return pdFALSE;
 }
 
 static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	// Make sure we return something 
+	int accX = 0, accY = 0, accZ = 0;
+	
+	// Make sure we return something
 	*pcWriteBuffer = '\0';
+	
+	if (LSM6D3GetAcc(&accX, &accY, &accZ) != H0BR4_OK) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading accelerometer values\r\n");
+		return pdFALSE;
+	}
+	
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", accX, accY, accZ);
+	return pdFALSE;
+}
+
+static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	int magX = 0, magY = 0, magZ = 0;
+
+	// Make sure we return something
+	*pcWriteBuffer = '\0';
+	
+	if (LSM303MagGetAxes(&magX, &magY, &magZ) != H0BR4_OK) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading magnetometer values\r\n");
+		return pdFALSE;
+	}
+	
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", magX, magY, magZ);
 	return pdFALSE;
 }
 

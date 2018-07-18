@@ -153,9 +153,20 @@ extern void MX_USART6_UART_Init(void);
 */
 
 #define CODE_H0BR4_GET_GYRO                 800
-#define CODE_H0BR4_GET_ACC                  801
-#define CODE_H0BR4_GET_MAG		              802
-#define CODE_H0BR4_GET_TEMP		              803
+#define CODE_H0BR4_GET_RAW_GYRO             801
+#define CODE_H0BR4_GET_ACC                  802
+#define CODE_H0BR4_GET_RAW_ACC              803
+#define CODE_H0BR4_GET_MAG		              804
+#define CODE_H0BR4_GET_RAW_MAG              805
+#define CODE_H0BR4_GET_TEMP		              806
+
+#define CODE_H0BR4_RESULT_GYRO              807
+#define CODE_H0BR4_RESULT_RAW_GYRO          808
+#define CODE_H0BR4_RESULT_ACC               809
+#define CODE_H0BR4_RESULT_RAW_ACC           810
+#define CODE_H0BR4_RESULT_MAG		 	          811
+#define CODE_H0BR4_RESULT_RAW_MAG           812
+#define CODE_H0BR4_RESULT_TEMP		          813
 
 
 	

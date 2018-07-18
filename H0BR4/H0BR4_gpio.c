@@ -56,7 +56,7 @@ void MX_GPIO_Init(void)
 	__GPIOF_CLK_ENABLE();		// for HSE and Boot0
 	
 	IND_LED_Init();
-	MEMS_Init();
+	MEMS_GPIO_Init();
 }
 
 //-- Configure indicator LED
@@ -71,7 +71,7 @@ void IND_LED_Init(void)
 	HAL_GPIO_Init(_IND_LED_PORT, &GPIO_InitStruct);
 }
 
-void MEMS_Init(void)
+void MEMS_GPIO_Init(void)
 {
 // TODO: Enable INT pins and their interrupts.
   GPIO_InitTypeDef GPIO_InitStruct;

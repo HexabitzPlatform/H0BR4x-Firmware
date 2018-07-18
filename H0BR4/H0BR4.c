@@ -22,7 +22,6 @@
 #include "H0BR4_LSM6DS3_driver.h"
 #include "H0BR4_LSM303AGR_ACC_driver.h"
 #include "H0BR4_LSM303AGR_MAG_driver.h"
-#include "BOS_utils.h"
 
 #include <math.h>
 

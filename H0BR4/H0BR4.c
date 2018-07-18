@@ -134,8 +134,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		case CODE_H0BR4_GET_GYRO:
 		{
 			int gyroX = 0, gyroY = 0, gyroZ = 0;
-			if (LSM6D3GetGyro(&gyroX, &gyroY, &gyroZ) != H0BR4_OK)
-				return H0BR4_ERR_LSM6DS3;
+			if ((result = LSM6D3GetGyro(&gyroX, &gyroY, &gyroZ)) != H0BR4_OK)
+				break;
 			
 			messageParams[0] = lowByte(gyroX); messageParams[1] = highByte(gyroX);
 			messageParams[2] = lowByte(gyroY); messageParams[3] = highByte(gyroY);
@@ -146,8 +146,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		case CODE_H0BR4_GET_RAW_GYRO:
 		{
 			int16_t gyroX = 0, gyroY = 0, gyroZ = 0;
-			if (LSM6D3GetGyroRaw(&gyroX, &gyroY, &gyroZ) != H0BR4_OK)
-				return H0BR4_ERR_LSM6DS3;
+			if ((result = LSM6D3GetGyroRaw(&gyroX, &gyroY, &gyroZ)) != H0BR4_OK)
+				break;
 			
 			messageParams[0] = lowByte(gyroX); messageParams[1] = highByte(gyroX);
 			messageParams[2] = lowByte(gyroY); messageParams[3] = highByte(gyroY);
@@ -158,8 +158,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		case CODE_H0BR4_GET_ACC:
 		{
 			int accX = 0, accY = 0, accZ = 0;
-			if (LSM6D3GetAcc(&accX, &accY, &accZ) != H0BR4_OK)
-				return H0BR4_ERR_LSM6DS3;
+			if ((result = LSM6D3GetAcc(&accX, &accY, &accZ)) != H0BR4_OK)
+				break;
 			
 			messageParams[0] = lowByte(accX); messageParams[1] = highByte(accX);
 			messageParams[2] = lowByte(accY); messageParams[3] = highByte(accY);
@@ -170,8 +170,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		case CODE_H0BR4_GET_RAW_ACC:
 		{
 			int16_t accX = 0, accY = 0, accZ = 0;
-			if (LSM6D3GetAccRaw(&accX, &accY, &accZ) != H0BR4_OK)
-				return H0BR4_ERR_LSM6DS3;
+			if ((result = LSM6D3GetAccRaw(&accX, &accY, &accZ)) != H0BR4_OK)
+				break;
 			
 			messageParams[0] = lowByte(accX); messageParams[1] = highByte(accX);
 			messageParams[2] = lowByte(accY); messageParams[3] = highByte(accY);
@@ -182,8 +182,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		case CODE_H0BR4_GET_MAG:
 		{
 			int magX = 0, magY = 0, magZ = 0;
-			if (LSM303MagGetAxes(&magX, &magY, &magZ) != H0BR4_OK)
-				return H0BR4_ERR_LSM303;
+			if ((result = LSM303MagGetAxes(&magX, &magY, &magZ)) != H0BR4_OK)
+				break;
 			
 			messageParams[0] = lowByte(magX); messageParams[1] = highByte(magX);
 			messageParams[2] = lowByte(magY); messageParams[3] = highByte(magY);
@@ -194,8 +194,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		case CODE_H0BR4_GET_RAW_MAG:
 		{
 			int16_t magX = 0, magY = 0, magZ = 0;
-			if (LSM303MagGetRawAxes(&magX, &magY, &magZ) != H0BR4_OK)
-				return H0BR4_ERR_LSM303;
+			if ((result = LSM303MagGetRawAxes(&magX, &magY, &magZ)) != H0BR4_OK)
+				break;
 			
 			messageParams[0] = lowByte(magX); messageParams[1] = highByte(magX);
 			messageParams[2] = lowByte(magY); messageParams[3] = highByte(magY);
@@ -205,6 +205,7 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		}
 		case CODE_H0BR4_GET_TEMP:
 		{
+			result = H0BR4_ERR_LSM6DS3;
 			break;
 		}
 		default:
@@ -254,11 +255,11 @@ uint8_t GetPort(UART_HandleTypeDef *huart)
 static Module_Status LSM6D3Enable(void)
 {
 	// Enable register address automatically incremented during a multiple byte access with a serial interface 
-	if (LSM6DS3_ACC_GYRO_W_IF_Addr_Incr(&hi2c2, LSM6DS3_ACC_GYRO_IF_INC_ENABLED))
+	if (LSM6DS3_ACC_GYRO_W_IF_Addr_Incr(&hi2c2, LSM6DS3_ACC_GYRO_IF_INC_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	// Bypass Mode
-	if (LSM6DS3_ACC_GYRO_W_FIFO_MODE(&hi2c2, LSM6DS3_ACC_GYRO_FIFO_MODE_BYPASS))
+	if (LSM6DS3_ACC_GYRO_W_FIFO_MODE(&hi2c2, LSM6DS3_ACC_GYRO_FIFO_MODE_BYPASS) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	// TODO: Set ODR to 0x00 (NA)
@@ -269,21 +270,21 @@ static Module_Status LSM6D3Enable(void)
 static Module_Status LSM6D3SetupGyro(void)
 {
 	// Gyroscope ODR Init
-	if (LSM6DS3_ACC_GYRO_W_ODR_G(&hi2c2, LSM6DS3_ACC_GYRO_ODR_G_13Hz))
+	if (LSM6DS3_ACC_GYRO_W_ODR_G(&hi2c2, LSM6DS3_ACC_GYRO_ODR_G_13Hz) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM303;
 	
 	// Gyroscope FS Init
-	if (LSM6DS3_ACC_GYRO_W_FS_G(&hi2c2, LSM6DS3_ACC_GYRO_FS_G_2000dps))
+	if (LSM6DS3_ACC_GYRO_W_FS_G(&hi2c2, LSM6DS3_ACC_GYRO_FS_G_2000dps) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	// Gyroscope Axes Status Init
-	if (LSM6DS3_ACC_GYRO_W_XEN_G(&hi2c2, LSM6DS3_ACC_GYRO_XEN_G_ENABLED))
+	if (LSM6DS3_ACC_GYRO_W_XEN_G(&hi2c2, LSM6DS3_ACC_GYRO_XEN_G_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
-	if (LSM6DS3_ACC_GYRO_W_YEN_G(&hi2c2, LSM6DS3_ACC_GYRO_YEN_G_ENABLED))
+	if (LSM6DS3_ACC_GYRO_W_YEN_G(&hi2c2, LSM6DS3_ACC_GYRO_YEN_G_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
-	if (LSM6DS3_ACC_GYRO_W_ZEN_G(&hi2c2, LSM6DS3_ACC_GYRO_ZEN_G_ENABLED))
+	if (LSM6DS3_ACC_GYRO_W_ZEN_G(&hi2c2, LSM6DS3_ACC_GYRO_ZEN_G_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	return H0BR4_OK;
@@ -292,21 +293,21 @@ static Module_Status LSM6D3SetupGyro(void)
 static Module_Status LSM6D3SetupAcc(void)
 {
 	// Accelerometer ODR Init
-	if (LSM6DS3_ACC_GYRO_W_ODR_XL(&hi2c2, LSM6DS3_ACC_GYRO_ODR_XL_13Hz))
+	if (LSM6DS3_ACC_GYRO_W_ODR_XL(&hi2c2, LSM6DS3_ACC_GYRO_ODR_XL_13Hz) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	// Accelerometer FS Init
-	if (LSM6DS3_ACC_GYRO_W_FS_XL(&hi2c2, LSM6DS3_ACC_GYRO_FS_XL_2g))
+	if (LSM6DS3_ACC_GYRO_W_FS_XL(&hi2c2, LSM6DS3_ACC_GYRO_FS_XL_2g) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	// Accelerometer Axes Status Init
-	if (LSM6DS3_ACC_GYRO_W_XEN_XL(&hi2c2, LSM6DS3_ACC_GYRO_XEN_XL_ENABLED))
+	if (LSM6DS3_ACC_GYRO_W_XEN_XL(&hi2c2, LSM6DS3_ACC_GYRO_XEN_XL_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
-	if (LSM6DS3_ACC_GYRO_W_YEN_XL(&hi2c2, LSM6DS3_ACC_GYRO_YEN_XL_ENABLED))
+	if (LSM6DS3_ACC_GYRO_W_YEN_XL(&hi2c2, LSM6DS3_ACC_GYRO_YEN_XL_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 		
-	if (LSM6DS3_ACC_GYRO_W_ZEN_XL(&hi2c2, LSM6DS3_ACC_GYRO_ZEN_XL_ENABLED))
+	if (LSM6DS3_ACC_GYRO_W_ZEN_XL(&hi2c2, LSM6DS3_ACC_GYRO_ZEN_XL_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	return H0BR4_OK;
@@ -317,7 +318,7 @@ static Module_Status LSM6D3SetupAcc(void)
 static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ)
 {
 	uint8_t temp[6];
-	if (LSM6DS3_ACC_GYRO_GetRawGyroData(&hi2c2, temp))
+	if (LSM6DS3_ACC_GYRO_GetRawGyroData(&hi2c2, temp) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	*gyroX = concatBytes(temp[1], temp[0]);
@@ -330,7 +331,7 @@ static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *g
 static Module_Status LSM6D3GetGyro(int *gyroX, int *gyroY, int *gyroZ)
 {
 	int buff[3];
-	if (LSM6DS3_ACC_Get_AngularRate(&hi2c2, buff, 0))
+	if (LSM6DS3_ACC_Get_AngularRate(&hi2c2, buff, 0) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	*gyroX = buff[0];
@@ -343,7 +344,7 @@ static Module_Status LSM6D3GetGyro(int *gyroX, int *gyroY, int *gyroZ)
 static Module_Status LSM6D3GetAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ)
 {
 	uint8_t temp[6];
-	if (LSM6DS3_ACC_GYRO_GetRawAccData(&hi2c2, temp))
+	if (LSM6DS3_ACC_GYRO_GetRawAccData(&hi2c2, temp) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	*accX = concatBytes(temp[1], temp[0]);
@@ -356,7 +357,7 @@ static Module_Status LSM6D3GetAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ
 static Module_Status LSM6D3GetAcc(int *accX, int *accY, int *accZ)
 {
 	int buff[3];
-	if (LSM6DS3_ACC_Get_Acceleration(&hi2c2, buff, 0))
+	if (LSM6DS3_ACC_Get_Acceleration(&hi2c2, buff, 0) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	*accX = buff[0];
@@ -747,6 +748,7 @@ static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteB
 {
 	// Make sure we return something 
 	*pcWriteBuffer = '\0';
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading temperature value\r\n");
 	return pdFALSE;
 }
 

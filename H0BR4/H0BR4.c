@@ -755,7 +755,7 @@ static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteB
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "(DPS): X:%d, Y:%d, Z:%d\r\n", gyroZ, gyroY, gyroZ);
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", gyroZ, gyroY, gyroZ);
 	return pdFALSE;
 }
 
@@ -771,7 +771,7 @@ static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBu
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "(G): X:%d, Y:%d, Z:%d\r\n", accX, accY, accZ);
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", accX, accY, accZ);
 	return pdFALSE;
 }
 

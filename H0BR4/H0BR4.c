@@ -51,6 +51,9 @@ static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *g
 static Module_Status LSM6D3GetAcc(int *accX, int *accY, int *accZ);
 static Module_Status LSM6D3GetAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ);
 
+static Module_Status LSM6D3GetTempCelsius(float *temp);
+static Module_Status LSM6D3GetTempFahrenheit(float *temp);
+
 static Module_Status LSM303MagGetAxes(int *magX, int *magY, int *magZ);
 static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *magZ);
 
@@ -205,7 +208,12 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		}
 		case CODE_H0BR4_GET_TEMP:
 		{
-			result = H0BR4_ERR_LSM6DS3;
+			float temp;
+			if ((result = LSM6D3GetTempCelsius(&temp)) != H0BR4_OK)
+				break;
+			
+			memcpy(messageParams, &temp, sizeof(temp));
+			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_TEMP, sizeof(temp));
 			break;
 		}
 		default:
@@ -254,6 +262,14 @@ uint8_t GetPort(UART_HandleTypeDef *huart)
 
 static Module_Status LSM6D3Enable(void)
 {
+	// Check WHO_AM_I Register	
+	uint8_t who_am_i = 0;
+	if (LSM6DS3_ACC_GYRO_R_WHO_AM_I(&hi2c2, &who_am_i) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+	
+	if (who_am_i != LSM6DS3_ACC_GYRO_WHO_AM_I)
+		return H0BR4_ERR_LSM6DS3;
+	
 	// Enable register address automatically incremented during a multiple byte access with a serial interface 
 	if (LSM6DS3_ACC_GYRO_W_IF_Addr_Incr(&hi2c2, LSM6DS3_ACC_GYRO_IF_INC_ENABLED) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
@@ -261,8 +277,6 @@ static Module_Status LSM6D3Enable(void)
 	// Bypass Mode
 	if (LSM6DS3_ACC_GYRO_W_FIFO_MODE(&hi2c2, LSM6DS3_ACC_GYRO_FIFO_MODE_BYPASS) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
-	
-	// TODO: Set ODR to 0x00 (NA)
 	
 	return H0BR4_OK;
 }
@@ -293,11 +307,16 @@ static Module_Status LSM6D3SetupGyro(void)
 static Module_Status LSM6D3SetupAcc(void)
 {
 	// Accelerometer ODR Init
-	if (LSM6DS3_ACC_GYRO_W_ODR_XL(&hi2c2, LSM6DS3_ACC_GYRO_ODR_XL_13Hz) != MEMS_SUCCESS)
+	if (LSM6DS3_ACC_GYRO_W_ODR_XL(&hi2c2, LSM6DS3_ACC_GYRO_ODR_XL_104Hz) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+	
+	// Bandwidth Selection
+	// Selection of bandwidth and ODR should be in accordance of Nyquist Sampling theorem!
+	if (LSM6DS3_ACC_GYRO_W_BW_XL(&hi2c2, LSM6DS3_ACC_GYRO_BW_XL_50Hz) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	// Accelerometer FS Init
-	if (LSM6DS3_ACC_GYRO_W_FS_XL(&hi2c2, LSM6DS3_ACC_GYRO_FS_XL_2g) != MEMS_SUCCESS)
+	if (LSM6DS3_ACC_GYRO_W_FS_XL(&hi2c2, LSM6DS3_ACC_GYRO_FS_XL_16g) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM6DS3;
 	
 	// Accelerometer Axes Status Init
@@ -308,6 +327,10 @@ static Module_Status LSM6D3SetupAcc(void)
 		return H0BR4_ERR_LSM6DS3;
 		
 	if (LSM6DS3_ACC_GYRO_W_ZEN_XL(&hi2c2, LSM6DS3_ACC_GYRO_ZEN_XL_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+	
+	// Enable Bandwidth Scaling
+	if (LSM6DS3_ACC_GYRO_W_BW_Fixed_By_ODR(&hi2c2, LSM6DS3_ACC_GYRO_BW_SCAL_ODR_ENABLED) != MEMS_ERROR)
 		return H0BR4_ERR_LSM6DS3;
 	
 	return H0BR4_OK;
@@ -367,6 +390,30 @@ static Module_Status LSM6D3GetAcc(int *accX, int *accY, int *accZ)
 	return H0BR4_OK;
 }
 
+static Module_Status LSM6D3GetTempCelsius(float *temp)
+{
+	uint8_t buff[2];
+	if (LSM6DS3_ACC_GYRO_ReadReg(&hi2c2, LSM6DS3_ACC_GYRO_OUT_TEMP_L, buff, 2) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+	
+	int16_t rawTemp = concatBytes(buff[0], buff[1]);
+	*temp = (((float)rawTemp)/16) + 25;
+	
+	return H0BR4_OK;
+}
+
+static Module_Status LSM6D3GetTempFahrenheit(float *temp)
+{
+	Module_Status status = H0BR4_OK;
+	float celsius = 0;
+	
+	if ((status = LSM6D3GetTempCelsius(&celsius)) != H0BR4_OK)
+		return status;
+	
+	*temp = celsiusToFahrenheit(celsius);
+	return H0BR4_OK;
+}
+
 static Module_Status LSM6D3Init(void)
 {
 	// Common Init
@@ -380,7 +427,7 @@ static Module_Status LSM6D3Init(void)
 	if ((status = LSM6D3SetupAcc()) != H0BR4_OK)
 		return status;
 	
-	// Configure Interrupt Lines
+	// TODO: Configure Interrupt Lines
 	
 	return status;
 }
@@ -708,7 +755,7 @@ static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteB
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", gyroZ, gyroY, gyroZ);
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "(DPS): X:%d, Y:%d, Z:%d\r\n", gyroZ, gyroY, gyroZ);
 	return pdFALSE;
 }
 
@@ -724,7 +771,7 @@ static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBu
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", accX, accY, accZ);
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "(G): X:%d, Y:%d, Z:%d\r\n", accX, accY, accZ);
 	return pdFALSE;
 }
 
@@ -746,9 +793,16 @@ static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 
 static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	// Make sure we return something 
+	float celsiusTemp = 25;
+	// Make sure we return something
 	*pcWriteBuffer = '\0';
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading temperature value\r\n");
+	
+	if (LSM6D3GetTempCelsius(&celsiusTemp) != H0BR4_OK) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading temperature value\r\n");
+		return pdFALSE;
+	}
+	
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Temperature(Celsius): %f\r\n", celsiusTemp);
 	return pdFALSE;
 }
 

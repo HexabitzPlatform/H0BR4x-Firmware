@@ -754,7 +754,7 @@
 
   <Group>
     <GroupName>BITZ/BOS</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1038,7 +1038,7 @@
       <GroupNumber>7</GroupNumber>
       <FileNumber>42</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Thirdparty\LSM6DS3\src\LSM6DS3.c</PathWithFileName>
@@ -1058,7 +1058,7 @@
       <GroupNumber>8</GroupNumber>
       <FileNumber>43</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Thirdparty\LSM303AGR\src\LSM303AGR_MAG.c</PathWithFileName>
@@ -1070,7 +1070,7 @@
       <GroupNumber>8</GroupNumber>
       <FileNumber>44</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\Thirdparty\LSM303AGR\src\LSM303AGR_ACC.c</PathWithFileName>

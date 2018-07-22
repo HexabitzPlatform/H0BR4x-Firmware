@@ -40,9 +40,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
-#include "H0BR4_LSM6DS3_driver.h"
-#include "H0BR4_LSM303AGR_ACC_driver.h"
-#include "H0BR4_LSM303AGR_MAG_driver.h"
+#include "LSM6DS3.h"
+#include "LSM303AGR_ACC.h"
+#include "LSM303AGR_MAG.h"
 
 
 I2C_HandleTypeDef hi2c2;

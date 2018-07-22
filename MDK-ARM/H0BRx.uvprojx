@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F091xB,H0BR4,_module=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\User;..\H0BR4;..\BOS;..\Thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS;..\Thirdparty\Middleware\FreeRTOS\Source\include;..\Thirdparty\Middleware\FreeRTOS\Source\portable\RVDS\ARM_CM0;..\Thirdparty\STM32F0xx_HAL_Driver\Inc\Legacy;..\Thirdparty\STM32F0xx_HAL_Driver\Inc;..\Thirdparty\CMSIS\Device\ST\STM32F0xx\Include;..\Thirdparty\CMSIS\Include</IncludePath>
+              <IncludePath>..\User;..\H0BR4;..\BOS;..\Thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS;..\Thirdparty\Middleware\FreeRTOS\Source\include;..\Thirdparty\Middleware\FreeRTOS\Source\portable\RVDS\ARM_CM0;..\Thirdparty\STM32F0xx_HAL_Driver\Inc\Legacy;..\Thirdparty\STM32F0xx_HAL_Driver\Inc;..\Thirdparty\CMSIS\Device\ST\STM32F0xx\Include;..\Thirdparty\CMSIS\Include;..\Thirdparty\LSM6DS3\inc;..\Thirdparty\LSM303AGR\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -556,21 +556,6 @@
               <FileType>1</FileType>
               <FilePath>..\H0BR4\H0BR4_i2c.c</FilePath>
             </File>
-            <File>
-              <FileName>H0BR4_LSM6DS3_driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\H0BR4\H0BR4_LSM6DS3_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>H0BR4_LSM303AGR_ACC_driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\H0BR4\H0BR4_LSM303AGR_ACC_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>H0BR4_LSM303AGR_MAG_driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\H0BR4\H0BR4_LSM303AGR_MAG_driver.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -625,6 +610,31 @@
               <FileName>cmsis_os.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LSM6DS3</GroupName>
+          <Files>
+            <File>
+              <FileName>LSM6DS3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\LSM6DS3\src\LSM6DS3.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LSM303AGR</GroupName>
+          <Files>
+            <File>
+              <FileName>LSM303AGR_MAG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\LSM303AGR\src\LSM303AGR_MAG.c</FilePath>
+            </File>
+            <File>
+              <FileName>LSM303AGR_ACC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\LSM303AGR\src\LSM303AGR_ACC.c</FilePath>
             </File>
           </Files>
         </Group>

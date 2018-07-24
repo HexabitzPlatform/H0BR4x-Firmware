@@ -117,10 +117,11 @@ void Module_Init(void)
 	// TODO: Initialize I2C
 	MX_I2C_Init();
 	
-	// TODO: Initialize Sensors
 	LSM6D3Init();
-	//LSM303AccInit();
-	//LSM303MagInit();
+	LSM303MagInit();
+	
+	// Disabling Accelerometer of LSM303AGR
+	// LSM303AccInit();
 
 }
 
@@ -435,78 +436,64 @@ static Module_Status LSM6D3Init(void)
 
 static Module_Status LSM303AccInit(void)
 {
-	Module_Status status = H0BR4_OK;
-	
 	// Check WhoAmI
 	uint8_t who_am_i;
-	if ( LSM303AGR_ACC_R_WHO_AM_I(&hi2c2, &who_am_i ) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_R_WHO_AM_I(&hi2c2, &who_am_i ) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
+
 	if (who_am_i != LSM303AGR_ACC_WHO_AM_I)
 		return H0BR4_ERR_LSM303;
 	
-	// Do Self test
-	
-	
-	
 	// Enable Block Data update
-	if (LSM303AGR_ACC_W_BlockDataUpdate(&hi2c2, LSM303AGR_ACC_BDU_ENABLED) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_W_BlockDataUpdate(&hi2c2, LSM303AGR_ACC_BDU_ENABLED) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 	
 	// FIFO Mode: ByPass
-	if (LSM303AGR_ACC_W_FifoMode(&hi2c2, LSM303AGR_ACC_FM_BYPASS) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_W_FifoMode(&hi2c2, LSM303AGR_ACC_FM_BYPASS) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 	
 	// ODR: Power Down
-	if (LSM303AGR_ACC_W_ODR(&hi2c2, LSM303AGR_ACC_ODR_DO_PWR_DOWN) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_W_ODR(&hi2c2, LSM303AGR_ACC_ODR_DO_PWR_DOWN) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 	
 	// Operating mode Selection: High Resolution
-	if (LSM303AGR_ACC_W_HiRes(&hi2c2, LSM303AGR_ACC_HR_ENABLED) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_W_HiRes(&hi2c2, LSM303AGR_ACC_HR_ENABLED) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
-	// Operating mode Selection: Low Power Disable
-	if (LSM303AGR_ACC_W_LOWPWR_EN(&hi2c2, LSM303AGR_ACC_LPEN_DISABLED) == MEMS_ERROR) {
-    return H0BR4_ERR_LSM303;
-  }
 	
+	// Operating mode Selection: Low Power Disable
+	if (LSM303AGR_ACC_W_LOWPWR_EN(&hi2c2, LSM303AGR_ACC_LPEN_DISABLED) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
 	
 	// Full Scale Selection
-	if (LSM303AGR_ACC_W_FullScale(&hi2c2, LSM303AGR_ACC_FS_8G) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_W_FullScale(&hi2c2, LSM303AGR_ACC_FS_8G) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 	
 	// Enable Axes: X, Y, Z
-	if (LSM303AGR_ACC_W_XEN(&hi2c2, LSM303AGR_ACC_XEN_ENABLED) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_W_XEN(&hi2c2, LSM303AGR_ACC_XEN_ENABLED) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
-	if (LSM303AGR_ACC_W_YEN(&hi2c2, LSM303AGR_ACC_YEN_ENABLED) == MEMS_ERROR) {
-    return H0BR4_ERR_LSM303;
-  }
-	if (LSM303AGR_ACC_W_ZEN(&hi2c2, LSM303AGR_ACC_ZEN_ENABLED) == MEMS_ERROR) {
-    return H0BR4_ERR_LSM303;
-  }
 	
-	return status;
+	if (LSM303AGR_ACC_W_YEN(&hi2c2, LSM303AGR_ACC_YEN_ENABLED) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
+	
+	if (LSM303AGR_ACC_W_ZEN(&hi2c2, LSM303AGR_ACC_ZEN_ENABLED) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
+	
+	return H0BR4_OK;
 }
 
 static Module_Status LSM303AccDeInit(void)
 {
 	// Check WhoAmI
 	uint8_t who_am_i;
-	if ( LSM303AGR_ACC_R_WHO_AM_I(&hi2c2, &who_am_i ) == MEMS_ERROR) {
+	if ( LSM303AGR_ACC_R_WHO_AM_I(&hi2c2, &who_am_i ) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
+  
 	if (who_am_i != LSM303AGR_ACC_WHO_AM_I)
 		return H0BR4_ERR_LSM303;
 	
 	// ODR: Power Down
-	if (LSM303AGR_ACC_W_ODR(&hi2c2, LSM303AGR_ACC_ODR_DO_PWR_DOWN) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_W_ODR(&hi2c2, LSM303AGR_ACC_ODR_DO_PWR_DOWN) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 	
 	return H0BR4_OK;
 }
@@ -515,9 +502,9 @@ static Module_Status LSM303AccGetAxis(int *accX, int *accY, int *accZ)
 {
 	int data[3];
   /* Read data from LSM303AGR. */
-  if (!LSM303AGR_ACC_Get_Acceleration(&hi2c2, data)) {
+  if (LSM303AGR_ACC_Get_Acceleration(&hi2c2, data) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
+	
   /* Calculate the data. */
   *accX = data[0];
   *accX = data[1];
@@ -534,13 +521,11 @@ static Module_Status LSM303AccGetAxesRaw(int16_t *accX, int16_t *accY, int16_t *
   LSM303AGR_ACC_HR_t hr;
 
   /* Determine which operational mode the acc is set */
-  if (!LSM303AGR_ACC_R_HiRes(&hi2c2, &hr)) {
+  if (LSM303AGR_ACC_R_HiRes(&hi2c2, &hr) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 
-  if (!LSM303AGR_ACC_R_LOWPWR_EN(&hi2c2, &lp)) {
+  if (LSM303AGR_ACC_R_LOWPWR_EN(&hi2c2, &lp) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 
   if ((lp == LSM303AGR_ACC_LPEN_ENABLED) && (hr == LSM303AGR_ACC_HR_DISABLED)) {
     /* op mode is LP 8-bit */
@@ -556,9 +541,8 @@ static Module_Status LSM303AccGetAxesRaw(int16_t *accX, int16_t *accY, int16_t *
   }
 
   /* Read output registers from LSM303AGR_ACC_GYRO_OUTX_L_XL to LSM303AGR_ACC_GYRO_OUTZ_H_XL. */
-  if (!LSM303AGR_ACC_Get_Raw_Acceleration(&hi2c2, raw_data_tmp.u8bit )) {
+  if (LSM303AGR_ACC_Get_Raw_Acceleration(&hi2c2, raw_data_tmp.u8bit) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 
   /* Format the data. */
   *accX = (raw_data_tmp.i16bit[0] >> shift);
@@ -571,9 +555,9 @@ static Module_Status LSM303AccGetAxesRaw(int16_t *accX, int16_t *accY, int16_t *
 static Module_Status LSM303AccGetDRDYStatus(bool *status)
 {
   LSM303AGR_ACC_XDA_t status_raw;
-  if (LSM303AGR_ACC_R_XDataAvail(&hi2c2, &status_raw ) == MEMS_ERROR) {
+  if (LSM303AGR_ACC_R_XDataAvail(&hi2c2, &status_raw ) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
+  
   switch (status_raw) {
     case LSM303AGR_ACC_XDA_AVAILABLE:
       *status = true;
@@ -591,82 +575,73 @@ static Module_Status LSM303AccClearDRDY(void)
 {
   uint8_t regValue[6];
 	
-	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_X_L, regValue, 2) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_X_L, regValue, 2) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
+  
 	
-	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_Y_L, regValue, 2) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_Y_L, regValue, 2) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 	
-	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_Z_L, regValue, 2) == MEMS_ERROR) {
+	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_Z_L, regValue, 2) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 	
-  return H0BR4_OK;
-}
-
-
-static Module_Status LSM303MagInit(void)
-{
-	// Check the Sensor
-	uint8_t who_am_i = 0x00;
-  if (LSM303AGR_MAG_R_WHO_AM_I(&hi2c2, &who_am_i ) == MEMS_ERROR) {
-    return H0BR4_ERR_LSM303;
-  }
-  if (who_am_i != LSM303AGR_MAG_WHO_AM_I) {
-    return H0BR4_ERR_LSM303;
-  }
-	
-	// Operating Mode: Power Down
-	if (LSM303AGR_MAG_W_MD(&hi2c2, LSM303AGR_MAG_MD_IDLE1_MODE) == MEMS_ERROR) {
-    return H0BR4_ERR_LSM303;
-  }
-	
-	// Enable Block Data Update
-  if (LSM303AGR_MAG_W_BDU(&hi2c2, LSM303AGR_MAG_BDU_ENABLED ) == MEMS_ERROR) {
-    return H0BR4_ERR_LSM303;
-  }
-	
-	// TODO: Change the default ODR
-	if (LSM303AGR_MAG_W_ODR(&hi2c2, LSM303AGR_MAG_ODR_10Hz) == MEMS_ERROR) {
-    return H0BR4_ERR_LSM303;
-  }
-
-	// Self Test Disabled
-	if (LSM303AGR_MAG_W_ST(&hi2c2, LSM303AGR_MAG_ST_DISABLED) == MEMS_ERROR ) {
-    return H0BR4_ERR_LSM303;
-  }
-
   return H0BR4_OK;
 }
 
 static Module_Status LSM303MagEnable(void)
 {
-	if (LSM303AGR_MAG_W_MD(&hi2c2, LSM303AGR_MAG_MD_CONTINUOS_MODE) == MEMS_ERROR) {
+	if (LSM303AGR_MAG_W_MD(&hi2c2, LSM303AGR_MAG_MD_CONTINUOS_MODE) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
+	
 	return H0BR4_OK;
 }
 
 static Module_Status LSM303MagDisable(void)
 {
-	if (LSM303AGR_MAG_W_MD(&hi2c2, LSM303AGR_MAG_MD_IDLE1_MODE) == MEMS_ERROR) {
+	if (LSM303AGR_MAG_W_MD(&hi2c2, LSM303AGR_MAG_MD_IDLE1_MODE) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
+	
 	return H0BR4_OK;
+}
+
+static Module_Status LSM303MagInit(void)
+{
+	// Check the Sensor
+	uint8_t who_am_i = 0x00;
+  if (LSM303AGR_MAG_R_WHO_AM_I(&hi2c2, &who_am_i ) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
+  
+  if (who_am_i != LSM303AGR_MAG_WHO_AM_I)
+    return H0BR4_ERR_LSM303;
+	
+	// Operating Mode: Power Down
+	if (LSM303AGR_MAG_W_MD(&hi2c2, LSM303AGR_MAG_MD_IDLE1_MODE) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
+	
+	// Enable Block Data Update
+  if (LSM303AGR_MAG_W_BDU(&hi2c2, LSM303AGR_MAG_BDU_ENABLED ) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
+	
+	// TODO: Change the default ODR
+	if (LSM303AGR_MAG_W_ODR(&hi2c2, LSM303AGR_MAG_ODR_10Hz) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
+
+	// Self Test Disabled
+	if (LSM303AGR_MAG_W_ST(&hi2c2, LSM303AGR_MAG_ST_DISABLED) != MEMS_SUCCESS)
+    return H0BR4_ERR_LSM303;
+
+  return LSM303MagEnable();
 }
 
 static Module_Status LSM303MagDeInit(void)
 {
 	// Check the Sensor
 	uint8_t who_am_i = 0x00;
-  if (LSM303AGR_MAG_R_WHO_AM_I(&hi2c2, &who_am_i ) == MEMS_ERROR) {
+  if (LSM303AGR_MAG_R_WHO_AM_I(&hi2c2, &who_am_i ) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
-  if (who_am_i != LSM303AGR_MAG_WHO_AM_I) {
+	
+  if (who_am_i != LSM303AGR_MAG_WHO_AM_I)
     return H0BR4_ERR_LSM303;
-  }
 	
 	return LSM303MagDisable();
 }
@@ -678,9 +653,8 @@ static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *
 	
 	memset(data, 0, sizeof(data));
 	
-	if (LSM303AGR_MAG_Get_Raw_Magnetic(&hi2c2, data) == MEMS_ERROR) {
+	if (LSM303AGR_MAG_Get_Raw_Magnetic(&hi2c2, data) != MEMS_SUCCESS)
 		return H0BR4_ERR_LSM303;
-	}
 	
 	pData = (int16_t *)data;
 	*magX = pData[0];
@@ -696,15 +670,13 @@ static Module_Status LSM303MagGetAxes(int *magX, int *magY, int *magZ)
   int16_t rawMagX, rawMagY, rawMagZ;
 
   /* Read raw data from LSM303AGR output register. */
-  if ((status = LSM303MagGetRawAxes(&rawMagX, &rawMagY, &rawMagZ)) != H0BR4_OK) {
+  if ((status = LSM303MagGetRawAxes(&rawMagX, &rawMagY, &rawMagZ)) != H0BR4_OK)
     return status;
-  }
 
   /* Set the raw data. */
   *magX = rawMagX * (float)LSM303AGR_MAG_SENSITIVITY_FOR_FS_50G;
   *magY = rawMagY * (float)LSM303AGR_MAG_SENSITIVITY_FOR_FS_50G;
   *magZ = rawMagZ * (float)LSM303AGR_MAG_SENSITIVITY_FOR_FS_50G;
-
   return status;
 }
 
@@ -712,9 +684,8 @@ static Module_Status LSM303MagGetDRDYStatus(bool *status)
 {
   LSM303AGR_MAG_ZYXDA_t status_raw;
 
-  if (LSM303AGR_MAG_R_ZYXDA(&hi2c2, &status_raw ) == MEMS_ERROR) {
+  if (LSM303AGR_MAG_R_ZYXDA(&hi2c2, &status_raw ) != MEMS_SUCCESS)
     return H0BR4_ERR_LSM303;
-  }
 
   switch (status_raw) {
     case LSM303AGR_MAG_ZYXDA_EV_ON:

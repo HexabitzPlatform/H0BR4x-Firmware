@@ -67,28 +67,28 @@ static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteB
 
 const CLI_Command_Definition_t LSM6DS3GyroCommandDefinition = {
 	(const int8_t *) "gyro",
-	(const int8_t *) "Command to get Filtered and calibrated Gyro X,Y,Z values in dps.\r\n",
+	(const int8_t *) "(H0BR4) gyro:\r\n Get filtered and calibrated LSM6DS3 Gyro X,Y,Z values in dps.\r\n\r\n",
 	LSM6DS3GetGyroCommand,
 	0
 };
 
 const CLI_Command_Definition_t LSM6DS3AccCommandDefinition = {
 	(const int8_t *) "acc",
-	(const int8_t *) "Command to get Filtered and calibrated Accelerometer X,Y,Z values in g.\r\n",
+	(const int8_t *) "(H0BR4) acc:\r\n Get filtered and calibrated LSM6DS3 Accelerometer X,Y,Z values in g.\r\n\r\n",
 	LSM6DS3GetAccCommand,
 	0
 };
 
 const CLI_Command_Definition_t LSM303MagCommandDefinition = {
 	(const int8_t *) "mag",
-	(const int8_t *) "Command to get Filtered and calibrated Magnetic strength X,Y,Z values.\r\n",
+	(const int8_t *) "(H0BR4) mag:\r\n Get filtered and calibrated LSM6DS3 Magnetic strength X,Y,Z values in mGauss.\r\n\r\n",
 	LSM303GetMagCommand,
 	0
 };
 
 const CLI_Command_Definition_t LSM6DS3TempCommandDefinition = {
-	(const int8_t *) "temperature",
-	(const int8_t *) "Command to get Filtered and calibrated Temperature values in Celsius.\r\n",
+	(const int8_t *) "temp",
+	(const int8_t *) "(H0BR4) temp:\r\n Get filtered and calibrated LSM6DS3 Temperature values in Celsius.\r\n\r\n",
 	LSM6DS3GetTempCommand,
 	0
 };

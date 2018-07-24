@@ -60,6 +60,7 @@ static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *
 
 /* Create CLI commands --------------------------------------------------------*/
 static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+static portBASE_TYPE LSM6DS3SreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
@@ -71,6 +72,15 @@ const CLI_Command_Definition_t LSM6DS3SampleCommandDefinition = {
 										Get filtered and calibrated Gyro, Acc, Mag or Temp values in \
 										dps, g, mguass or celsius units respectively.\r\n\r\n",
 	LSM6DS3SampleSensorCommand,
+	1
+};
+
+const CLI_Command_Definition_t LSM6DS3StreamCommandDefinition = {
+	(const int8_t *) "stream",
+	(const int8_t *) "(H0BR4) stream:\r\n Syntax: stream (period) (time) (port)/(buffer) [module]\r\n \
+										Get stream of  filtered and calibrated Gyro, Acc, Mag or Temp values in \
+										dps, g, mguass or celsius units respectively.\r\n\r\n",
+	LSM6DS3SreamSensorCommand,
 	1
 };
 
@@ -241,6 +251,7 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 void RegisterModuleCLICommands(void)
 {
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3SampleCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&LSM6DS3StreamCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3GyroCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3AccCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM303MagCommandDefinition);
@@ -751,12 +762,12 @@ static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xW
 		if (!strncmp(pSensName, gyroCmdName, strlen(gyroCmdName))) {
 			if (LSM6D3GetGyro(&x, &y, &z) != H0BR4_OK)
 				break;
-			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", x, y, z);
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 			
 		} else if (!strncmp(pSensName, accCmdName, strlen(accCmdName))) {
 			if (LSM6D3GetAcc(&x, &y, &z) != H0BR4_OK)
 				break;
-			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", x, y, z);
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 		
 		} else if (!strncmp(pSensName, magCmdName, strlen(magCmdName))) {
 			if (LSM303MagGetAxes(&x, &y, &z) != H0BR4_OK)
@@ -779,35 +790,46 @@ static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xW
 	return pdFALSE;
 }
 
-static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+static portBASE_TYPE LSM6DS3SreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	int gyroX = 0, gyroY = 0, gyroZ = 0;
+	// int x = 0, y = 0, z = 0;
 	
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 	
-	if (LSM6D3GetGyro(&gyroX, &gyroY, &gyroZ) != H0BR4_OK) {
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Command not supported\r\n");
+	return pdFALSE;
+}
+
+static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	int x = 0, y = 0, z = 0;
+	
+	// Make sure we return something
+	*pcWriteBuffer = '\0';
+	
+	if (LSM6D3GetGyro(&x, &y, &z) != H0BR4_OK) {
 		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading gyro values\r\n");
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", gyroZ, gyroY, gyroZ);
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 	return pdFALSE;
 }
 
 static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	int accX = 0, accY = 0, accZ = 0;
+	int x = 0, y = 0, z = 0;
 	
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 	
-	if (LSM6D3GetAcc(&accX, &accY, &accZ) != H0BR4_OK) {
+	if (LSM6D3GetAcc(&x, &y, &z) != H0BR4_OK) {
 		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading accelerometer values\r\n");
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", accX, accY, accZ);
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 	return pdFALSE;
 }
 

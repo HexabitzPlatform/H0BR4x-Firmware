@@ -172,8 +172,8 @@
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>607</LineNumber>
-          <EnabledFlag>0</EnabledFlag>
+          <LineNumber>603</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>

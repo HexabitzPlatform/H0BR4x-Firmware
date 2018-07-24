@@ -59,11 +59,20 @@ static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *
 
 
 /* Create CLI commands --------------------------------------------------------*/
+static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 
+const CLI_Command_Definition_t LSM6DS3SampleCommandDefinition = {
+	(const int8_t *) "sample",
+	(const int8_t *) "(H0BR4) sample:\r\n Syntax: sample [gyro]/[acc]/[mag]/[temp]\r\n \
+										Get filtered and calibrated Gyro, Acc, Mag or Temp values in \
+										dps, g, mguass or celsius units respectively.\r\n\r\n",
+	LSM6DS3SampleSensorCommand,
+	1
+};
 
 const CLI_Command_Definition_t LSM6DS3GyroCommandDefinition = {
 	(const int8_t *) "gyro",
@@ -231,6 +240,7 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 */
 void RegisterModuleCLICommands(void)
 {
+	FreeRTOS_CLIRegisterCommand(&LSM6DS3SampleCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3GyroCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3AccCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM303MagCommandDefinition);
@@ -713,6 +723,61 @@ static Module_Status LSM303MagGetDRDYStatus(bool *status)
 	|															Commands																 	|
    ----------------------------------------------------------------------- 
 */
+
+static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	int x = 0, y = 0, z = 0;
+	float temp = 25.0;
+	
+	const char *const gyroCmdName = "gyro";
+	const char *const accCmdName = "acc";
+	const char *const magCmdName = "mag";
+	const char *const tempCmdName = "temp";
+	
+	const char *pSensName = NULL;
+	portBASE_TYPE sensNameLen = 0;
+	
+	// Make sure we return something
+	*pcWriteBuffer = '\0';
+	
+	pSensName = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, &sensNameLen);
+	
+	if (pSensName == NULL) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		return pdFALSE;
+	}
+	
+	do {
+		if (!strncmp(pSensName, gyroCmdName, strlen(gyroCmdName))) {
+			if (LSM6D3GetGyro(&x, &y, &z) != H0BR4_OK)
+				break;
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", x, y, z);
+			
+		} else if (!strncmp(pSensName, accCmdName, strlen(accCmdName))) {
+			if (LSM6D3GetAcc(&x, &y, &z) != H0BR4_OK)
+				break;
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", x, y, z);
+		
+		} else if (!strncmp(pSensName, magCmdName, strlen(magCmdName))) {
+			if (LSM303MagGetAxes(&x, &y, &z) != H0BR4_OK)
+				break;
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", x, y, z);
+			
+		} else if (!strncmp(pSensName, tempCmdName, strlen(tempCmdName))) {
+			if (LSM6D3GetTempCelsius(&temp) != H0BR4_OK)
+				break;
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Temperature(Celsius): %f\r\n", temp);
+		
+		} else {
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		}
+	
+		return pdFALSE;
+	} while (0);
+	
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading %s values\r\n", pSensName);
+	return pdFALSE;
+}
 
 static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {

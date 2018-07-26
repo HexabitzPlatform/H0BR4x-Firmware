@@ -153,20 +153,14 @@ extern void MX_USART6_UART_Init(void);
 */
 
 #define CODE_H0BR4_GET_GYRO                 800
-#define CODE_H0BR4_GET_RAW_GYRO             801
-#define CODE_H0BR4_GET_ACC                  802
-#define CODE_H0BR4_GET_RAW_ACC              803
-#define CODE_H0BR4_GET_MAG		              804
-#define CODE_H0BR4_GET_RAW_MAG              805
-#define CODE_H0BR4_GET_TEMP		              806
+#define CODE_H0BR4_GET_ACC                  801
+#define CODE_H0BR4_GET_MAG		              802
+#define CODE_H0BR4_GET_TEMP		              803
 
-#define CODE_H0BR4_RESULT_GYRO              807
-#define CODE_H0BR4_RESULT_RAW_GYRO          808
-#define CODE_H0BR4_RESULT_ACC               809
-#define CODE_H0BR4_RESULT_RAW_ACC           810
-#define CODE_H0BR4_RESULT_MAG		 	          811
-#define CODE_H0BR4_RESULT_RAW_MAG           812
-#define CODE_H0BR4_RESULT_TEMP		          813
+#define CODE_H0BR4_RESULT_GYRO              804
+#define CODE_H0BR4_RESULT_ACC               805
+#define CODE_H0BR4_RESULT_MAG		 	          806
+#define CODE_H0BR4_RESULT_TEMP		          807
 
 
 	
@@ -174,6 +168,37 @@ extern void MX_USART6_UART_Init(void);
 	|																APIs	 																 	|
    ----------------------------------------------------------------------- 
 */
+
+Module_Status SampleGyroMDPS(int *gyroX, int *gyroY, int *gyroZ);
+Module_Status SampleGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ);
+
+Module_Status SampleGyroDPS(float *x, float *y, float *z);
+Module_Status SampleGyroDPSToBuf(float *buffer);
+Module_Status SampleGyroDPSToString(char *cstring, size_t maxLen);
+Module_Status SampleGyroDPSToPort(uint8_t port, uint8_t module);
+
+
+Module_Status SampleAccMG(int *accX, int *accY, int *accZ);
+Module_Status SampleAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ);
+
+Module_Status SampleAccG(float *x, float *y, float *z);
+Module_Status SampleAccGToBuf(float *buffer);
+Module_Status SampleAccGToString(char *cstring, size_t maxLen);
+Module_Status SampleAccGToPort(uint8_t port, uint8_t module);
+
+Module_Status SampleMagMGauss(int *magX, int *magY, int *magZ);
+Module_Status SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ);
+
+Module_Status SampleMagMGaussToBuf(int *buffer);
+Module_Status SampleMagMGaussToString(char *cstring, size_t maxLen);
+Module_Status SampleMagMGaussToPort(uint8_t port, uint8_t module);
+
+
+Module_Status SampleTempCelsius(float *temp);
+Module_Status SampleTempFahrenheit(float *temp);
+
+Module_Status SampleTempCToPort(uint8_t port, uint8_t module);
+Module_Status SampleTempCToString(char *cstring, size_t maxLen);
 
 
 /* -----------------------------------------------------------------------

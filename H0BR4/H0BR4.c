@@ -41,21 +41,22 @@ UART_HandleTypeDef huart6;
 
 
 /* Private function prototypes -----------------------------------------------*/
-static Module_Status LSM6D3Init(void);
+static Module_Status LSM6DS3Init(void);
 static Module_Status LSM303AccInit(void);
 static Module_Status LSM303MagInit(void);
 
-static Module_Status LSM6D3GetGyro(int *gyroX, int *gyroY, int *gyroZ);
-static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ);
+static Module_Status LSM6DS3SampleGyroMDPS(int *gyroX, int *gyroY, int *gyroZ);
+static Module_Status LSM6DS3SampleGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ);
 
-static Module_Status LSM6D3GetAcc(int *accX, int *accY, int *accZ);
-static Module_Status LSM6D3GetAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ);
+static Module_Status LSM6DS3SampleAccMG(int *accX, int *accY, int *accZ);
+static Module_Status LSM6DS3SampleAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ);
 
-static Module_Status LSM6D3GetTempCelsius(float *temp);
-static Module_Status LSM6D3GetTempFahrenheit(float *temp);
+static Module_Status LSM6DS3SampleTempCelsius(float *temp);
+static Module_Status LSM6DS3SampleTempFahrenheit(float *temp);
 
-static Module_Status LSM303MagGetAxes(int *magX, int *magY, int *magZ);
-static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *magZ);
+static Module_Status LSM303SampleMagMGauss(int *magX, int *magY, int *magZ);
+static Module_Status LSM303SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ);
+
 
 
 /* Create CLI commands --------------------------------------------------------*/
@@ -69,8 +70,8 @@ static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteB
 const CLI_Command_Definition_t LSM6DS3SampleCommandDefinition = {
 	(const int8_t *) "sample",
 	(const int8_t *) "(H0BR4) sample:\r\n Syntax: sample [gyro]/[acc]/[mag]/[temp]\r\n \
-										Get filtered and calibrated Gyro, Acc, Mag or Temp values in \
-										dps, g, mguass or celsius units respectively.\r\n\r\n",
+		Get filtered and calibrated Gyro, Acc, Mag or Temp values in \
+	dps, g, mguass or celsius units respectively.\r\n\r\n",
 	LSM6DS3SampleSensorCommand,
 	1
 };
@@ -78,8 +79,8 @@ const CLI_Command_Definition_t LSM6DS3SampleCommandDefinition = {
 const CLI_Command_Definition_t LSM6DS3StreamCommandDefinition = {
 	(const int8_t *) "stream",
 	(const int8_t *) "(H0BR4) stream:\r\n Syntax: stream (period) (time) (port)/(buffer) [module]\r\n \
-										Get stream of  filtered and calibrated Gyro, Acc, Mag or Temp values in \
-										dps, g, mguass or celsius units respectively.\r\n\r\n",
+		Get stream of  filtered and calibrated Gyro, Acc, Mag or Temp values in \
+	dps, g, mguass or celsius units respectively.\r\n\r\n",
 	LSM6DS3SreamSensorCommand,
 	1
 };
@@ -136,7 +137,7 @@ void Module_Init(void)
 	// TODO: Initialize I2C
 	MX_I2C_Init();
 	
-	LSM6D3Init();
+	LSM6DS3Init();
 	LSM303MagInit();
 	
 	// Disabling Accelerometer of LSM303AGR
@@ -156,84 +157,30 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 	{
 		case CODE_H0BR4_GET_GYRO:
 		{
-			int gyroX = 0, gyroY = 0, gyroZ = 0;
-			if ((result = LSM6D3GetGyro(&gyroX, &gyroY, &gyroZ)) != H0BR4_OK)
+			if ((result = SampleGyroDPSToPort(port, dst)) != H0BR4_OK)
 				break;
 			
-			messageParams[0] = lowByte(gyroX); messageParams[1] = highByte(gyroX);
-			messageParams[2] = lowByte(gyroY); messageParams[3] = highByte(gyroY);
-			messageParams[4] = lowByte(gyroZ); messageParams[5] = highByte(gyroZ);
-			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_GYRO, 6);
-			break;
-		}
-		case CODE_H0BR4_GET_RAW_GYRO:
-		{
-			int16_t gyroX = 0, gyroY = 0, gyroZ = 0;
-			if ((result = LSM6D3GetGyroRaw(&gyroX, &gyroY, &gyroZ)) != H0BR4_OK)
-				break;
-			
-			messageParams[0] = lowByte(gyroX); messageParams[1] = highByte(gyroX);
-			messageParams[2] = lowByte(gyroY); messageParams[3] = highByte(gyroY);
-			messageParams[4] = lowByte(gyroZ); messageParams[5] = highByte(gyroZ);
-			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_RAW_GYRO, 6);
 			break;
 		}
 		case CODE_H0BR4_GET_ACC:
 		{
-			int accX = 0, accY = 0, accZ = 0;
-			if ((result = LSM6D3GetAcc(&accX, &accY, &accZ)) != H0BR4_OK)
+			if ((result = SampleAccGToPort(port, dst)) != H0BR4_OK)
 				break;
 			
-			messageParams[0] = lowByte(accX); messageParams[1] = highByte(accX);
-			messageParams[2] = lowByte(accY); messageParams[3] = highByte(accY);
-			messageParams[4] = lowByte(accZ); messageParams[5] = highByte(accZ);
-			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_ACC, 6);
-			break;
-		}
-		case CODE_H0BR4_GET_RAW_ACC:
-		{
-			int16_t accX = 0, accY = 0, accZ = 0;
-			if ((result = LSM6D3GetAccRaw(&accX, &accY, &accZ)) != H0BR4_OK)
-				break;
-			
-			messageParams[0] = lowByte(accX); messageParams[1] = highByte(accX);
-			messageParams[2] = lowByte(accY); messageParams[3] = highByte(accY);
-			messageParams[4] = lowByte(accZ); messageParams[5] = highByte(accZ);
-			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_RAW_ACC, 6);
 			break;
 		}
 		case CODE_H0BR4_GET_MAG:
 		{
-			int magX = 0, magY = 0, magZ = 0;
-			if ((result = LSM303MagGetAxes(&magX, &magY, &magZ)) != H0BR4_OK)
+			if ((result = SampleMagMGaussToPort(port, dst)) != H0BR4_OK)
 				break;
 			
-			messageParams[0] = lowByte(magX); messageParams[1] = highByte(magX);
-			messageParams[2] = lowByte(magY); messageParams[3] = highByte(magY);
-			messageParams[4] = lowByte(magZ); messageParams[5] = highByte(magZ);
-			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_MAG, 6);
-			break;
-		}
-		case CODE_H0BR4_GET_RAW_MAG:
-		{
-			int16_t magX = 0, magY = 0, magZ = 0;
-			if ((result = LSM303MagGetRawAxes(&magX, &magY, &magZ)) != H0BR4_OK)
-				break;
-			
-			messageParams[0] = lowByte(magX); messageParams[1] = highByte(magX);
-			messageParams[2] = lowByte(magY); messageParams[3] = highByte(magY);
-			messageParams[4] = lowByte(magZ); messageParams[5] = highByte(magZ);
-			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_RAW_MAG, 6);
 			break;
 		}
 		case CODE_H0BR4_GET_TEMP:
 		{
-			float temp;
-			if ((result = LSM6D3GetTempCelsius(&temp)) != H0BR4_OK)
+			if ((result = SampleTempCToPort(port, dst)) != H0BR4_OK)
 				break;
 			
-			memcpy(messageParams, &temp, sizeof(temp));
-			SendMessageFromPort(port, myID, dst, CODE_H0BR4_RESULT_TEMP, sizeof(temp));
 			break;
 		}
 		default:
@@ -360,7 +307,7 @@ static Module_Status LSM6D3SetupAcc(void)
 
 
 
-static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ)
+static Module_Status LSM6DS3SampleGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ)
 {
 	uint8_t temp[6];
 	if (LSM6DS3_ACC_GYRO_GetRawGyroData(&hi2c2, temp) != MEMS_SUCCESS)
@@ -373,7 +320,7 @@ static Module_Status LSM6D3GetGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *g
 	return H0BR4_OK;
 }
 
-static Module_Status LSM6D3GetGyro(int *gyroX, int *gyroY, int *gyroZ)
+static Module_Status LSM6DS3SampleGyroMDPS(int *gyroX, int *gyroY, int *gyroZ)
 {
 	int buff[3];
 	if (LSM6DS3_ACC_Get_AngularRate(&hi2c2, buff, 0) != MEMS_SUCCESS)
@@ -386,7 +333,7 @@ static Module_Status LSM6D3GetGyro(int *gyroX, int *gyroY, int *gyroZ)
 	return H0BR4_OK;
 }
 
-static Module_Status LSM6D3GetAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ)
+static Module_Status LSM6DS3SampleAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ)
 {
 	uint8_t temp[6];
 	if (LSM6DS3_ACC_GYRO_GetRawAccData(&hi2c2, temp) != MEMS_SUCCESS)
@@ -399,7 +346,7 @@ static Module_Status LSM6D3GetAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ
 	return H0BR4_OK;
 }
 
-static Module_Status LSM6D3GetAcc(int *accX, int *accY, int *accZ)
+static Module_Status LSM6DS3SampleAccMG(int *accX, int *accY, int *accZ)
 {
 	int buff[3];
 	if (LSM6DS3_ACC_Get_Acceleration(&hi2c2, buff, 0) != MEMS_SUCCESS)
@@ -412,7 +359,7 @@ static Module_Status LSM6D3GetAcc(int *accX, int *accY, int *accZ)
 	return H0BR4_OK;
 }
 
-static Module_Status LSM6D3GetTempCelsius(float *temp)
+static Module_Status LSM6DS3SampleTempCelsius(float *temp)
 {
 	uint8_t buff[2];
 	if (LSM6DS3_ACC_GYRO_ReadReg(&hi2c2, LSM6DS3_ACC_GYRO_OUT_TEMP_L, buff, 2) != MEMS_SUCCESS)
@@ -424,19 +371,19 @@ static Module_Status LSM6D3GetTempCelsius(float *temp)
 	return H0BR4_OK;
 }
 
-static Module_Status LSM6D3GetTempFahrenheit(float *temp)
+static Module_Status LSM6DS3SampleTempFahrenheit(float *temp)
 {
 	Module_Status status = H0BR4_OK;
 	float celsius = 0;
 	
-	if ((status = LSM6D3GetTempCelsius(&celsius)) != H0BR4_OK)
+	if ((status = LSM6DS3SampleTempCelsius(&celsius)) != H0BR4_OK)
 		return status;
 	
 	*temp = celsiusToFahrenheit(celsius);
 	return H0BR4_OK;
 }
 
-static Module_Status LSM6D3Init(void)
+static Module_Status LSM6DS3Init(void)
 {
 	// Common Init
 	Module_Status status = H0BR4_OK;
@@ -667,7 +614,7 @@ static Module_Status LSM303MagDeInit(void)
 	return LSM303MagDisable();
 }
 
-static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *magZ)
+static Module_Status LSM303SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ)
 {
 	int16_t *pData;
 	uint8_t data[6];
@@ -685,13 +632,13 @@ static Module_Status LSM303MagGetRawAxes(int16_t *magX, int16_t *magY, int16_t *
 	return H0BR4_OK;
 }
 
-static Module_Status LSM303MagGetAxes(int *magX, int *magY, int *magZ)
+static Module_Status LSM303SampleMagMGauss(int *magX, int *magY, int *magZ)
 {
 	Module_Status status = H0BR4_OK;
   int16_t rawMagX, rawMagY, rawMagZ;
 
   /* Read raw data from LSM303AGR output register. */
-  if ((status = LSM303MagGetRawAxes(&rawMagX, &rawMagY, &rawMagZ)) != H0BR4_OK)
+  if ((status = LSM303SampleMagRaw(&rawMagX, &rawMagY, &rawMagZ)) != H0BR4_OK)
     return status;
 
   /* Set the raw data. */
@@ -722,11 +669,199 @@ static Module_Status LSM303MagGetDRDYStatus(bool *status)
 }
 
 
+
+
+
 /* -----------------------------------------------------------------------
 	|																APIs	 																 	|
    ----------------------------------------------------------------------- 
 */
 
+Module_Status SampleGyroMDPS(int *gyroX, int *gyroY, int *gyroZ)
+{
+	return LSM6DS3SampleGyroMDPS(gyroX, gyroY, gyroZ);
+}
+
+Module_Status SampleGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ)
+{
+	return LSM6DS3SampleGyroRaw(gyroX, gyroY, gyroZ);
+}
+
+
+Module_Status SampleGyroDPSToPort(uint8_t port, uint8_t module)
+{
+	float buffer[3]; // Three Samples X, Y, Z
+	Module_Status status = H0BR4_OK;
+	
+	if ((status = SampleGyroDPSToBuf(buffer)) != H0BR4_OK)
+		return status;
+	
+	memcpy(messageParams, buffer, sizeof(buffer));
+	SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_GYRO, sizeof(buffer));
+	return status;
+}
+
+Module_Status SampleGyroDPSToString(char *cstring, size_t maxLen)
+{
+	Module_Status status = H0BR4_OK;
+	float x = 0, y = 0, z = 0;
+	
+	if ((status = SampleGyroDPS(&x, &y, &z)) != H0BR4_OK)
+		return status;
+	
+	snprintf(cstring, maxLen, "Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n", x, y, z);
+	return status;
+}
+
+Module_Status SampleGyroDPS(float *x, float *y, float *z)
+{
+	Module_Status status = H0BR4_OK;
+	int xInMDPS = 0, yInMDPS = 0, zInMDPS = 0;
+	
+	if ((status = LSM6DS3SampleGyroMDPS(&xInMDPS, &yInMDPS, &zInMDPS)) != H0BR4_OK)
+		return status;
+	
+	*x = ((float)xInMDPS) / 1000;
+	*y = ((float)yInMDPS) / 1000;
+	*z = ((float)zInMDPS) / 1000;
+	
+	return status;
+}
+
+Module_Status SampleGyroDPSToBuf(float *buffer)
+{
+	return SampleGyroDPS(buffer, buffer + 1, buffer + 2);
+}
+
+Module_Status SampleAccMG(int *accX, int *accY, int *accZ)
+{
+	return LSM6DS3SampleAccMG(accX, accY, accZ);
+}
+
+Module_Status SampleAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ)
+{
+	return LSM6DS3SampleAccRaw(accX, accY, accZ);
+}
+
+Module_Status SampleAccGToPort(uint8_t port, uint8_t module)
+{
+	float buffer[3]; // Three Samples X, Y, Z
+	Module_Status status = H0BR4_OK;
+	
+	if ((status = SampleAccGToBuf(buffer)) != H0BR4_OK)
+		return status;
+	
+	memcpy(messageParams, buffer, sizeof(buffer));
+	SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_ACC, sizeof(buffer));
+	return status;
+}
+
+Module_Status SampleAccGToString(char *cstring, size_t maxLen)
+{
+	Module_Status status = H0BR4_OK;
+	float x = 0, y = 0, z = 0;
+	
+	if ((status = SampleAccG(&x, &y, &z)) != H0BR4_OK)
+		return status;
+	
+	snprintf(cstring, maxLen, "Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n", x, y, z);
+	return status;
+}
+
+Module_Status SampleAccG(float *x, float *y, float *z)
+{
+	Module_Status status = H0BR4_OK;
+	int xInMG = 0, yInMG = 0, zInMG = 0;
+	
+	if ((status = LSM6DS3SampleAccMG(&xInMG, &yInMG, &zInMG)) != H0BR4_OK)
+		return status;
+	
+	*x = ((float)xInMG) / 1000;
+	*y = ((float)yInMG) / 1000;
+	*z = ((float)zInMG) / 1000;
+	
+	return status;
+}
+
+Module_Status SampleAccGToBuf(float *buffer)
+{
+	return SampleAccG(buffer, buffer + 1, buffer + 2);
+}
+
+Module_Status SampleMagMGauss(int *magX, int *magY, int *magZ)
+{
+	return LSM303SampleMagMGauss(magX, magY, magZ);
+}
+
+Module_Status SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ)
+{
+	return LSM303SampleMagRaw(magX, magY, magZ);
+}
+
+Module_Status SampleMagMGaussToPort(uint8_t port, uint8_t module)
+{
+	int buffer[3]; // Three Samples X, Y, Z
+	Module_Status status = H0BR4_OK;
+	
+	if ((status = SampleMagMGaussToBuf(buffer)) != H0BR4_OK)
+		return status;
+	
+	memcpy(messageParams, buffer, sizeof(buffer));
+	SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_MAG, sizeof(buffer));
+	return status;
+}
+
+Module_Status SampleMagMGaussToString(char *cstring, size_t maxLen)
+{
+	Module_Status status = H0BR4_OK;
+	int x = 0, y = 0, z = 0;
+	
+	if ((status = LSM303SampleMagMGauss(&x, &y, &z)) != H0BR4_OK)
+		return status;
+	
+	snprintf(cstring, maxLen, "Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n", x, y, z);
+	return status;
+}
+
+Module_Status SampleMagMGaussToBuf(int *buffer)
+{
+	return LSM303SampleMagMGauss(buffer, buffer + 1, buffer + 2);
+}
+
+Module_Status SampleTempCelsius(float *temp)
+{
+	return LSM6DS3SampleTempCelsius(temp);
+}
+
+Module_Status SampleTempFahrenheit(float *temp)
+{
+	return LSM6DS3SampleTempFahrenheit(temp);
+}
+
+Module_Status SampleTempCToPort(uint8_t port, uint8_t module)
+{
+	float temp;
+	Module_Status status = H0BR4_OK;
+	
+	if ((status = LSM6DS3SampleTempCelsius(&temp)) != H0BR4_OK)
+		return status;
+	
+	memcpy(messageParams, &temp, sizeof(temp));
+	SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_TEMP, sizeof(temp));
+	return status;
+}
+
+Module_Status SampleTempCToString(char *cstring, size_t maxLen)
+{
+	Module_Status status = H0BR4_OK;
+	float temp;
+	
+	if ((status = LSM6DS3SampleTempCelsius(&temp)) != H0BR4_OK)
+		return status;
+	
+	snprintf(cstring, maxLen, "Temp(Celsius): %0.2f\r\n", temp);
+	return status;
+}
 
 
 
@@ -737,8 +872,8 @@ static Module_Status LSM303MagGetDRDYStatus(bool *status)
 
 static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	int x = 0, y = 0, z = 0;
-	float temp = 25.0;
+	// int x = 0, y = 0, z = 0;
+	// float temp = 25.0;
 	
 	const char *const gyroCmdName = "gyro";
 	const char *const accCmdName = "acc";
@@ -760,25 +895,21 @@ static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xW
 	
 	do {
 		if (!strncmp(pSensName, gyroCmdName, strlen(gyroCmdName))) {
-			if (LSM6D3GetGyro(&x, &y, &z) != H0BR4_OK)
+			if (SampleGyroDPSToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK)
 				break;
-			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 			
 		} else if (!strncmp(pSensName, accCmdName, strlen(accCmdName))) {
-			if (LSM6D3GetAcc(&x, &y, &z) != H0BR4_OK)
+			if (SampleAccGToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK)
 				break;
-			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 		
 		} else if (!strncmp(pSensName, magCmdName, strlen(magCmdName))) {
-			if (LSM303MagGetAxes(&x, &y, &z) != H0BR4_OK)
+			if (SampleMagMGaussToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK)
 				break;
-			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", x, y, z);
 			
 		} else if (!strncmp(pSensName, tempCmdName, strlen(tempCmdName))) {
-			if (LSM6D3GetTempCelsius(&temp) != H0BR4_OK)
+			if (SampleTempCToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK)
 				break;
-			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Temperature(Celsius): %f\r\n", temp);
-		
+			
 		} else {
 			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
 		}
@@ -803,64 +934,52 @@ static portBASE_TYPE LSM6DS3SreamSensorCommand(int8_t *pcWriteBuffer, size_t xWr
 
 static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	int x = 0, y = 0, z = 0;
-	
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 	
-	if (LSM6D3GetGyro(&x, &y, &z) != H0BR4_OK) {
+	if (SampleGyroDPSToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
 		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading gyro values\r\n");
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 	return pdFALSE;
 }
 
 static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	int x = 0, y = 0, z = 0;
-	
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 	
-	if (LSM6D3GetAcc(&x, &y, &z) != H0BR4_OK) {
+	if (SampleAccGToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
 		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading accelerometer values\r\n");
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%f, Y:%f, Z:%f\r\n", ((float)x)/1000, ((float)y)/1000, ((float)z)/1000);
 	return pdFALSE;
 }
 
 static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	int magX = 0, magY = 0, magZ = 0;
-
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 	
-	if (LSM303MagGetAxes(&magX, &magY, &magZ) != H0BR4_OK) {
+	if (SampleMagMGaussToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
 		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading magnetometer values\r\n");
 		return pdFALSE;
 	}
-	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "X:%d, Y:%d, Z:%d\r\n", magX, magY, magZ);
 	return pdFALSE;
 }
 
 static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	float celsiusTemp = 25;
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 	
-	if (LSM6D3GetTempCelsius(&celsiusTemp) != H0BR4_OK) {
+	if (SampleTempCToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
 		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading temperature value\r\n");
 		return pdFALSE;
 	}
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Temperature(Celsius): %f\r\n", celsiusTemp);
 	return pdFALSE;
 }
 

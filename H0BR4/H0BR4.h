@@ -122,6 +122,10 @@ typedef enum
 	H0BR4_ERR_MAG,
 	H0BR4_ERR_LSM6DS3,
 	H0BR4_ERR_LSM303,
+	H0BR4_ERR_BUSY,
+	H0BR4_ERR_TIMEOUT,
+	H0BR4_ERR_IO,
+	H0BR4_ERR_TERMINATED,
 	H0BR4_ERR_WrongParams,
 	H0BR4_ERROR = 25} Module_Status;
 
@@ -161,6 +165,11 @@ extern void MX_USART6_UART_Init(void);
 #define CODE_H0BR4_RESULT_ACC               805
 #define CODE_H0BR4_RESULT_MAG		 	          806
 #define CODE_H0BR4_RESULT_TEMP		          807
+
+#define CODE_H0BR4_STREAM_GYRO							808
+#define CODE_H0BR4_STREAM_ACC								809
+#define CODE_H0BR4_STREAM_MAG								810
+#define CODE_H0BR4_STREAM_TEMP							811
 
 
 	

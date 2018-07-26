@@ -27,6 +27,9 @@
 
 #define LSM303AGR_MAG_SENSITIVITY_FOR_FS_50G  1.5  /**< Sensitivity value for 16 gauss full scale [mgauss/LSB] */
 
+#define MIN_MEMS_PERIOD_MS				200
+#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
+
 
 /* Define UART variables */
 UART_HandleTypeDef huart1;
@@ -36,6 +39,8 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart6;
 
+typedef Module_Status (*SampleMemsToPort)(uint8_t, uint8_t);
+typedef Module_Status (*SampleMemsToString)(char *, size_t);
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -56,6 +61,15 @@ static Module_Status LSM6DS3SampleTempFahrenheit(float *temp);
 
 static Module_Status LSM303SampleMagMGauss(int *magX, int *magY, int *magZ);
 static Module_Status LSM303SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ);
+
+//static Module_Status StreamGyroDPSToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+//static Module_Status StreamGyroDPSToCLI(uint32_t period, uint32_t timeout);
+
+//static Module_Status StreamMagMGaussToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+//static Module_Status StreamMagMGaussToCLI(uint32_t period, uint32_t timeout);
+
+static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout, SampleMemsToPort function);
+static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function);
 
 
 
@@ -78,7 +92,7 @@ const CLI_Command_Definition_t LSM6DS3StreamCommandDefinition = {
 		Get stream of  filtered and calibrated Gyro, Acc, Mag or Temp values in \
 	dps, g, mguass or celsius units respectively.\r\n\r\n",
 	LSM6DS3SreamSensorCommand,
-	1
+	-1
 };
 
 
@@ -120,6 +134,7 @@ void Module_Init(void)
 Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst)
 {
 	Module_Status result = H0BR4_OK;
+	uint32_t period = 0, timeout = 0;
 	
 	switch (code)
 	{
@@ -151,6 +166,45 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 			
 			break;
 		}
+		
+		case CODE_H0BR4_STREAM_GYRO:
+		{
+			memcpy(&period, &messageParams[0], sizeof(period));
+      memcpy(&timeout, &messageParams[4], sizeof(period));
+			if ((result = StreamMemsToPort(port, dst, period, timeout, SampleGyroDPSToPort)) != H0BR4_OK)
+				break;
+			
+			break;
+		}
+
+		case CODE_H0BR4_STREAM_ACC:
+		{
+			memcpy(&period, &messageParams[0], sizeof(period));
+      memcpy(&timeout, &messageParams[4], sizeof(period));
+			if ((result = StreamMemsToPort(port, dst, period, timeout, SampleAccGToPort)) != H0BR4_OK)
+				break;
+			
+			break;
+		}
+		case CODE_H0BR4_STREAM_MAG:
+		{
+			memcpy(&period, &messageParams[0], sizeof(period));
+      memcpy(&timeout, &messageParams[4], sizeof(period));
+			if ((result = StreamMemsToPort(port, dst, period, timeout, SampleMagMGaussToPort)) != H0BR4_OK)
+				break;
+			
+			break;
+		}
+		case CODE_H0BR4_STREAM_TEMP:
+		{
+			memcpy(&period, &messageParams[0], sizeof(period));
+      memcpy(&timeout, &messageParams[4], sizeof(period));
+			if ((result = StreamMemsToPort(port, dst, period, timeout, SampleTempCToPort)) != H0BR4_OK)
+				break;
+			
+			break;
+		}
+		
 		default:
 			result = H0BR4_ERR_UnknownMessage;
 			break;
@@ -633,6 +687,78 @@ static Module_Status LSM303MagGetDRDYStatus(bool *status)
 }
 
 
+static Module_Status PollingSleepCLISafe(uint32_t period)
+{
+	int8_t *pcOutputString = NULL;
+	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
+	long numDeltaDelay =  period / DELTA_SLEEP_MS;
+	unsigned lastDelayMS = period % DELTA_SLEEP_MS;
+	
+	while (numDeltaDelay-- > 0) {
+		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
+		
+		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+		readPxMutex(PcPort, (char *)pcOutputString, sizeof(char), cmd500ms, 0);
+		if (pcOutputString[0] == '\r')
+			return H0BR4_ERR_TERMINATED;
+	}
+	
+	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
+	return H0BR4_OK;
+}
+
+
+static Module_Status StreamMemsToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout, SampleMemsToPort function)
+{
+	Module_Status status = H0BR4_OK;
+	
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0BR4_ERR_WrongParams;
+	if (port == 0)
+		return H0BR4_ERR_WrongParams;
+	if (port == PcPort) // Check if CLI is not enable at that port!
+		return H0BR4_ERR_BUSY;
+	
+	if (period > timeout)
+		timeout = period;
+	
+	long numTimes = timeout / period;
+	
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		if ((status = function(port, module)) != H0BR4_OK)
+			break;
+		
+		vTaskDelay(pdMS_TO_TICKS(period));
+	}
+	return status;
+}
+
+static Module_Status StreamMemsToCLI(uint32_t period, uint32_t timeout, SampleMemsToString function)
+{
+	Module_Status status = H0BR4_OK;
+	int8_t *pcOutputString = NULL;
+	
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0BR4_ERR_WrongParams;
+
+	// TODO: Check if CLI is enable or not
+	
+	if (period > timeout)
+		timeout = period;
+	
+	long numTimes = timeout / period;
+	
+	while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+		if ((status = function((char *)pcOutputString, 100)) != H0BR4_OK)
+			break;
+		
+		writePxMutex(PcPort, (char *)pcOutputString, strlen((char *)pcOutputString), cmd500ms, HAL_MAX_DELAY);
+		if (PollingSleepCLISafe(period) != H0BR4_OK)
+			break;
+	}
+	return status;
+}
 
 
 
@@ -823,7 +949,7 @@ Module_Status SampleTempCToString(char *cstring, size_t maxLen)
 	if ((status = LSM6DS3SampleTempCelsius(&temp)) != H0BR4_OK)
 		return status;
 	
-	snprintf(cstring, maxLen, "Temp(Celsius): %0.2f\r\n", temp);
+	snprintf(cstring, maxLen, "Temp(Celsius) | %0.2f\r\n", temp);
 	return status;
 }
 
@@ -881,18 +1007,124 @@ static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xW
 		return pdFALSE;
 	} while (0);
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading %s values\r\n", pSensName);
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading Sensor\r\n");
 	return pdFALSE;
+}
+
+// Port Mode => false and CLI Mode => true
+static bool StreamCommandParser(const int8_t *pcCommandString, const char **ppSensName, portBASE_TYPE *pSensNameLen, 
+														bool *pPortOrCLI, uint32_t *pPeriod, uint32_t *pTimeout, uint8_t *pPort, uint8_t *pModule)
+{
+	const char *pPeriodMSStr = NULL;
+	const char *pTimeoutMSStr = NULL;
+	
+	portBASE_TYPE periodStrLen = 0;
+	portBASE_TYPE timeoutStrLen = 0;
+	
+	const char *pPortStr = NULL;
+	const char *pModStr = NULL;
+	
+	portBASE_TYPE portStrLen = 0;
+	portBASE_TYPE modStrLen = 0;
+	
+	*ppSensName = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, pSensNameLen);
+	pPeriodMSStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 2, &periodStrLen);
+	pTimeoutMSStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 3, &timeoutStrLen);
+	
+	// Atleast 3 Parameters are required!
+	if ((*ppSensName == NULL) || (pPeriodMSStr == NULL) || (pTimeoutMSStr == NULL))
+		return false;
+	
+	// TODO: Check if Period and Timeout are integers or not!
+	*pPeriod = atoi(pPeriodMSStr);
+	*pTimeout = atoi(pTimeoutMSStr);
+	*pPortOrCLI = true;
+	
+	pPortStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 4, &portStrLen);
+	pModStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 5, &modStrLen);
+	
+	if ((pModStr == NULL) && (pPortStr == NULL))
+		return true;
+	if ((pModStr == NULL) || (pPortStr == NULL))	// If user has provided 4 Arguments.
+		return false;
+	
+	*pPort = atoi(pPortStr);
+	*pModule = atoi(pModStr);
+	*pPortOrCLI = false;
+	
+	return true;
 }
 
 static portBASE_TYPE LSM6DS3SreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
 {
-	// int x = 0, y = 0, z = 0;
+	const char *const gyroCmdName = "gyro";
+	const char *const accCmdName = "acc";
+	const char *const magCmdName = "mag";
+	const char *const tempCmdName = "temp";
+	
+	uint32_t period = 0;
+	uint32_t timeout = 0;
+	uint8_t port = 0;
+	uint8_t module = 0;
+	
+	bool portOrCLI = true; // Port Mode => false and CLI Mode => true
+	
+	const char *pSensName = NULL;
+	portBASE_TYPE sensNameLen = 0;
 	
 	// Make sure we return something
 	*pcWriteBuffer = '\0';
 	
-	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Command not supported\r\n");
+	if (!StreamCommandParser(pcCommandString, &pSensName, &sensNameLen, &portOrCLI, &period, &timeout, &port, &module)) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		return pdFALSE;
+	}
+	
+	do {
+		if (!strncmp(pSensName, gyroCmdName, strlen(gyroCmdName))) {
+			if (portOrCLI) {
+				if (StreamMemsToCLI(period, timeout, SampleGyroDPSToString) != H0BR4_OK)
+					break;
+			} else {
+				if (StreamMemsToPort(port, module, period, timeout, SampleGyroDPSToPort) != H0BR4_OK)
+					break;
+			}
+			
+		} else if (!strncmp(pSensName, accCmdName, strlen(accCmdName))) {
+			if (portOrCLI) {
+				if (StreamMemsToCLI(period, timeout, SampleAccGToString) != H0BR4_OK)
+					break;
+			} else {
+				if (StreamMemsToPort(port, module, period, timeout, SampleAccGToPort) != H0BR4_OK)
+					break;
+			}
+			
+		} else if (!strncmp(pSensName, magCmdName, strlen(magCmdName))) {
+			if (portOrCLI) {
+				if (StreamMemsToCLI(period, timeout, SampleMagMGaussToString) != H0BR4_OK)
+					break;
+			} else {
+				if (StreamMemsToPort(port, module, period, timeout, SampleMagMGaussToPort) != H0BR4_OK)
+					break;
+			}
+			
+		} else if (!strncmp(pSensName, tempCmdName, strlen(tempCmdName))) {
+			if (portOrCLI) {
+				if (StreamMemsToCLI(period, timeout, SampleTempCToString) != H0BR4_OK)
+					break;
+			} else {
+				if (StreamMemsToPort(port, module, period, timeout, SampleTempCToPort) != H0BR4_OK)
+					break;
+			}
+			
+		} else {
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		}
+	
+		return pdFALSE;
+	} while (0);
+	
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading Sensor\r\n");
 	return pdFALSE;
 }
 

@@ -62,10 +62,6 @@ static Module_Status LSM303SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *m
 /* Create CLI commands --------------------------------------------------------*/
 static portBASE_TYPE LSM6DS3SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 static portBASE_TYPE LSM6DS3SreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
-static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
-static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
-static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
-static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
 
 const CLI_Command_Definition_t LSM6DS3SampleCommandDefinition = {
 	(const int8_t *) "sample",
@@ -83,34 +79,6 @@ const CLI_Command_Definition_t LSM6DS3StreamCommandDefinition = {
 	dps, g, mguass or celsius units respectively.\r\n\r\n",
 	LSM6DS3SreamSensorCommand,
 	1
-};
-
-const CLI_Command_Definition_t LSM6DS3GyroCommandDefinition = {
-	(const int8_t *) "gyro",
-	(const int8_t *) "(H0BR4) gyro:\r\n Get filtered and calibrated LSM6DS3 Gyro X,Y,Z values in dps.\r\n\r\n",
-	LSM6DS3GetGyroCommand,
-	0
-};
-
-const CLI_Command_Definition_t LSM6DS3AccCommandDefinition = {
-	(const int8_t *) "acc",
-	(const int8_t *) "(H0BR4) acc:\r\n Get filtered and calibrated LSM6DS3 Accelerometer X,Y,Z values in g.\r\n\r\n",
-	LSM6DS3GetAccCommand,
-	0
-};
-
-const CLI_Command_Definition_t LSM303MagCommandDefinition = {
-	(const int8_t *) "mag",
-	(const int8_t *) "(H0BR4) mag:\r\n Get filtered and calibrated LSM6DS3 Magnetic strength X,Y,Z values in mGauss.\r\n\r\n",
-	LSM303GetMagCommand,
-	0
-};
-
-const CLI_Command_Definition_t LSM6DS3TempCommandDefinition = {
-	(const int8_t *) "temp",
-	(const int8_t *) "(H0BR4) temp:\r\n Get filtered and calibrated LSM6DS3 Temperature values in Celsius.\r\n\r\n",
-	LSM6DS3GetTempCommand,
-	0
 };
 
 
@@ -199,10 +167,6 @@ void RegisterModuleCLICommands(void)
 {
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3SampleCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&LSM6DS3StreamCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&LSM6DS3GyroCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&LSM6DS3AccCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&LSM303MagCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&LSM6DS3TempCommandDefinition);
 }
 
 /*-----------------------------------------------------------*/
@@ -931,58 +895,6 @@ static portBASE_TYPE LSM6DS3SreamSensorCommand(int8_t *pcWriteBuffer, size_t xWr
 	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Command not supported\r\n");
 	return pdFALSE;
 }
-
-static portBASE_TYPE LSM6DS3GetGyroCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
-{
-	// Make sure we return something
-	*pcWriteBuffer = '\0';
-	
-	if (SampleGyroDPSToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
-		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading gyro values\r\n");
-		return pdFALSE;
-	}
-	
-	return pdFALSE;
-}
-
-static portBASE_TYPE LSM6DS3GetAccCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
-{
-	// Make sure we return something
-	*pcWriteBuffer = '\0';
-	
-	if (SampleAccGToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
-		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading accelerometer values\r\n");
-		return pdFALSE;
-	}
-	
-	return pdFALSE;
-}
-
-static portBASE_TYPE LSM303GetMagCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
-{
-	// Make sure we return something
-	*pcWriteBuffer = '\0';
-	
-	if (SampleMagMGaussToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
-		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading magnetometer values\r\n");
-		return pdFALSE;
-	}
-	return pdFALSE;
-}
-
-static portBASE_TYPE LSM6DS3GetTempCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
-{
-	// Make sure we return something
-	*pcWriteBuffer = '\0';
-	
-	if (SampleTempCToString((char *)pcWriteBuffer, xWriteBufferLen) != H0BR4_OK) {
-		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading temperature value\r\n");
-		return pdFALSE;
-	}
-	
-	return pdFALSE;
-}
-
 
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

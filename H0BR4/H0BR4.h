@@ -171,6 +171,8 @@ extern void MX_USART6_UART_Init(void);
 #define CODE_H0BR4_STREAM_MAG								810
 #define CODE_H0BR4_STREAM_TEMP							811
 
+#define CODE_H0BR4_STREAM_STOP							812
+
 
 	
 /* -----------------------------------------------------------------------
@@ -198,7 +200,7 @@ Module_Status SampleAccGToPort(uint8_t port, uint8_t module);
 Module_Status SampleMagMGauss(int *magX, int *magY, int *magZ);
 Module_Status SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ);
 
-Module_Status SampleMagMGaussToBuf(int *buffer);
+Module_Status SampleMagMGaussToBuf(float *buffer);
 Module_Status SampleMagMGaussToString(char *cstring, size_t maxLen);
 Module_Status SampleMagMGaussToPort(uint8_t port, uint8_t module);
 
@@ -208,6 +210,25 @@ Module_Status SampleTempFahrenheit(float *temp);
 
 Module_Status SampleTempCToPort(uint8_t port, uint8_t module);
 Module_Status SampleTempCToString(char *cstring, size_t maxLen);
+
+
+Module_Status StreamGyroDPSToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamGyroDPSToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamGyroDPSToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+
+Module_Status StreamAccGToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamAccGToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamAccGToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+
+Module_Status StreamMagMGaussToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamMagMGaussToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamMagMGaussToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+
+Module_Status StreamTempCToPort(uint8_t port, uint8_t module, uint32_t period, uint32_t timeout);
+Module_Status StreamTempCToCLI(uint32_t period, uint32_t timeout);
+Module_Status StreamTempCToBuffer(float *buffer, uint32_t period, uint32_t timeout);
+
+void stopStreamMems(void);
 
 
 /* -----------------------------------------------------------------------

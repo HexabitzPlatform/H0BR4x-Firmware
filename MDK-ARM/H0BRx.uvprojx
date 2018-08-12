@@ -10,7 +10,7 @@
       <TargetName>Module 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -324,6 +324,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -336,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F091xB,H0BR4,_module=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\User;..\H0BR4;..\BOS;..\Thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS;..\Thirdparty\Middleware\FreeRTOS\Source\include;..\Thirdparty\Middleware\FreeRTOS\Source\portable\RVDS\ARM_CM0;..\Thirdparty\STM32F0xx_HAL_Driver\Inc\Legacy;..\Thirdparty\STM32F0xx_HAL_Driver\Inc;..\Thirdparty\CMSIS\Device\ST\STM32F0xx\Include;..\Thirdparty\CMSIS\Include</IncludePath>
+              <IncludePath>..\User;..\H0BR4;..\BOS;..\Thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS;..\Thirdparty\Middleware\FreeRTOS\Source\include;..\Thirdparty\Middleware\FreeRTOS\Source\portable\RVDS\ARM_CM0;..\Thirdparty\STM32F0xx_HAL_Driver\Inc\Legacy;..\Thirdparty\STM32F0xx_HAL_Driver\Inc;..\Thirdparty\CMSIS\Device\ST\STM32F0xx\Include;..\Thirdparty\CMSIS\Include;..\Thirdparty\LSM6DS3\inc;..\Thirdparty\LSM303AGR\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -480,6 +481,16 @@
               <FileType>1</FileType>
               <FilePath>..\thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_rtc_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f0xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_i2c_ex.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -540,6 +551,11 @@
               <FileType>2</FileType>
               <FilePath>..\H0BR4\startup_stm32f091xc.s</FilePath>
             </File>
+            <File>
+              <FileName>H0BR4_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\H0BR4\H0BR4_i2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -594,6 +610,31 @@
               <FileName>cmsis_os.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\thirdparty\Middleware\FreeRTOS\Source\CMSIS_RTOS\cmsis_os.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LSM6DS3</GroupName>
+          <Files>
+            <File>
+              <FileName>LSM6DS3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\LSM6DS3\src\LSM6DS3.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LSM303AGR</GroupName>
+          <Files>
+            <File>
+              <FileName>LSM303AGR_MAG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\LSM303AGR\src\LSM303AGR_MAG.c</FilePath>
+            </File>
+            <File>
+              <FileName>LSM303AGR_ACC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Thirdparty\LSM303AGR\src\LSM303AGR_ACC.c</FilePath>
             </File>
           </Files>
         </Group>

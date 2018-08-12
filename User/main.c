@@ -89,7 +89,6 @@ int main(void)
 /* FrontEndTask function */
 void FrontEndTask(void * argument)
 {
-
 	
   /* Infinite loop */
   for(;;)

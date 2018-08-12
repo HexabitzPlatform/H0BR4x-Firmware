@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : H0BR4_gpio.c
-  * Description        : This file provides code for the configuration
-  *                      of all used GPIO pins.
+  * File Name          : H08R6_i2c.h
+  * Description        : This file contains all the functions prototypes for
+  *                      the i2c
   ******************************************************************************
   *
   * COPYRIGHT(c) 2015 STMicroelectronics
@@ -33,70 +33,30 @@
   */
 
 /*
-		MODIFIED by Hexabitz for BitzOS (BOS) V0.1.4 - Copyright (C) 20167 Hexabitz
+		MODIFIED by Hexabitz for BitzOS (BOS) V0.1.4 - Copyright (C) 2018 Hexabitz
     All rights reserved
 */
 
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __i2c_H
+#define __i2c_H
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 /* Includes ------------------------------------------------------------------*/
-#include "BOS.h"
+#include "stm32f0xx_hal.h"
 
-/*----------------------------------------------------------------------------*/
-/* Configure GPIO                                                             */
-/*----------------------------------------------------------------------------*/
+extern I2C_HandleTypeDef hi2c2;
 
-/** Pinout Configuration
-*/
-void MX_GPIO_Init(void)
-{
-  /* GPIO Ports Clock Enable */
-  __GPIOC_CLK_ENABLE();
-  __GPIOA_CLK_ENABLE();
-  __GPIOD_CLK_ENABLE();
-	__GPIOB_CLK_ENABLE();
-	__GPIOF_CLK_ENABLE();		// for HSE and Boot0
-	
-	IND_LED_Init();
-	MEMS_GPIO_Init();
+
+extern void MX_I2C_Init(void);
+extern void MX_I2C2_Init(void);
+
+#ifdef __cplusplus
 }
+#endif
+#endif /*__i2c_H */
 
-//-- Configure indicator LED
-void IND_LED_Init(void)
-{
-	GPIO_InitTypeDef GPIO_InitStruct;
-	
-	GPIO_InitStruct.Pin = _IND_LED_PIN;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-	HAL_GPIO_Init(_IND_LED_PORT, &GPIO_InitStruct);
-}
-
-void MEMS_GPIO_Init(void)
-{
-// TODO: Enable INT pins and their interrupts.
-  GPIO_InitTypeDef GPIO_InitStruct;
-
-  /**I2C2 GPIO Configuration
-  PB13     ------> I2C2_SCL
-  PB14     ------> I2C2_SDA
-  */
-	
-  GPIO_InitStruct.Pin = _MEMS_I2C2_SCL_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF5_I2C2;
-  HAL_GPIO_Init(_MEMS_I2C2_SCL_PORT, &GPIO_InitStruct);
-
-  GPIO_InitStruct.Pin = _MEMS_I2C2_SDA_PIN;
-  HAL_GPIO_Init(_MEMS_I2C2_SDA_PORT, &GPIO_InitStruct);
-
-  /* Peripheral clock enable */
-  __HAL_RCC_I2C2_CLK_ENABLE();
-	
-  /* I2C2 interrupt Init */
-  HAL_NVIC_SetPriority(I2C2_IRQn, 1, 0);
-  HAL_NVIC_EnableIRQ(I2C2_IRQn);
-}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

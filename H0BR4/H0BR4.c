@@ -87,7 +87,7 @@ dps, g, mguass or celsius units respectively.\r\n\r\n",
 
 const CLI_Command_Definition_t StreamCommandDefinition = {
 	(const int8_t *) "stream",
-	(const int8_t *) "(H0BR4) stream:\r\n Syntax: stream [gyro]/[acc]/[mag]/[temp] (period) (time) [port]/[buffer] [module]\r\n \
+	(const int8_t *) "(H0BR4) stream:\r\n Syntax: stream [gyro]/[acc]/[mag]/[temp] (period in ms) (time in ms) [port]/[buffer] [module]\r\n \
 \tGet stream of  filtered and calibrated Gyro, Acc, Mag or Temp values in \
 dps, g, mguass or celsius units respectively. Press ENTER to stop the stream.\r\n\r\n",
 	StreamSensorCommand,

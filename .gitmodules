@@ -1,6 +1,8 @@
 [submodule "BOS"]
 	path = BOS
-	url = git@bitbucket.org:hexabitz/bos.git
+	url = https://github.com/hexabitzinc/BOS
+	branch = master
 [submodule "Thirdparty"]
 	path = Thirdparty
-	url = git@bitbucket.org:hexabitz/thirdparty.git
+	url = https://github.com/hexabitzinc/Thirdparty
+	branch = master

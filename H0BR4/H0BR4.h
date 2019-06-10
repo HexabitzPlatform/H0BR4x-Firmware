@@ -1,5 +1,5 @@
 /*
-    BitzOS (BOS) V0.1.5 - Copyright (C) 2017-2018 Hexabitz
+    BitzOS (BOS) V0.1.6 - Copyright (C) 2017-2019 Hexabitz
     All rights reserved
 		
     File Name     : H0BR4.c
@@ -111,6 +111,7 @@
 #define _MEMS_I2C2_SCL_PIN            GPIO_PIN_13
 #define _MEMS_I2C2_SCL_GPIO_CLK()     __GPIOB_CLK_ENABLE();
 
+#define NUM_MODULE_PARAMS		1
 
 /* Module_Status Type Definition */  
 typedef enum 

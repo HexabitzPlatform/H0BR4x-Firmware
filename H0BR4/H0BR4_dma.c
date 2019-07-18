@@ -242,7 +242,7 @@ void DMA_MSG_TX_UnSetup(UART_HandleTypeDef *huart)
 
 /* Streaming DMA setup (port-to-port) 
 */
-void DMA_STREAM_Setup(UART_HandleTypeDef* huartSrc, UART_HandleTypeDef* huartDst, uint8_t num)
+void DMA_STREAM_Setup(UART_HandleTypeDef* huartSrc, UART_HandleTypeDef* huartDst, uint16_t num)
 {	
 	DMA_HandleTypeDef *hDMA;
 	uint8_t port = GetPort(huartSrc);

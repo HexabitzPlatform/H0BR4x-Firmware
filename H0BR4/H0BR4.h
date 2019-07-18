@@ -151,30 +151,6 @@ extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 
-
-/* -----------------------------------------------------------------------
-	|														Message Codes	 														 	|
-   ----------------------------------------------------------------------- 
-*/
-
-#define CODE_H0BR4_GET_GYRO                 800
-#define CODE_H0BR4_GET_ACC                  801
-#define CODE_H0BR4_GET_MAG		              802
-#define CODE_H0BR4_GET_TEMP		              803
-
-#define CODE_H0BR4_RESULT_GYRO              804
-#define CODE_H0BR4_RESULT_ACC               805
-#define CODE_H0BR4_RESULT_MAG		 	          806
-#define CODE_H0BR4_RESULT_TEMP		          807
-
-#define CODE_H0BR4_STREAM_GYRO							808
-#define CODE_H0BR4_STREAM_ACC								809
-#define CODE_H0BR4_STREAM_MAG								810
-#define CODE_H0BR4_STREAM_TEMP							811
-
-#define CODE_H0BR4_STREAM_STOP							812
-
-
 	
 /* -----------------------------------------------------------------------
 	|																APIs	 																 	|

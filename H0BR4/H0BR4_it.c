@@ -39,12 +39,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
-/* External variables --------------------------------------------------------*/
 
+/* External variables --------------------------------------------------------*/
+extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
+//extern uint8_t UARTTxBuf[3][MSG_TX_BUF_SIZE];
 
 /* External function prototypes ----------------------------------------------*/
-extern TaskHandle_t xCommandConsoleTaskHandle;
-extern void NotifyMessagingTaskFromISR(uint8_t port);
+
 
 
 
@@ -151,13 +152,8 @@ void USART3_8_IRQHandler(void)
 */
 void DMA1_Ch1_IRQHandler(void)
 {
-	/* Streaming DMA 1 */
-	HAL_DMA_IRQHandler(&portPortDMA1);
-	if (DMAStream1total)
-		++DMAStream1count;
-	if (DMAStream1count >= DMAStream1total) {
-		StopPortPortDMA1();
-	}
+	/* Streaming or messaging DMA on P1 */
+	DMA_IRQHandler(P1);
 	
 }
 
@@ -168,17 +164,15 @@ void DMA1_Ch1_IRQHandler(void)
 */
 void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void)
 {
-	/* Messaging DMA 3 */
-	if (HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_TCIF2) == SET) {
-		HAL_DMA_IRQHandler(&portMemDMA3);
-	/* Streaming DMA 2 */
-	} else if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_TCIF3) == SET) {
-		HAL_DMA_IRQHandler(&portPortDMA2);
-		if (DMAStream2total)
-			++DMAStream2count;
-		if (DMAStream2count >= DMAStream2total) {
-			StopPortPortDMA2();
-		}
+	/* Streaming or messaging DMA on P5 */
+	if (HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF2) == SET) {
+		DMA_IRQHandler(P5);
+	/* Streaming or messaging DMA on P2 */
+	} else if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET) {
+		DMA_IRQHandler(P2);
+	/* TX messaging DMA 0 */
+	} else if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET) {
+		HAL_DMA_IRQHandler(&msgTxDMA[0]);
 	}
 }
 
@@ -189,20 +183,21 @@ void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void)
 */
 void DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler(void)
 {
-	/* Messaging DMA 1 */
-	if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_TCIF5) == SET) {
-		HAL_DMA_IRQHandler(&portMemDMA1);
-	/* Messaging DMA 2 */
-	} else if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_TCIF6) == SET) {
-		HAL_DMA_IRQHandler(&portMemDMA2);
-	/* Streaming DMA 3 */
-	} else if (HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_TCIF3) == SET) {
-		HAL_DMA_IRQHandler(&portPortDMA3);
-		if (DMAStream3total)
-			++DMAStream3count;
-		if (DMAStream3count >= DMAStream3total) {
-			StopPortPortDMA3();
-		}
+	/* Streaming or messaging DMA on P3 */
+	if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET) {
+		DMA_IRQHandler(P3);
+	/* Streaming or messaging DMA on P4 */
+	} else if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET) {
+		DMA_IRQHandler(P4);
+	/* Streaming or messaging DMA on P6 */
+	} else if (HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF3) == SET) {
+		DMA_IRQHandler(P6);
+	/* TX messaging DMA 1 */
+	} else if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET) {
+		HAL_DMA_IRQHandler(&msgTxDMA[1]);
+	/* TX messaging DMA 2 */
+	} else if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF7) == SET) {
+		HAL_DMA_IRQHandler(&msgTxDMA[2]);
 	}
 }
 
@@ -211,11 +206,13 @@ void DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler(void)
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+	
+	/* TX DMAs are shared so unsetup them here to be reused */
+	if(huart->hdmatx != NULL)
+		DMA_MSG_TX_UnSetup(huart);
 
 	/* Give back the mutex. */
 	xSemaphoreGiveFromISR( PxTxSemaphoreHandle[GetPort(huart)], &( xHigherPriorityTaskWoken ) );
-	
-	UartTxReady = SET;
 }
 
 /*-----------------------------------------------------------*/
@@ -228,60 +225,27 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
   /* Set the UART state ready to be able to start the process again */
   huart->State = HAL_UART_STATE_READY;
 	
-	/* Start receiving again */
-	HAL_UART_Receive_IT(huart, (uint8_t *)&cRxedChar, 1);	
+	/* Resume streaming DMA for this UART port */
+	uint8_t port = GetPort(huart);
+	if (portStatus[port] == STREAM) {
+		HAL_UART_Receive_DMA(huart, (uint8_t *)(&(dmaStreamDst[port-1]->Instance->TDR)), huart->hdmarx->Instance->CNDTR);	
+	/* Or parse the circular buffer and restart messaging DMA for this port */
+	} else {
+		MsgDMAStopped[port-1] = true;		// Set a flag here and let the backend task restart DMA after parsing the buffer	
+	}	
 }
 
 /*-----------------------------------------------------------*/
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	char cRxedChar = 0; uint8_t port = GetPort(huart);
-	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
-	
-	if (portStatus[port] == FREE || portStatus[port] == MSG || portStatus[port] == CLI) 
-	{
-		/* Read buffer */
-		cRxedChar = huart->Instance->RDR;
-		
-		/* Received CLI request? */
-		if( cRxedChar == '\r' )
-		{
-			cRxedChar = '\0';
-			PcPort = port; 
-			portStatus[port] = CLI;
-			
-			/* Activate the CLI task */
-			vTaskNotifyGiveFromISR(xCommandConsoleTaskHandle, &( xHigherPriorityTaskWoken ) );		
-		}
-		/* Received messaging request? (any value between 1 and 50 other than \r = 0x0D) */
-		else if( (cRxedChar != '\0') && (cRxedChar <= 50) )
-		{
-			portStatus[port] = MSG;
-			messageLength[port-1] = cRxedChar;			
-				
-			/* Activate DMA transfer */
-			PortMemDMA1_Setup(huart, cRxedChar);
-			
-			cRxedChar = '\0';	
-		}
-		/* Message has been received? */
-		else if( cRxedChar == 0x75 )
-		{
-			/* Notify messaging tasks */
-			NotifyMessagingTaskFromISR(port);		
-		}
-		
-		/* Give back the mutex */
-		xSemaphoreGiveFromISR( PxRxSemaphoreHandle[port], &( xHigherPriorityTaskWoken ) );
-		
-		/* Read this port again */
-		if (portStatus[port] == FREE) {
-			HAL_UART_Receive_IT(huart, (uint8_t *)&cRxedChar, 1);
-		}
-	}
-	
-	UartRxReady = SET;
+	// Circular buffer is full. Set a global persistant flag via BOS events and a temporary flag via portStatus.
+	BOS.overrun = GetPort(huart);
+	portStatus[GetPort(huart)] = OVERRUN;
+	// Clear the circular RX buffer
+	memset(&UARTRxBuf[GetPort(huart)-1][0], 0, MSG_RX_BUF_SIZE);
+	// Set a port-specific flag here and let the backend task restart DMA
+	MsgDMAStopped[GetPort(huart)-1] = true;	
 }
 
 /*-----------------------------------------------------------*/

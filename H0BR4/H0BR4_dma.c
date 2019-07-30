@@ -163,23 +163,29 @@ void DMA_FRONTEND_CH_Init(DMA_HandleTypeDef *hDMA, DMA_Channel_TypeDef *ch)
 void SetupMessagingRxDMAs(void)
 {	
 #ifdef _P1
-	DMA_MSG_RX_Setup(P1uart, &msgRxDMA[0]);
+	if (portStatus[P1] == FREE)
+		DMA_MSG_RX_Setup(P1uart, &msgRxDMA[0]);
 #endif
-#ifdef _P2	
-	DMA_MSG_RX_Setup(P2uart, &msgRxDMA[1]);
+#ifdef _P2
+	if (portStatus[P2] == FREE)	
+		DMA_MSG_RX_Setup(P2uart, &msgRxDMA[1]);
 #endif
-#ifdef _P3		
-	DMA_MSG_RX_Setup(P3uart, &msgRxDMA[2]);
+#ifdef _P3	
+	if (portStatus[P3] == FREE)
+		DMA_MSG_RX_Setup(P3uart, &msgRxDMA[2]);
 #endif
 #ifdef _P4		
-	DMA_MSG_RX_Setup(P4uart, &msgRxDMA[3]);
+	if (portStatus[P4] == FREE)
+		DMA_MSG_RX_Setup(P4uart, &msgRxDMA[3]);
 #endif
 #ifdef _P5		
-	DMA_MSG_RX_Setup(P5uart, &msgRxDMA[4]);
+	if (portStatus[P5] == FREE)
+		DMA_MSG_RX_Setup(P5uart, &msgRxDMA[4]);
 #endif
 #ifdef _P6		
-	DMA_MSG_RX_Setup(P6uart, &msgRxDMA[5]);
-#endif				
+	if (portStatus[P6] == FREE)
+		DMA_MSG_RX_Setup(P6uart, &msgRxDMA[5]);
+#endif					
 }
 
 /*-----------------------------------------------------------*/

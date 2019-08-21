@@ -81,7 +81,7 @@ static portBASE_TYPE StopStreamCommand(int8_t *pcWriteBuffer, size_t xWriteBuffe
 
 const CLI_Command_Definition_t SampleCommandDefinition = {
 	(const int8_t *) "sample",
-	(const int8_t *) "(H0BR4) sample:\r\n Syntax: sample [gyro]/[acc]/[mag]/[temp]\r\n \
+	(const int8_t *) "sample:\r\n Syntax: sample [gyro]/[acc]/[mag]/[temp]\r\n \
 \tGet filtered and calibrated Gyro, Acc, Mag or Temp values in \
 dps, g, mguass or celsius units respectively.\r\n\r\n",
 	SampleSensorCommand,
@@ -90,7 +90,7 @@ dps, g, mguass or celsius units respectively.\r\n\r\n",
 
 const CLI_Command_Definition_t StreamCommandDefinition = {
 	(const int8_t *) "stream",
-	(const int8_t *) "(H0BR4) stream:\r\n Syntax: stream [gyro]/[acc]/[mag]/[temp] (period in ms) (time in ms) [port]/[buffer] [module]\r\n \
+	(const int8_t *) "stream:\r\n Syntax: stream [gyro]/[acc]/[mag]/[temp] (period in ms) (time in ms) [port]/[buffer] [module]\r\n \
 \tGet stream of  filtered and calibrated Gyro, Acc, Mag or Temp values in \
 dps, g, mguass or celsius units respectively. Press ENTER to stop the stream.\r\n\r\n",
 	StreamSensorCommand,
@@ -99,7 +99,7 @@ dps, g, mguass or celsius units respectively. Press ENTER to stop the stream.\r\
 
 const CLI_Command_Definition_t StopCommandDefinition = {
 	(const int8_t *) "stop",
-	(const int8_t *) "(H0BR4) stop:\r\n Syntax: stop\r\n \
+	(const int8_t *) "stop:\r\n Syntax: stop\r\n \
 \tStop the current streaming of MEMS values. r\n\r\n",
 	StopStreamCommand,
 	0

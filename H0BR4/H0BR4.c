@@ -141,7 +141,7 @@ void Module_Init(void)
 
 /* --- H0BR4 message processing task. 
 */
-Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst)
+Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst, uint8_t shift)
 {
 	Module_Status result = H0BR4_OK;
 	uint32_t period = 0, timeout = 0;
@@ -179,8 +179,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		
 		case CODE_H0BR4_STREAM_GYRO:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamGyroDPSToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
@@ -189,8 +189,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 
 		case CODE_H0BR4_STREAM_ACC:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamAccGToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
@@ -198,8 +198,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		}
 		case CODE_H0BR4_STREAM_MAG:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamMagMGaussToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
@@ -207,14 +207,13 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		}
 		case CODE_H0BR4_STREAM_TEMP:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamTempCToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
 			break;
-		}
-		
+		}	
 		case CODE_H0BR4_STREAM_STOP:
 		{
 			stopStreamMems();

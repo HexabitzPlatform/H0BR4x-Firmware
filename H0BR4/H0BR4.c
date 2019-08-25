@@ -705,7 +705,6 @@ static Module_Status LSM303SampleMagMGauss(int *magX, int *magY, int *magZ)
 
 static Module_Status PollingSleepCLISafe(uint32_t period)
 {
-	int8_t *pcOutputString = NULL;
 	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
 	long numDeltaDelay =  period / DELTA_SLEEP_MS;
 	unsigned lastDelayMS = period % DELTA_SLEEP_MS;
@@ -713,10 +712,14 @@ static Module_Status PollingSleepCLISafe(uint32_t period)
 	while (numDeltaDelay-- > 0) {
 		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
 		
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-		readPxMutex(PcPort, (char *)pcOutputString, sizeof(char), cmd500ms, 0);
-		if (pcOutputString[0] == '\r')
-			return H0BR4_ERR_TERMINATED;
+		// Look for ENTER key to stop the stream
+		for (uint8_t chr=0 ; chr<MSG_RX_BUF_SIZE ; chr++)
+		{
+			if (UARTRxBuf[PcPort-1][chr] == '\r') {
+				UARTRxBuf[PcPort-1][chr] = 0;
+				return H0BR4_ERR_TERMINATED;
+			}
+		}
 		
 		if (stopStream)
 			return H0BR4_ERR_TERMINATED;

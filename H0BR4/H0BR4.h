@@ -112,7 +112,7 @@
 #define _MEMS_I2C2_SCL_PIN            GPIO_PIN_13
 #define _MEMS_I2C2_SCL_GPIO_CLK()     __GPIOB_CLK_ENABLE();
 
-#define NUM_MODULE_PARAMS		1
+#define NUM_MODULE_PARAMS		13
 
 /* Module_Status Type Definition */  
 typedef enum 

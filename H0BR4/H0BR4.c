@@ -40,7 +40,28 @@ UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart6;
 
 /* Module exported parameters ------------------------------------------------*/
-module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=NULL, .paramFormat=FMT_FLOAT, .paramName=""}};
+float H0BR4_gyroX=0.0f;
+float H0BR4_gyroY=0.0f;
+float H0BR4_gyroZ=0.0f;
+float H0BR4_accX=0.0f;
+float H0BR4_accY=0.0f;
+float H0BR4_accZ=0.0f;
+int H0BR4_magX=0.0f;
+int H0BR4_magY=0.0f;
+int H0BR4_magZ=0.0f;
+float H0BR4_temp=0.0f;
+
+module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=&H0BR4_gyroX, .paramFormat=FMT_FLOAT, .paramName="gyroX"},
+{.paramPtr=&H0BR4_gyroY, .paramFormat=FMT_FLOAT, .paramName="gyroY"},
+{.paramPtr=&H0BR4_gyroZ, .paramFormat=FMT_FLOAT, .paramName="gyroZ"},
+{.paramPtr=&H0BR4_accX, .paramFormat=FMT_FLOAT, .paramName="accX"},
+{.paramPtr=&H0BR4_accY, .paramFormat=FMT_FLOAT, .paramName="accY"},
+{.paramPtr=&H0BR4_accZ, .paramFormat=FMT_FLOAT, .paramName="accZ"},
+{.paramPtr=&H0BR4_magX, .paramFormat=FMT_FLOAT, .paramName="magX"},
+{.paramPtr=&H0BR4_magY, .paramFormat=FMT_FLOAT, .paramName="magY"},
+{.paramPtr=&H0BR4_magZ, .paramFormat=FMT_FLOAT, .paramName="magZ"},
+{.paramPtr=&H0BR4_temp, .paramFormat=FMT_FLOAT, .paramName="temp"},
+};
 
 typedef Module_Status (*SampleMemsToPort)(uint8_t, uint8_t);
 typedef Module_Status (*SampleMemsToString)(char *, size_t);
@@ -150,29 +171,26 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 	{
 		case CODE_H0BR4_GET_GYRO:
 		{
-			if ((result = SampleGyroDPSToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleGyroDPS(&H0BR4_gyroX, &H0BR4_gyroY, &H0BR4_gyroZ);
 			
 			break;
 		}
 		case CODE_H0BR4_GET_ACC:
 		{
-			if ((result = SampleAccGToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleAccG(&H0BR4_accX, &H0BR4_accY, &H0BR4_accZ);
 			
 			break;
 		}
 		case CODE_H0BR4_GET_MAG:
 		{
-			if ((result = SampleMagMGaussToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleMagMGauss(&H0BR4_magX, &H0BR4_magY, &H0BR4_magZ);
+
 			
 			break;
 		}
 		case CODE_H0BR4_GET_TEMP:
 		{
-			if ((result = SampleTempCToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleTempCelsius(&H0BR4_temp);
 			
 			break;
 		}

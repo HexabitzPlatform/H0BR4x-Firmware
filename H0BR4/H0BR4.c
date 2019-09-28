@@ -57,9 +57,9 @@ module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=&H0BR4_gyroX, .paramFor
 {.paramPtr=&H0BR4_accX, .paramFormat=FMT_FLOAT, .paramName="accX"},
 {.paramPtr=&H0BR4_accY, .paramFormat=FMT_FLOAT, .paramName="accY"},
 {.paramPtr=&H0BR4_accZ, .paramFormat=FMT_FLOAT, .paramName="accZ"},
-{.paramPtr=&H0BR4_magX, .paramFormat=FMT_FLOAT, .paramName="magX"},
-{.paramPtr=&H0BR4_magY, .paramFormat=FMT_FLOAT, .paramName="magY"},
-{.paramPtr=&H0BR4_magZ, .paramFormat=FMT_FLOAT, .paramName="magZ"},
+{.paramPtr=&H0BR4_magX, .paramFormat=FMT_INT32, .paramName="magX"},
+{.paramPtr=&H0BR4_magY, .paramFormat=FMT_INT32, .paramName="magY"},
+{.paramPtr=&H0BR4_magZ, .paramFormat=FMT_INT32, .paramName="magZ"},
 {.paramPtr=&H0BR4_temp, .paramFormat=FMT_FLOAT, .paramName="temp"},
 };
 

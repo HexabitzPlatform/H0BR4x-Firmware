@@ -43,6 +43,7 @@
 /* External variables --------------------------------------------------------*/
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 //extern uint8_t UARTTxBuf[3][MSG_TX_BUF_SIZE];
+extern uint8_t UARTRxBufIndex[NumOfPorts];
 
 /* External function prototypes ----------------------------------------------*/
 
@@ -245,8 +246,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		// Circular buffer is full. Set a global persistant flag via BOS events and a temporary flag via portStatus.
 		BOS.overrun = GetPort(huart);
 		portStatus[GetPort(huart)] = OVERRUN;
-		// Clear the circular RX buffer
-		memset(&UARTRxBuf[GetPort(huart)-1][0], 0, MSG_RX_BUF_SIZE);
+		// Reset the circular RX buffer index
+		UARTRxBufIndex[GetPort(huart)-1] = 0;
 		// Set a port-specific flag here and let the backend task restart DMA
 		MsgDMAStopped[GetPort(huart)-1] = true;	
 	}

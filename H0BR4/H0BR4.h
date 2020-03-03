@@ -13,6 +13,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
+#include "H0BR4_MemoryMap.h"
 #include "H0BR4_uart.h"
 #include "H0BR4_i2c.h"
 #include "H0BR4_gpio.h"	
@@ -111,7 +112,7 @@
 #define _MEMS_I2C2_SCL_PIN            GPIO_PIN_13
 #define _MEMS_I2C2_SCL_GPIO_CLK()     __GPIOB_CLK_ENABLE();
 
-#define NUM_MODULE_PARAMS		1
+#define NUM_MODULE_PARAMS		13
 
 /* Module_Status Type Definition */  
 typedef enum 
@@ -150,30 +151,6 @@ extern void MX_USART3_UART_Init(void);
 extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
-
-
-/* -----------------------------------------------------------------------
-	|														Message Codes	 														 	|
-   ----------------------------------------------------------------------- 
-*/
-
-#define CODE_H0BR4_GET_GYRO                 800
-#define CODE_H0BR4_GET_ACC                  801
-#define CODE_H0BR4_GET_MAG		              802
-#define CODE_H0BR4_GET_TEMP		              803
-
-#define CODE_H0BR4_RESULT_GYRO              804
-#define CODE_H0BR4_RESULT_ACC               805
-#define CODE_H0BR4_RESULT_MAG		 	          806
-#define CODE_H0BR4_RESULT_TEMP		          807
-
-#define CODE_H0BR4_STREAM_GYRO							808
-#define CODE_H0BR4_STREAM_ACC								809
-#define CODE_H0BR4_STREAM_MAG								810
-#define CODE_H0BR4_STREAM_TEMP							811
-
-#define CODE_H0BR4_STREAM_STOP							812
-
 
 	
 /* -----------------------------------------------------------------------

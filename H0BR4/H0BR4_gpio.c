@@ -33,7 +33,7 @@
   */
 
 /*
-		MODIFIED by Hexabitz for BitzOS (BOS) V0.1.6 - Copyright (C) 2017-2019 Hexabitz
+		MODIFIED by Hexabitz for BitzOS (BOS) V0.2.0 - Copyright (C) 2017-2019 Hexabitz
     All rights reserved
 */
 
@@ -46,7 +46,7 @@
 
 /** Pinout Configuration
 */
-void MX_GPIO_Init(void)
+void GPIO_Init(void)
 {
   /* GPIO Ports Clock Enable */
   __GPIOC_CLK_ENABLE();

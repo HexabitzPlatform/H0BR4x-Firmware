@@ -1,5 +1,5 @@
 /*
-    BitzOS (BOS) V0.1.6 - Copyright (C) 2017-2019 Hexabitz
+    BitzOS (BOS) V0.2.0 - Copyright (C) 2017-2019 Hexabitz
     All rights reserved
 
     File Name     : H0BR4.c
@@ -40,7 +40,28 @@ UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart6;
 
 /* Module exported parameters ------------------------------------------------*/
-module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=NULL, .paramFormat=FMT_FLOAT, .paramName=""}};
+float H0BR4_gyroX=0.0f;
+float H0BR4_gyroY=0.0f;
+float H0BR4_gyroZ=0.0f;
+float H0BR4_accX=0.0f;
+float H0BR4_accY=0.0f;
+float H0BR4_accZ=0.0f;
+int H0BR4_magX=0.0f;
+int H0BR4_magY=0.0f;
+int H0BR4_magZ=0.0f;
+float H0BR4_temp=0.0f;
+
+module_param_t modParam[NUM_MODULE_PARAMS] = {{.paramPtr=&H0BR4_gyroX, .paramFormat=FMT_FLOAT, .paramName="gyroX"},
+{.paramPtr=&H0BR4_gyroY, .paramFormat=FMT_FLOAT, .paramName="gyroY"},
+{.paramPtr=&H0BR4_gyroZ, .paramFormat=FMT_FLOAT, .paramName="gyroZ"},
+{.paramPtr=&H0BR4_accX, .paramFormat=FMT_FLOAT, .paramName="accX"},
+{.paramPtr=&H0BR4_accY, .paramFormat=FMT_FLOAT, .paramName="accY"},
+{.paramPtr=&H0BR4_accZ, .paramFormat=FMT_FLOAT, .paramName="accZ"},
+{.paramPtr=&H0BR4_magX, .paramFormat=FMT_INT32, .paramName="magX"},
+{.paramPtr=&H0BR4_magY, .paramFormat=FMT_INT32, .paramName="magY"},
+{.paramPtr=&H0BR4_magZ, .paramFormat=FMT_INT32, .paramName="magZ"},
+{.paramPtr=&H0BR4_temp, .paramFormat=FMT_FLOAT, .paramName="temp"},
+};
 
 typedef Module_Status (*SampleMemsToPort)(uint8_t, uint8_t);
 typedef Module_Status (*SampleMemsToString)(char *, size_t);
@@ -81,7 +102,7 @@ static portBASE_TYPE StopStreamCommand(int8_t *pcWriteBuffer, size_t xWriteBuffe
 
 const CLI_Command_Definition_t SampleCommandDefinition = {
 	(const int8_t *) "sample",
-	(const int8_t *) "(H0BR4) sample:\r\n Syntax: sample [gyro]/[acc]/[mag]/[temp]\r\n \
+	(const int8_t *) "sample:\r\n Syntax: sample [gyro]/[acc]/[mag]/[temp]\r\n \
 \tGet filtered and calibrated Gyro, Acc, Mag or Temp values in \
 dps, g, mguass or celsius units respectively.\r\n\r\n",
 	SampleSensorCommand,
@@ -90,7 +111,7 @@ dps, g, mguass or celsius units respectively.\r\n\r\n",
 
 const CLI_Command_Definition_t StreamCommandDefinition = {
 	(const int8_t *) "stream",
-	(const int8_t *) "(H0BR4) stream:\r\n Syntax: stream [gyro]/[acc]/[mag]/[temp] (period in ms) (time in ms) [port]/[buffer] [module]\r\n \
+	(const int8_t *) "stream:\r\n Syntax: stream [gyro]/[acc]/[mag]/[temp] (period in ms) (time in ms) [port]/[buffer] [module]\r\n \
 \tGet stream of  filtered and calibrated Gyro, Acc, Mag or Temp values in \
 dps, g, mguass or celsius units respectively. Press ENTER to stop the stream.\r\n\r\n",
 	StreamSensorCommand,
@@ -99,7 +120,7 @@ dps, g, mguass or celsius units respectively. Press ENTER to stop the stream.\r\
 
 const CLI_Command_Definition_t StopCommandDefinition = {
 	(const int8_t *) "stop",
-	(const int8_t *) "(H0BR4) stop:\r\n Syntax: stop\r\n \
+	(const int8_t *) "stop:\r\n Syntax: stop\r\n \
 \tStop the current streaming of MEMS values. r\n\r\n",
 	StopStreamCommand,
 	0
@@ -141,7 +162,7 @@ void Module_Init(void)
 
 /* --- H0BR4 message processing task. 
 */
-Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst)
+Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uint8_t dst, uint8_t shift)
 {
 	Module_Status result = H0BR4_OK;
 	uint32_t period = 0, timeout = 0;
@@ -150,37 +171,34 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 	{
 		case CODE_H0BR4_GET_GYRO:
 		{
-			if ((result = SampleGyroDPSToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleGyroDPS(&H0BR4_gyroX, &H0BR4_gyroY, &H0BR4_gyroZ);
 			
 			break;
 		}
 		case CODE_H0BR4_GET_ACC:
 		{
-			if ((result = SampleAccGToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleAccG(&H0BR4_accX, &H0BR4_accY, &H0BR4_accZ);
 			
 			break;
 		}
 		case CODE_H0BR4_GET_MAG:
 		{
-			if ((result = SampleMagMGaussToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleMagMGauss(&H0BR4_magX, &H0BR4_magY, &H0BR4_magZ);
+
 			
 			break;
 		}
 		case CODE_H0BR4_GET_TEMP:
 		{
-			if ((result = SampleTempCToPort(port, dst)) != H0BR4_OK)
-				break;
+			SampleTempCelsius(&H0BR4_temp);
 			
 			break;
 		}
 		
 		case CODE_H0BR4_STREAM_GYRO:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamGyroDPSToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
@@ -189,8 +207,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 
 		case CODE_H0BR4_STREAM_ACC:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamAccGToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
@@ -198,8 +216,8 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		}
 		case CODE_H0BR4_STREAM_MAG:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamMagMGaussToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
@@ -207,14 +225,13 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 		}
 		case CODE_H0BR4_STREAM_TEMP:
 		{
-			memcpy(&period, &messageParams[0], sizeof(period));
-      memcpy(&timeout, &messageParams[4], sizeof(period));
+			period = ( (uint32_t) cMessage[port-1][shift] << 24 ) + ( (uint32_t) cMessage[port-1][1+shift] << 16 ) + ( (uint32_t) cMessage[port-1][2+shift] << 8 ) + cMessage[port-1][3+shift];
+			timeout = ( (uint32_t) cMessage[port-1][4+shift] << 24 ) + ( (uint32_t) cMessage[port-1][5+shift] << 16 ) + ( (uint32_t) cMessage[port-1][6+shift] << 8 ) + cMessage[port-1][7+shift];
 			if ((result = StreamTempCToPort(port, dst, period, timeout)) != H0BR4_OK)
 				break;
 			
 			break;
-		}
-		
+		}	
 		case CODE_H0BR4_STREAM_STOP:
 		{
 			stopStreamMems();
@@ -706,7 +723,6 @@ static Module_Status LSM303SampleMagMGauss(int *magX, int *magY, int *magZ)
 
 static Module_Status PollingSleepCLISafe(uint32_t period)
 {
-	int8_t *pcOutputString = NULL;
 	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
 	long numDeltaDelay =  period / DELTA_SLEEP_MS;
 	unsigned lastDelayMS = period % DELTA_SLEEP_MS;
@@ -714,10 +730,14 @@ static Module_Status PollingSleepCLISafe(uint32_t period)
 	while (numDeltaDelay-- > 0) {
 		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
 		
-		pcOutputString = FreeRTOS_CLIGetOutputBuffer();
-		readPxMutex(PcPort, (char *)pcOutputString, sizeof(char), cmd500ms, 0);
-		if (pcOutputString[0] == '\r')
-			return H0BR4_ERR_TERMINATED;
+		// Look for ENTER key to stop the stream
+		for (uint8_t chr=0 ; chr<MSG_RX_BUF_SIZE ; chr++)
+		{
+			if (UARTRxBuf[PcPort-1][chr] == '\r') {
+				UARTRxBuf[PcPort-1][chr] = 0;
+				return H0BR4_ERR_TERMINATED;
+			}
+		}
 		
 		if (stopStream)
 			return H0BR4_ERR_TERMINATED;
@@ -842,14 +862,42 @@ Module_Status SampleGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ)
 Module_Status SampleGyroDPSToPort(uint8_t port, uint8_t module)
 {
 	float buffer[3]; // Three Samples X, Y, Z
+	static uint8_t temp[12];
 	Module_Status status = H0BR4_OK;
 	
 	if ((status = SampleGyroDPSToBuf(buffer)) != H0BR4_OK)
 		return status;
 	
-	memcpy(messageParams, buffer, sizeof(buffer));
+	/*memcpy(messageParams, buffer, sizeof(buffer));
 	if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_GYRO, sizeof(buffer)) != BOS_OK)
-		status = H0BR4_ERR_IO;
+		status = H0BR4_ERR_IO;*/
+	
+	if (module==myID){
+						temp[0] = *((__IO uint8_t *)(&buffer[0])+3);  temp[1] = *((__IO uint8_t *)(&buffer[0])+2);
+						temp[2] = *((__IO uint8_t *)(&buffer[0])+1);  temp[3] = *((__IO uint8_t *)(&buffer[0])+0);
+		
+		        temp[4] = *((__IO uint8_t *)(&buffer[1])+3);  temp[5] = *((__IO uint8_t *)(&buffer[1])+2);
+						temp[6] = *((__IO uint8_t *)(&buffer[1])+1);  temp[7] = *((__IO uint8_t *)(&buffer[1])+0);
+
+		        temp[8] = *((__IO uint8_t *)(&buffer[2])+3);  temp[9] = *((__IO uint8_t *)(&buffer[2])+2);
+						temp[10] = *((__IO uint8_t *)(&buffer[2])+1); temp[11] = *((__IO uint8_t *)(&buffer[2])+0);
+
+						writePxITMutex(port, (char *)&temp[0], 12*sizeof(uint8_t), 10);
+						//memset(temp,0,12*sizeof(uint8_t));
+				}
+			else{
+						messageParams[0]=port;
+					  messageParams[1] = *((__IO uint8_t *)(&buffer[0])+3);  messageParams[2] = *((__IO uint8_t *)(&buffer[0])+2);
+						messageParams[3] = *((__IO uint8_t *)(&buffer[0])+1);  messageParams[4] = *((__IO uint8_t *)(&buffer[0])+0);
+				
+					  messageParams[5] = *((__IO uint8_t *)(&buffer[1])+3);  messageParams[6] = *((__IO uint8_t *)(&buffer[1])+2);
+						messageParams[7] = *((__IO uint8_t *)(&buffer[1])+1);  messageParams[8] = *((__IO uint8_t *)(&buffer[1])+0);
+				
+					  messageParams[9] = *((__IO uint8_t *)(&buffer[2])+3);  messageParams[10] = *((__IO uint8_t *)(&buffer[2])+2);
+						messageParams[11] = *((__IO uint8_t *)(&buffer[2])+1); messageParams[12] = *((__IO uint8_t *)(&buffer[2])+0);
+						SendMessageToModule(module, CODE_PORT_FORWARD, (sizeof(float)*3)+1);
+					}
+	
 	return status;
 }
 
@@ -898,14 +946,41 @@ Module_Status SampleAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ)
 Module_Status SampleAccGToPort(uint8_t port, uint8_t module)
 {
 	float buffer[3]; // Three Samples X, Y, Z
+	static uint8_t temp[12];
 	Module_Status status = H0BR4_OK;
 	
 	if ((status = SampleAccGToBuf(buffer)) != H0BR4_OK)
 		return status;
 	
-	memcpy(messageParams, buffer, sizeof(buffer));
+	/*memcpy(messageParams, buffer, sizeof(buffer));
 	if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_ACC, sizeof(buffer)) != BOS_OK)
-		status = H0BR4_ERR_IO;
+		status = H0BR4_ERR_IO;*/
+	
+	if (module==myID){
+						temp[0] = *((__IO uint8_t *)(&buffer[0])+3);  temp[1] = *((__IO uint8_t *)(&buffer[0])+2);
+						temp[2] = *((__IO uint8_t *)(&buffer[0])+1);  temp[3] = *((__IO uint8_t *)(&buffer[0])+0);
+		
+		        temp[4] = *((__IO uint8_t *)(&buffer[1])+3);  temp[5] = *((__IO uint8_t *)(&buffer[1])+2);
+						temp[6] = *((__IO uint8_t *)(&buffer[1])+1);  temp[7] = *((__IO uint8_t *)(&buffer[1])+0);
+
+		        temp[8] = *((__IO uint8_t *)(&buffer[2])+3);  temp[9] = *((__IO uint8_t *)(&buffer[2])+2);
+						temp[10] = *((__IO uint8_t *)(&buffer[2])+1); temp[11] = *((__IO uint8_t *)(&buffer[2])+0);
+		
+						writePxITMutex(port, (char *)&temp[0], 12*sizeof(uint8_t), 10);
+						//memset(temp,0,12*sizeof(uint8_t));
+				}
+			else{
+						messageParams[0]=port;
+					  messageParams[1] = *((__IO uint8_t *)(&buffer[0])+3);  messageParams[2] = *((__IO uint8_t *)(&buffer[0])+2);
+						messageParams[3] = *((__IO uint8_t *)(&buffer[0])+1);  messageParams[4] = *((__IO uint8_t *)(&buffer[0])+0);
+				
+					  messageParams[5] = *((__IO uint8_t *)(&buffer[1])+3);  messageParams[6] = *((__IO uint8_t *)(&buffer[1])+2);
+						messageParams[7] = *((__IO uint8_t *)(&buffer[1])+1);  messageParams[8] = *((__IO uint8_t *)(&buffer[1])+0);
+				
+					  messageParams[9] = *((__IO uint8_t *)(&buffer[2])+3);  messageParams[10] = *((__IO uint8_t *)(&buffer[2])+2);
+						messageParams[11] = *((__IO uint8_t *)(&buffer[2])+1); messageParams[12] = *((__IO uint8_t *)(&buffer[2])+0);
+						SendMessageToModule(module, CODE_PORT_FORWARD, (sizeof(float)*3)+1);
+					}
 	return status;
 }
 
@@ -954,14 +1029,41 @@ Module_Status SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ)
 Module_Status SampleMagMGaussToPort(uint8_t port, uint8_t module)
 {
 	float buffer[3]; // Three Samples X, Y, Z
+	static uint8_t temp[12];
 	Module_Status status = H0BR4_OK;
 	
 	if ((status = SampleMagMGaussToBuf(buffer)) != H0BR4_OK)
 		return status;
 	
-	memcpy(messageParams, buffer, sizeof(buffer));
+	/*memcpy(messageParams, buffer, sizeof(buffer));
 	if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_MAG, sizeof(buffer)) != BOS_OK)
-		status = H0BR4_ERR_TIMEOUT;
+		status = H0BR4_ERR_TIMEOUT;*/
+	
+	if (module==myID){
+						temp[0] = *((__IO uint8_t *)(&buffer[0])+3);  temp[1] = *((__IO uint8_t *)(&buffer[0])+2);
+						temp[2] = *((__IO uint8_t *)(&buffer[0])+1);  temp[3] = *((__IO uint8_t *)(&buffer[0])+0);
+		
+		        temp[4] = *((__IO uint8_t *)(&buffer[1])+3);  temp[5] = *((__IO uint8_t *)(&buffer[1])+2);
+						temp[6] = *((__IO uint8_t *)(&buffer[1])+1);  temp[7] = *((__IO uint8_t *)(&buffer[1])+0);
+
+		        temp[8] = *((__IO uint8_t *)(&buffer[2])+3);  temp[9] = *((__IO uint8_t *)(&buffer[2])+2);
+						temp[10] = *((__IO uint8_t *)(&buffer[2])+1); temp[11] = *((__IO uint8_t *)(&buffer[2])+0);
+
+						writePxITMutex(port, (char *)&temp[0], 12*sizeof(uint8_t), 10);
+						//memset(temp,0,12*sizeof(uint8_t));
+				}
+			else{
+						messageParams[0]=port;
+					  messageParams[1] = *((__IO uint8_t *)(&buffer[0])+3);  messageParams[2] = *((__IO uint8_t *)(&buffer[0])+2);
+						messageParams[3] = *((__IO uint8_t *)(&buffer[0])+1);  messageParams[4] = *((__IO uint8_t *)(&buffer[0])+0);
+				
+					  messageParams[5] = *((__IO uint8_t *)(&buffer[1])+3);  messageParams[6] = *((__IO uint8_t *)(&buffer[1])+2);
+						messageParams[7] = *((__IO uint8_t *)(&buffer[1])+1);  messageParams[8] = *((__IO uint8_t *)(&buffer[1])+0);
+				
+					  messageParams[9] = *((__IO uint8_t *)(&buffer[2])+3);  messageParams[10] = *((__IO uint8_t *)(&buffer[2])+2);
+						messageParams[11] = *((__IO uint8_t *)(&buffer[2])+1); messageParams[12] = *((__IO uint8_t *)(&buffer[2])+0);
+						SendMessageToModule(module, CODE_PORT_FORWARD, (sizeof(float)*3)+1);
+					}
 	return status;
 }
 
@@ -1002,14 +1104,33 @@ Module_Status SampleTempFahrenheit(float *temp)
 Module_Status SampleTempCToPort(uint8_t port, uint8_t module)
 {
 	float temp;
+	static uint8_t tempD[4];
 	Module_Status status = H0BR4_OK;
 	
 	if ((status = LSM6DS3SampleTempCelsius(&temp)) != H0BR4_OK)
 		return status;
 	
-	memcpy(messageParams, &temp, sizeof(temp));
+	/*memcpy(messageParams, &temp, sizeof(temp));
 	if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_TEMP, sizeof(temp)) != BOS_OK)
-		status = H0BR4_ERR_TERMINATED;
+		status = H0BR4_ERR_TERMINATED;*/
+	
+if (module==myID){
+						tempD[0] = *((__IO uint8_t *)(&temp)+3);
+						tempD[1] = *((__IO uint8_t *)(&temp)+2);
+						tempD[2] = *((__IO uint8_t *)(&temp)+1);
+						tempD[3] = *((__IO uint8_t *)(&temp)+0);
+						writePxMutex(port, (char *)&tempD[0], 4*sizeof(uint8_t), 10, 10);
+						//writePxITMutex(port, (char *)&tempD[0], 4*sizeof(uint8_t), 10);
+						//memset(tempD,0,4*sizeof(uint8_t));
+				}
+			else{
+						messageParams[0]=port;
+					  messageParams[1] = *((__IO uint8_t *)(&temp)+3);
+						messageParams[2] = *((__IO uint8_t *)(&temp)+2);
+						messageParams[3] = *((__IO uint8_t *)(&temp)+1);
+						messageParams[4] = *((__IO uint8_t *)(&temp)+0);
+						SendMessageToModule(module, CODE_PORT_FORWARD, sizeof(float)+1);
+					}
 	return status;
 }
 

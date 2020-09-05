@@ -1,0 +1,13 @@
+port.c:152:13:prvTaskExitError	0	static,ignoring_inline_asm
+port.c:173:6:vPortStartFirstTask	0	static,ignoring_inline_asm
+port.c:134:14:pxPortInitialiseStack	8	static
+port.c:166:6:SVC_Handler	0	static
+port.c:200:12:xPortStartScheduler	8	static
+port.c:227:6:vPortEndScheduler	0	static,ignoring_inline_asm
+port.c:235:6:vPortYield	0	static,ignoring_inline_asm
+port.c:247:6:vPortEnterCritical	0	static,ignoring_inline_asm
+port.c:256:6:vPortExitCritical	0	static,ignoring_inline_asm
+port.c:267:10:ulSetInterruptMaskFromISR	0	static,ignoring_inline_asm
+port.c:280:6:vClearInterruptMaskFromISR	0	static,ignoring_inline_asm
+port.c:292:6:PendSV_Handler	0	static,ignoring_inline_asm
+port.c:340:6:xPortSysTickHandler	8	static

@@ -1,0 +1,9 @@
+stm32f0xx_hal_crc.c:429:17:CRC_Handle_8	20	static
+stm32f0xx_hal_crc.c:472:17:CRC_Handle_16	20	static
+stm32f0xx_hal_crc.c:226:13:HAL_CRC_MspInit	0	static
+stm32f0xx_hal_crc.c:120:19:HAL_CRC_Init	8	static
+stm32f0xx_hal_crc.c:238:13:HAL_CRC_MspDeInit	0	static
+stm32f0xx_hal_crc.c:188:19:HAL_CRC_DeInit	8	static
+stm32f0xx_hal_crc.c:278:10:HAL_CRC_Accumulate	8	static
+stm32f0xx_hal_crc.c:332:10:HAL_CRC_Calculate	16	static
+stm32f0xx_hal_crc.c:405:22:HAL_CRC_GetState	0	static

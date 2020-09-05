@@ -1,0 +1,13 @@
+H0BR4_it.c:60:6:SysTick_Handler	8	static
+H0BR4_it.c:71:6:HardFault_Handler	0	static
+H0BR4_it.c:87:6:USART1_IRQHandler	8	static
+H0BR4_it.c:106:6:USART2_IRQHandler	8	static
+H0BR4_it.c:125:6:USART3_8_IRQHandler	8	static
+H0BR4_it.c:154:6:DMA1_Ch1_IRQHandler	8	static
+H0BR4_it.c:166:6:DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler	8	static
+H0BR4_it.c:185:6:DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler	8	static
+H0BR4_it.c:207:6:HAL_UART_TxCpltCallback	16	static
+H0BR4_it.c:221:6:HAL_UART_ErrorCallback	8	static
+H0BR4_it.c:241:6:HAL_UART_RxCpltCallback	8	static
+H0BR4_it.c:258:6:vApplicationStackOverflowHook	0	static,ignoring_inline_asm
+H0BR4_it.c:271:6:vApplicationMallocFailedHook	0	static,ignoring_inline_asm

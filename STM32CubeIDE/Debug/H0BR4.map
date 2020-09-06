@@ -256,7 +256,7 @@ Discarded input sections
  .text.SendMessageToGroup
                 0x0000000000000000       0x44 BOS/BOS.o
  .text.WriteToRemote
-                0x0000000000000000      0x248 BOS/BOS.o
+                0x0000000000000000      0x230 BOS/BOS.o
  .rodata.WriteToRemote
                 0x0000000000000000       0x48 BOS/BOS.o
  .text.ReadRemoteVar
@@ -274,7 +274,7 @@ Discarded input sections
  .text.GetTimeString
                 0x0000000000000000       0x34 BOS/BOS.o
  .text.printfp  0x0000000000000000       0x28 BOS/BOS.o
- .rodata.formatTimeStr.10498
+ .rodata.formatTimeStr.10499
                 0x0000000000000000        0xf BOS/BOS.o
  .text          0x0000000000000000        0x0 BOS/BOS_CLI.o
  .data          0x0000000000000000        0x0 BOS/BOS_CLI.o
@@ -4909,7 +4909,7 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  *fill*         0x00000000080194b2        0x2 
  .rodata.flashsizeCommandDefinition
                 0x00000000080194b4       0x10 BOS/BOS.o
- .rodata.formatDateStr.10493
+ .rodata.formatDateStr.10494
                 0x00000000080194c4       0x12 BOS/BOS.o
  *fill*         0x00000000080194d6        0x2 
  .rodata.getCommand.str1.4
@@ -4937,188 +4937,186 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
                 0x0000000008019788       0x12 BOS/BOS.o
  *fill*         0x000000000801979a        0x2 
  .rodata.modulePNstring
-                0x000000000801979c       0x7e BOS/BOS.o
+                0x000000000801979c       0x84 BOS/BOS.o
                 0x000000000801979c                modulePNstring
- *fill*         0x000000000801981a        0x2 
  .rodata.monthStringAbreviated
-                0x000000000801981c       0x30 BOS/BOS.o
+                0x0000000008019820       0x30 BOS/BOS.o
  .rodata.nameCommand.str1.4
-                0x000000000801984c       0xca BOS/BOS.o
- *fill*         0x0000000008019916        0x2 
+                0x0000000008019850       0xca BOS/BOS.o
+ *fill*         0x000000000801991a        0x2 
  .rodata.nameCommandDefinition
-                0x0000000008019918       0x10 BOS/BOS.o
+                0x000000000801991c       0x10 BOS/BOS.o
  .rodata.pauseSnipCommand.str1.4
-                0x0000000008019928       0x35 BOS/BOS.o
- *fill*         0x000000000801995d        0x3 
+                0x000000000801992c       0x35 BOS/BOS.o
+ *fill*         0x0000000008019961        0x3 
  .rodata.pauseSnipCommandDefinition
-                0x0000000008019960       0x10 BOS/BOS.o
+                0x0000000008019964       0x10 BOS/BOS.o
  .rodata.pingCommand.str1.4
-                0x0000000008019970       0x2d BOS/BOS.o
- *fill*         0x000000000801999d        0x3 
+                0x0000000008019974       0x2d BOS/BOS.o
+ *fill*         0x00000000080199a1        0x3 
  .rodata.pingCommandDefinition
-                0x00000000080199a0       0x10 BOS/BOS.o
+                0x00000000080199a4       0x10 BOS/BOS.o
  .rodata.prvRunTimeStatsCommand.str1.4
-                0x00000000080199b0       0x51 BOS/BOS.o
- *fill*         0x0000000008019a01        0x3 
+                0x00000000080199b4       0x51 BOS/BOS.o
+ *fill*         0x0000000008019a05        0x3 
  .rodata.prvRunTimeStatsCommandDefinition
-                0x0000000008019a04       0x10 BOS/BOS.o
+                0x0000000008019a08       0x10 BOS/BOS.o
  .rodata.prvTaskStatsCommand.str1.4
-                0x0000000008019a14       0x5b BOS/BOS.o
- *fill*         0x0000000008019a6f        0x1 
+                0x0000000008019a18       0x5b BOS/BOS.o
+ *fill*         0x0000000008019a73        0x1 
  .rodata.prvTaskStatsCommandDefinition
-                0x0000000008019a70       0x10 BOS/BOS.o
+                0x0000000008019a74       0x10 BOS/BOS.o
  .rodata.remoteBootloaderUpdate.str1.4
-                0x0000000008019a80      0x169 BOS/BOS.o
- *fill*         0x0000000008019be9        0x3 
+                0x0000000008019a84      0x169 BOS/BOS.o
+ *fill*         0x0000000008019bed        0x3 
  .rodata.removebuttonCommand.str1.4
-                0x0000000008019bec       0x27 BOS/BOS.o
- *fill*         0x0000000008019c13        0x1 
+                0x0000000008019bf0       0x27 BOS/BOS.o
+ *fill*         0x0000000008019c17        0x1 
  .rodata.removebuttonCommandDefinition
-                0x0000000008019c14       0x10 BOS/BOS.o
+                0x0000000008019c18       0x10 BOS/BOS.o
  .rodata.resetCommandDefinition
-                0x0000000008019c24       0x10 BOS/BOS.o
+                0x0000000008019c28       0x10 BOS/BOS.o
  .rodata.scastCommand.str1.4
-                0x0000000008019c34       0xab BOS/BOS.o
- *fill*         0x0000000008019cdf        0x1 
+                0x0000000008019c38       0xab BOS/BOS.o
+ *fill*         0x0000000008019ce3        0x1 
  .rodata.scastCommandDefinition
-                0x0000000008019ce0       0x10 BOS/BOS.o
+                0x0000000008019ce4       0x10 BOS/BOS.o
  .rodata.setBaudrateCommand.str1.4
-                0x0000000008019cf0       0x3b BOS/BOS.o
- *fill*         0x0000000008019d2b        0x1 
+                0x0000000008019cf4       0x3b BOS/BOS.o
+ *fill*         0x0000000008019d2f        0x1 
  .rodata.setBaudrateCommandDefinition
-                0x0000000008019d2c       0x10 BOS/BOS.o
-                0x0000000008019d2c                setBaudrateCommandDefinition
+                0x0000000008019d30       0x10 BOS/BOS.o
+                0x0000000008019d30                setBaudrateCommandDefinition
  .rodata.setCommand.str1.4
-                0x0000000008019d3c      0x1e8 BOS/BOS.o
+                0x0000000008019d40      0x1e8 BOS/BOS.o
                                         0x1ec (size before relaxing)
  .rodata.setCommandDefinition
-                0x0000000008019f24       0x10 BOS/BOS.o
+                0x0000000008019f28       0x10 BOS/BOS.o
  .rodata.snipCommand.str1.4
-                0x0000000008019f34      0x16f BOS/BOS.o
- *fill*         0x000000000801a0a3        0x1 
+                0x0000000008019f38      0x16f BOS/BOS.o
+ *fill*         0x000000000801a0a7        0x1 
  .rodata.snipCommandDefinition
-                0x000000000801a0a4       0x10 BOS/BOS.o
+                0x000000000801a0a8       0x10 BOS/BOS.o
  .rodata.statusCommandDefinition
-                0x000000000801a0b4       0x10 BOS/BOS.o
+                0x000000000801a0b8       0x10 BOS/BOS.o
  .rodata.str1.4
-                0x000000000801a0c4      0xd4c BOS/BOS.o
+                0x000000000801a0c8      0xd4c BOS/BOS.o
                                         0xd54 (size before relaxing)
  .rodata.testportCommand.str1.4
-                0x000000000801ae10       0xaf BOS/BOS.o
- *fill*         0x000000000801aebf        0x1 
+                0x000000000801ae14       0xaf BOS/BOS.o
+ *fill*         0x000000000801aec3        0x1 
  .rodata.testportCommandDefinition
-                0x000000000801aec0       0x10 BOS/BOS.o
+                0x000000000801aec4       0x10 BOS/BOS.o
  .rodata.timeCommand.str1.4
-                0x000000000801aed0       0x5b BOS/BOS.o
- *fill*         0x000000000801af2b        0x1 
+                0x000000000801aed4       0x5b BOS/BOS.o
+ *fill*         0x000000000801af2f        0x1 
  .rodata.timeCommandDefinition
-                0x000000000801af2c       0x10 BOS/BOS.o
+                0x000000000801af30       0x10 BOS/BOS.o
  .rodata.unbridgeCommand.str1.4
-                0x000000000801af3c       0x39 BOS/BOS.o
- *fill*         0x000000000801af75        0x3 
+                0x000000000801af40       0x39 BOS/BOS.o
+ *fill*         0x000000000801af79        0x3 
  .rodata.unbridgeCommandDefinition
-                0x000000000801af78       0x10 BOS/BOS.o
+                0x000000000801af7c       0x10 BOS/BOS.o
  .rodata.uuidCommand.str1.4
-                0x000000000801af88       0x17 BOS/BOS.o
+                0x000000000801af8c       0x17 BOS/BOS.o
                                          0x1b (size before relaxing)
- *fill*         0x000000000801af9f        0x1 
+ *fill*         0x000000000801afa3        0x1 
  .rodata.uuidCommandDefinition
-                0x000000000801afa0       0x10 BOS/BOS.o
+                0x000000000801afa4       0x10 BOS/BOS.o
  .rodata.weekdayString
-                0x000000000801afb0       0x1c BOS/BOS.o
+                0x000000000801afb4       0x1c BOS/BOS.o
  .rodata.CheckSnippetCondition
-                0x000000000801afcc       0x1c BOS/BOS_CLI.o
+                0x000000000801afd0       0x1c BOS/BOS_CLI.o
  .rodata.CLI_CommandParser.str1.4
-                0x000000000801afe8      0x1c1 BOS/BOS_CLI.o
+                0x000000000801afec      0x1c1 BOS/BOS_CLI.o
                                         0x1cd (size before relaxing)
- *fill*         0x000000000801b1a9        0x3 
+ *fill*         0x000000000801b1ad        0x3 
  .rodata.ParseSnippetCondition.str1.4
-                0x000000000801b1ac       0x2e BOS/BOS_CLI.o
+                0x000000000801b1b0       0x2e BOS/BOS_CLI.o
                                          0x3a (size before relaxing)
- *fill*         0x000000000801b1da        0x2 
+ *fill*         0x000000000801b1de        0x2 
  .rodata.prvCLITask.str1.4
-                0x000000000801b1dc      0x2c0 BOS/BOS_CLI.o
+                0x000000000801b1e0      0x2c0 BOS/BOS_CLI.o
                                         0x2c3 (size before relaxing)
  .rodata.MX_FREERTOS_Init.str1.4
-                0x000000000801b49c       0x72 BOS/BOS_freertos.o
- *fill*         0x000000000801b50e        0x2 
+                0x000000000801b4a0       0x72 BOS/BOS_freertos.o
+ *fill*         0x000000000801b512        0x2 
  .rodata.Module_MessagingTask
-                0x000000000801b510       0x34 H0BR4/H0BR4.o
+                0x000000000801b514       0x34 H0BR4/H0BR4.o
  .rodata.SampleAccGToString.str1.4
-                0x000000000801b544       0x25 H0BR4/H0BR4.o
- *fill*         0x000000000801b569        0x3 
+                0x000000000801b548       0x25 H0BR4/H0BR4.o
+ *fill*         0x000000000801b56d        0x3 
  .rodata.SampleCommandDefinition
-                0x000000000801b56c       0x10 H0BR4/H0BR4.o
-                0x000000000801b56c                SampleCommandDefinition
+                0x000000000801b570       0x10 H0BR4/H0BR4.o
+                0x000000000801b570                SampleCommandDefinition
  .rodata.SampleGyroDPSToString.str1.4
-                0x000000000801b57c       0x28 H0BR4/H0BR4.o
+                0x000000000801b580       0x28 H0BR4/H0BR4.o
  .rodata.SampleMagMGaussToString.str1.4
-                0x000000000801b5a4       0x24 H0BR4/H0BR4.o
+                0x000000000801b5a8       0x24 H0BR4/H0BR4.o
  .rodata.SampleSensorCommand.str1.4
-                0x000000000801b5c8       0x43 H0BR4/H0BR4.o
- *fill*         0x000000000801b60b        0x1 
+                0x000000000801b5cc       0x43 H0BR4/H0BR4.o
+ *fill*         0x000000000801b60f        0x1 
  .rodata.SampleTempCToString.str1.4
-                0x000000000801b60c       0x18 H0BR4/H0BR4.o
+                0x000000000801b610       0x18 H0BR4/H0BR4.o
  .rodata.StopCommandDefinition
-                0x000000000801b624       0x10 H0BR4/H0BR4.o
-                0x000000000801b624                StopCommandDefinition
+                0x000000000801b628       0x10 H0BR4/H0BR4.o
+                0x000000000801b628                StopCommandDefinition
  .rodata.StopStreamCommand.str1.4
-                0x000000000801b634       0x1d H0BR4/H0BR4.o
- *fill*         0x000000000801b651        0x3 
+                0x000000000801b638       0x1d H0BR4/H0BR4.o
+ *fill*         0x000000000801b655        0x3 
  .rodata.StreamCommandDefinition
-                0x000000000801b654       0x10 H0BR4/H0BR4.o
-                0x000000000801b654                StreamCommandDefinition
+                0x000000000801b658       0x10 H0BR4/H0BR4.o
+                0x000000000801b658                StreamCommandDefinition
  .rodata.StreamMemsToCLI.str1.4
-                0x000000000801b664        0x3 H0BR4/H0BR4.o
+                0x000000000801b668        0x3 H0BR4/H0BR4.o
  .rodata.str1.4
-                0x000000000801b664      0x255 H0BR4/H0BR4.o
- *fill*         0x000000000801b8b9        0x3 
+                0x000000000801b668      0x255 H0BR4/H0BR4.o
+ *fill*         0x000000000801b8bd        0x3 
  .rodata.FreeRTOS_CLIProcessCommand.str1.4
-                0x000000000801b8bc       0xa8 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+                0x000000000801b8c0       0xa8 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
  .rodata.prvHelpCommand.str1.4
-                0x000000000801b964        0x7 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+                0x000000000801b968        0x7 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
  .rodata.str1.4
-                0x000000000801b964       0x83 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
- *fill*         0x000000000801b9e7        0x1 
+                0x000000000801b968       0x83 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+ *fill*         0x000000000801b9eb        0x1 
  .rodata.xHelpCommand
-                0x000000000801b9e8       0x10 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+                0x000000000801b9ec       0x10 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
  .rodata.ucExpectedStackBytes.5627
-                0x000000000801b9f8       0x14 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
+                0x000000000801b9fc       0x14 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
  .rodata.vTaskGetRunTimeStats.str1.4
-                0x000000000801ba0c       0x18 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
+                0x000000000801ba10       0x18 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
  .rodata.vTaskList.str1.4
-                0x000000000801ba24        0xf Thirdparty/Middleware/FreeRTOS/Source/tasks.o
- *fill*         0x000000000801ba33        0x1 
+                0x000000000801ba28        0xf Thirdparty/Middleware/FreeRTOS/Source/tasks.o
+ *fill*         0x000000000801ba37        0x1 
  .rodata.vTaskStartScheduler.str1.4
-                0x000000000801ba34        0x5 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
- *fill*         0x000000000801ba39        0x3 
+                0x000000000801ba38        0x5 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
+ *fill*         0x000000000801ba3d        0x3 
  .rodata.prvTimerTask
-                0x000000000801ba3c       0x28 Thirdparty/Middleware/FreeRTOS/Source/timers.o
+                0x000000000801ba40       0x28 Thirdparty/Middleware/FreeRTOS/Source/timers.o
  .rodata.prvCheckForValidListAndQueue.str1.4
-                0x000000000801ba64        0x5 Thirdparty/Middleware/FreeRTOS/Source/timers.o
- *fill*         0x000000000801ba69        0x3 
+                0x000000000801ba68        0x5 Thirdparty/Middleware/FreeRTOS/Source/timers.o
+ *fill*         0x000000000801ba6d        0x3 
  .rodata.xTimerCreateTimerTask.str1.4
-                0x000000000801ba6c        0x8 Thirdparty/Middleware/FreeRTOS/Source/timers.o
+                0x000000000801ba70        0x8 Thirdparty/Middleware/FreeRTOS/Source/timers.o
  .rodata.aAPBAHBPrescTable
-                0x000000000801ba74       0x10 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
-                0x000000000801ba74                aAPBAHBPrescTable
+                0x000000000801ba78       0x10 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
+                0x000000000801ba78                aAPBAHBPrescTable
  .rodata._global_impure_ptr
-                0x000000000801ba84        0x4 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-impure.o)
-                0x000000000801ba84                _global_impure_ptr
+                0x000000000801ba88        0x4 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-impure.o)
+                0x000000000801ba88                _global_impure_ptr
  .rodata._setlocale_r.str1.1
-                0x000000000801ba88        0x8 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-locale.o)
+                0x000000000801ba8c        0x8 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-locale.o)
                                           0x9 (size before relaxing)
  .rodata.str1.1
-                0x000000000801ba90        0x2 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-locale.o)
+                0x000000000801ba94        0x2 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-locale.o)
  .rodata._strtod_l.str1.1
-                0x000000000801ba92        0x2 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-strtod.o)
+                0x000000000801ba96        0x2 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-strtod.o)
                                           0xc (size before relaxing)
- *fill*         0x000000000801ba92        0x2 
+ *fill*         0x000000000801ba96        0x2 
  .rodata.fpi.6173
-                0x000000000801ba94       0x14 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-strtod.o)
+                0x000000000801ba98       0x14 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-strtod.o)
  .rodata.fpinan.6209
-                0x000000000801baa8       0x14 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-strtod.o)
- *fill*         0x000000000801babc        0x4 
+                0x000000000801baac       0x14 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-strtod.o)
  .rodata.tinytens
                 0x000000000801bac0       0x28 c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/../../../../arm-none-eabi/lib/thumb/v6-m\libc.a(lib_a-strtod.o)
  .rodata._svfprintf_r.str1.1
@@ -5218,7 +5216,7 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .data.SystemCoreClock
                 0x00000000200000dc        0x4 Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.o
                 0x00000000200000dc                SystemCoreClock
- .data.pxLastCommandInList.9111
+ .data.pxLastCommandInList.9112
                 0x00000000200000e0        0x4 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
  .data.xRegisteredCommands
                 0x00000000200000e4        0x8 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
@@ -5279,7 +5277,7 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
                 0x0000000020000ce8                arrayPortsDir
  .bss.bcastID   0x0000000020000d1a        0x1 BOS/BOS.o
                 0x0000000020000d1a                bcastID
- .bss.bcastLastID.9464
+ .bss.bcastLastID.9465
                 0x0000000020000d1b        0x1 BOS/BOS.o
  .bss.bcastRoutes
                 0x0000000020000d1c       0x32 BOS/BOS.o
@@ -5295,7 +5293,7 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.button    0x0000000020000d6c       0x3f BOS/BOS.o
                 0x0000000020000d6c                button
  *fill*         0x0000000020000dab        0x1 
- .bss.cCLIString.9461
+ .bss.cCLIString.9462
                 0x0000000020000dac       0x32 BOS/BOS.o
  *fill*         0x0000000020000dde        0x2 
  .bss.cMessage  0x0000000020000de0      0x150 BOS/BOS.o
@@ -5303,12 +5301,12 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.cRxedChar
                 0x0000000020000f30        0x1 BOS/BOS.o
                 0x0000000020000f30                cRxedChar
- .bss.clicked.9915
+ .bss.clicked.9916
                 0x0000000020000f31        0x1 BOS/BOS.o
  *fill*         0x0000000020000f32        0x2 
- .bss.commands.10821
+ .bss.commands.10822
                 0x0000000020000f34       0x32 BOS/BOS.o
- .bss.count.10583
+ .bss.count.10584
                 0x0000000020000f66        0x1 BOS/BOS.o
  *fill*         0x0000000020000f67        0x1 
  .bss.dblCounter
@@ -5317,11 +5315,11 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.delayButtonStateReset
                 0x0000000020000f6f        0x1 BOS/BOS.o
                 0x0000000020000f6f                delayButtonStateReset
- .bss.dst1.9823
+ .bss.dst1.9824
                 0x0000000020000f70        0x1 BOS/BOS.o
- .bss.dst2.9825
+ .bss.dst2.9826
                 0x0000000020000f71        0x1 BOS/BOS.o
- .bss.dst3.9827
+ .bss.dst3.9828
                 0x0000000020000f72        0x1 BOS/BOS.o
  *fill*         0x0000000020000f73        0x1 
  .bss.groupAlias
@@ -5367,27 +5365,27 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.neighbors2
                 0x00000000200012b4       0x18 BOS/BOS.o
                 0x00000000200012b4                neighbors2
- .bss.pcParameterString.10582
+ .bss.pcParameterString.10583
                 0x00000000200012cc        0x4 BOS/BOS.o
- .bss.pcParameterString1.10568
+ .bss.pcParameterString1.10569
                 0x00000000200012d0        0x4 BOS/BOS.o
- .bss.pcParameterString1.10656
+ .bss.pcParameterString1.10657
                 0x00000000200012d4        0x4 BOS/BOS.o
- .bss.pcParameterString1.10681
+ .bss.pcParameterString1.10682
                 0x00000000200012d8        0x4 BOS/BOS.o
- .bss.pcParameterString1.10710
+ .bss.pcParameterString1.10711
                 0x00000000200012dc        0x4 BOS/BOS.o
- .bss.pcParameterString2.10542
+ .bss.pcParameterString2.10543
                 0x00000000200012e0        0x4 BOS/BOS.o
- .bss.pcParameterString2.10682
+ .bss.pcParameterString2.10683
                 0x00000000200012e4        0x4 BOS/BOS.o
- .bss.pcParameterString3.10543
+ .bss.pcParameterString3.10544
                 0x00000000200012e8        0x4 BOS/BOS.o
- .bss.pcParameterString3.10683
+ .bss.pcParameterString3.10684
                 0x00000000200012ec        0x4 BOS/BOS.o
- .bss.pcParameterString4.10684
+ .bss.pcParameterString4.10685
                 0x00000000200012f0        0x4 BOS/BOS.o
- .bss.pcParameterString5.10685
+ .bss.pcParameterString5.10686
                 0x00000000200012f4        0x4 BOS/BOS.o
  .bss.pcUserMessage
                 0x00000000200012f8       0x50 BOS/BOS.o
@@ -5398,12 +5396,12 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.pressCounter
                 0x0000000020001350       0x1c BOS/BOS.o
                 0x0000000020001350                pressCounter
- .bss.ptrShift.10142
+ .bss.ptrShift.10143
                 0x000000002000136c        0x2 BOS/BOS.o
  *fill*         0x000000002000136e        0x2 
- .bss.pxCommand.10306
+ .bss.pxCommand.10307
                 0x0000000020001370        0x4 BOS/BOS.o
- .bss.pxCommand.10328
+ .bss.pxCommand.10329
                 0x0000000020001374        0x4 BOS/BOS.o
  .bss.releaseCounter
                 0x0000000020001378       0x1c BOS/BOS.o
@@ -5426,39 +5424,39 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.routePrev
                 0x00000000200013dc       0x19 BOS/BOS.o
                 0x00000000200013dc                routePrev
- .bss.src1.9822
+ .bss.src1.9823
                 0x00000000200013f5        0x1 BOS/BOS.o
- .bss.src2.9824
+ .bss.src2.9825
                 0x00000000200013f6        0x1 BOS/BOS.o
- .bss.src3.9826
+ .bss.src3.9827
                 0x00000000200013f7        0x1 BOS/BOS.o
- .bss.totalNumberOfParams.10141
+ .bss.totalNumberOfParams.10142
                 0x00000000200013f8        0x2 BOS/BOS.o
  *fill*         0x00000000200013fa        0x2 
- .bss.xParameterStringLength.10585
+ .bss.xParameterStringLength.10586
                 0x00000000200013fc        0x4 BOS/BOS.o
- .bss.xParameterStringLength1.10544
+ .bss.xParameterStringLength1.10545
                 0x0000000020001400        0x4 BOS/BOS.o
- .bss.xParameterStringLength1.10569
+ .bss.xParameterStringLength1.10570
                 0x0000000020001404        0x4 BOS/BOS.o
- .bss.xParameterStringLength1.10584
+ .bss.xParameterStringLength1.10585
                 0x0000000020001408        0x4 BOS/BOS.o
- .bss.xParameterStringLength2.10545
+ .bss.xParameterStringLength2.10546
                 0x000000002000140c        0x4 BOS/BOS.o
- .bss.xParameterStringLength3.10546
+ .bss.xParameterStringLength3.10547
                 0x0000000020001410        0x4 BOS/BOS.o
- .bss.cInputString.9136
+ .bss.cInputString.9137
                 0x0000000020001414       0x32 BOS/BOS_CLI.o
  *fill*         0x0000000020001446        0x2 
- .bss.cInputString.9183
+ .bss.cInputString.9184
                 0x0000000020001448       0x32 BOS/BOS_CLI.o
  *fill*         0x000000002000147a        0x2 
- .bss.cInputString.9224
+ .bss.cInputString.9225
                 0x000000002000147c       0x32 BOS/BOS_CLI.o
  *fill*         0x00000000200014ae        0x2 
- .bss.cLastInputString.9137
+ .bss.cLastInputString.9138
                 0x00000000200014b0       0x32 BOS/BOS_CLI.o
- .bss.group.9154
+ .bss.group.9155
                 0x00000000200014e2        0x1 BOS/BOS_CLI.o
  .bss.numOfRecordedSnippets
                 0x00000000200014e3        0x1 BOS/BOS_CLI.o
@@ -5466,9 +5464,9 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.pcWelcomePortMessage
                 0x00000000200014e4       0x28 BOS/BOS_CLI.o
                 0x00000000200014e4                pcWelcomePortMessage
- .bss.ptrStart.9196
+ .bss.ptrStart.9197
                 0x000000002000150c        0x4 BOS/BOS_CLI.o
- .bss.recordSnippet.9153
+ .bss.recordSnippet.9154
                 0x0000000020001510        0x1 BOS/BOS_CLI.o
  *fill*         0x0000000020001511        0x3 
  .bss.MsgDMAStopped
@@ -5524,7 +5522,7 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.acceptedMsg
                 0x0000000020001748        0x2 BOS/BOS_freertos.o
                 0x0000000020001748                acceptedMsg
- .bss.crc8.9168
+ .bss.crc8.9169
                 0x000000002000174a        0x1 BOS/BOS_freertos.o
  *fill*         0x000000002000174b        0x1 
  .bss.defaultTaskHandle
@@ -5574,13 +5572,13 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
  .bss.stopStream
                 0x0000000020001784        0x1 H0BR4/H0BR4.o
  *fill*         0x0000000020001785        0x3 
- .bss.temp.12321
+ .bss.temp.12322
                 0x0000000020001788        0xc H0BR4/H0BR4.o
- .bss.temp.12358
+ .bss.temp.12359
                 0x0000000020001794        0xc H0BR4/H0BR4.o
- .bss.temp.12395
+ .bss.temp.12396
                 0x00000000200017a0        0xc H0BR4/H0BR4.o
- .bss.tempD.12421
+ .bss.tempD.12422
                 0x00000000200017ac        0x4 H0BR4/H0BR4.o
  .bss.msgRxDMA  0x00000000200017b0      0x150 H0BR4/H0BR4_dma.o
                 0x00000000200017b0                msgRxDMA
@@ -5591,14 +5589,14 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
                 0x00000000200019a8                streamDMA
  .bss.cOutputBuffer
                 0x0000000020001af8      0x264 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
- .bss.counter.9158
+ .bss.counter.9159
                 0x0000000020001d5c        0x1 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
  *fill*         0x0000000020001d5d        0x3 
- .bss.pxCommand.9121
+ .bss.pxCommand.9122
                 0x0000000020001d60        0x4 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
- .bss.pxCommand.9155
+ .bss.pxCommand.9156
                 0x0000000020001d64        0x4 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
- .bss.str.9157  0x0000000020001d68        0x1 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+ .bss.str.9158  0x0000000020001d68        0x1 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
  *fill*         0x0000000020001d69        0x3 
  .bss.pxCurrentTCB
                 0x0000000020001d6c        0x4 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
@@ -6018,51 +6016,51 @@ LOAD c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.exte
                 0x0000000000001764       0x1e c:/st/stm32cubeide_1.3.0/stm32cubeide/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.win32_1.0.0.201904181610/tools/bin/../lib/gcc/arm-none-eabi/7.3.1/thumb/v6-m/crtn.o
 OUTPUT(H0BR4.elf elf32-littlearm)
 
-.debug_info     0x0000000000000000    0x5aa94
- .debug_info    0x0000000000000000     0xd525 BOS/BOS.o
- .debug_info    0x000000000000d525     0x2e3b BOS/BOS_CLI.o
- .debug_info    0x0000000000010360     0x1cd5 BOS/BOS_dma.o
- .debug_info    0x0000000000012035     0x2628 BOS/BOS_eeprom.o
- .debug_info    0x000000000001465d     0x2749 BOS/BOS_freertos.o
- .debug_info    0x0000000000016da6     0x474a H0BR4/H0BR4.o
- .debug_info    0x000000000001b4f0     0x239c H0BR4/H0BR4_dma.o
- .debug_info    0x000000000001d88c     0x1de9 H0BR4/H0BR4_gpio.o
- .debug_info    0x000000000001f675     0x1ecb H0BR4/H0BR4_i2c.o
- .debug_info    0x0000000000021540     0x1e48 H0BR4/H0BR4_it.o
- .debug_info    0x0000000000023388     0x25fb H0BR4/H0BR4_uart.o
- .debug_info    0x0000000000025983       0x22 H0BR4/gcc/startup_stm32f091xc.o
- .debug_info    0x00000000000259a5      0xa3f Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.o
- .debug_info    0x00000000000263e4     0x2aca Thirdparty/LSM303AGR/src/LSM303AGR_MAG.o
- .debug_info    0x0000000000028eae     0xae35 Thirdparty/LSM6DS3/src/LSM6DS3.o
- .debug_info    0x0000000000033ce3     0x27c2 Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
- .debug_info    0x00000000000364a5     0x1f93 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
- .debug_info    0x0000000000038438      0xab5 Thirdparty/Middleware/FreeRTOS/Source/list.o
- .debug_info    0x0000000000038eed     0x1beb Thirdparty/Middleware/FreeRTOS/Source/queue.o
- .debug_info    0x000000000003aad8     0x2bb2 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
- .debug_info    0x000000000003d68a     0x17b4 Thirdparty/Middleware/FreeRTOS/Source/timers.o
- .debug_info    0x000000000003ee3e      0x298 Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/port.o
- .debug_info    0x000000000003f0d6      0xbf2 Thirdparty/Middleware/FreeRTOS/Source/portable/MemMang/heap_4.o
- .debug_info    0x000000000003fcc8      0xdd9 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.o
- .debug_info    0x0000000000040aa1      0xf91 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.o
- .debug_info    0x0000000000041a32      0xd91 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc.o
- .debug_info    0x00000000000427c3      0xbb2 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc_ex.o
- .debug_info    0x0000000000043375      0xe71 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.o
- .debug_info    0x00000000000441e6      0xe05 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.o
- .debug_info    0x0000000000044feb     0x1256 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.o
- .debug_info    0x0000000000046241      0xe49 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.o
- .debug_info    0x000000000004708a     0x3143 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.o
- .debug_info    0x000000000004a1cd      0xfa2 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.o
- .debug_info    0x000000000004b16f      0x8f3 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_msp_template.o
- .debug_info    0x000000000004ba62      0xc6e Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.o
- .debug_info    0x000000000004c6d0     0x118f Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
- .debug_info    0x000000000004d85f      0xd9c Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.o
- .debug_info    0x000000000004e5fb     0x14c8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.o
- .debug_info    0x000000000004fac3     0x16d8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.o
- .debug_info    0x000000000005119b     0x38dc Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.o
- .debug_info    0x0000000000054a77     0x19c9 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.o
- .debug_info    0x0000000000056440     0x1a3e Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.o
- .debug_info    0x0000000000057e7e     0x11e6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o
- .debug_info    0x0000000000059064     0x1a30 User/main.o
+.debug_info     0x0000000000000000    0x5aaa0
+ .debug_info    0x0000000000000000     0xd52b BOS/BOS.o
+ .debug_info    0x000000000000d52b     0x2e3b BOS/BOS_CLI.o
+ .debug_info    0x0000000000010366     0x1cd5 BOS/BOS_dma.o
+ .debug_info    0x000000000001203b     0x2628 BOS/BOS_eeprom.o
+ .debug_info    0x0000000000014663     0x2749 BOS/BOS_freertos.o
+ .debug_info    0x0000000000016dac     0x474a H0BR4/H0BR4.o
+ .debug_info    0x000000000001b4f6     0x239c H0BR4/H0BR4_dma.o
+ .debug_info    0x000000000001d892     0x1de9 H0BR4/H0BR4_gpio.o
+ .debug_info    0x000000000001f67b     0x1ecb H0BR4/H0BR4_i2c.o
+ .debug_info    0x0000000000021546     0x1e48 H0BR4/H0BR4_it.o
+ .debug_info    0x000000000002338e     0x25fb H0BR4/H0BR4_uart.o
+ .debug_info    0x0000000000025989       0x22 H0BR4/gcc/startup_stm32f091xc.o
+ .debug_info    0x00000000000259ab      0xa3f Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.o
+ .debug_info    0x00000000000263ea     0x2aca Thirdparty/LSM303AGR/src/LSM303AGR_MAG.o
+ .debug_info    0x0000000000028eb4     0xae35 Thirdparty/LSM6DS3/src/LSM6DS3.o
+ .debug_info    0x0000000000033ce9     0x27c2 Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
+ .debug_info    0x00000000000364ab     0x1f99 Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+ .debug_info    0x0000000000038444      0xab5 Thirdparty/Middleware/FreeRTOS/Source/list.o
+ .debug_info    0x0000000000038ef9     0x1beb Thirdparty/Middleware/FreeRTOS/Source/queue.o
+ .debug_info    0x000000000003aae4     0x2bb2 Thirdparty/Middleware/FreeRTOS/Source/tasks.o
+ .debug_info    0x000000000003d696     0x17b4 Thirdparty/Middleware/FreeRTOS/Source/timers.o
+ .debug_info    0x000000000003ee4a      0x298 Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/port.o
+ .debug_info    0x000000000003f0e2      0xbf2 Thirdparty/Middleware/FreeRTOS/Source/portable/MemMang/heap_4.o
+ .debug_info    0x000000000003fcd4      0xdd9 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.o
+ .debug_info    0x0000000000040aad      0xf91 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.o
+ .debug_info    0x0000000000041a3e      0xd91 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc.o
+ .debug_info    0x00000000000427cf      0xbb2 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc_ex.o
+ .debug_info    0x0000000000043381      0xe71 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.o
+ .debug_info    0x00000000000441f2      0xe05 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.o
+ .debug_info    0x0000000000044ff7     0x1256 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.o
+ .debug_info    0x000000000004624d      0xe49 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.o
+ .debug_info    0x0000000000047096     0x3143 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.o
+ .debug_info    0x000000000004a1d9      0xfa2 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.o
+ .debug_info    0x000000000004b17b      0x8f3 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_msp_template.o
+ .debug_info    0x000000000004ba6e      0xc6e Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.o
+ .debug_info    0x000000000004c6dc     0x118f Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
+ .debug_info    0x000000000004d86b      0xd9c Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.o
+ .debug_info    0x000000000004e607     0x14c8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.o
+ .debug_info    0x000000000004facf     0x16d8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.o
+ .debug_info    0x00000000000511a7     0x38dc Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.o
+ .debug_info    0x0000000000054a83     0x19c9 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.o
+ .debug_info    0x000000000005644c     0x1a3e Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.o
+ .debug_info    0x0000000000057e8a     0x11e6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o
+ .debug_info    0x0000000000059070     0x1a30 User/main.o
 
 .debug_abbrev   0x0000000000000000     0x7ee2
  .debug_abbrev  0x0000000000000000      0x48f BOS/BOS.o
@@ -6288,140 +6286,140 @@ OUTPUT(H0BR4.elf elf32-littlearm)
  .debug_ranges  0x0000000000002e58       0x50 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o
  .debug_ranges  0x0000000000002ea8       0x18 User/main.o
 
-.debug_line     0x0000000000000000    0x17d0a
- .debug_line    0x0000000000000000     0x238f BOS/BOS.o
- .debug_line    0x000000000000238f      0x8e7 BOS/BOS_CLI.o
- .debug_line    0x0000000000002c76      0x5e7 BOS/BOS_dma.o
- .debug_line    0x000000000000325d      0x737 BOS/BOS_eeprom.o
- .debug_line    0x0000000000003994      0x789 BOS/BOS_freertos.o
- .debug_line    0x000000000000411d      0xbbc H0BR4/H0BR4.o
- .debug_line    0x0000000000004cd9      0x9ab H0BR4/H0BR4_dma.o
- .debug_line    0x0000000000005684      0x5c5 H0BR4/H0BR4_gpio.o
- .debug_line    0x0000000000005c49      0x601 H0BR4/H0BR4_i2c.o
- .debug_line    0x000000000000624a      0x70f H0BR4/H0BR4_it.o
- .debug_line    0x0000000000006959      0x786 H0BR4/H0BR4_uart.o
- .debug_line    0x00000000000070df       0xcc H0BR4/gcc/startup_stm32f091xc.o
- .debug_line    0x00000000000071ab      0x3b4 Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.o
- .debug_line    0x000000000000755f      0x751 Thirdparty/LSM303AGR/src/LSM303AGR_MAG.o
- .debug_line    0x0000000000007cb0     0x1fdb Thirdparty/LSM6DS3/src/LSM6DS3.o
- .debug_line    0x0000000000009c8b      0xa64 Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
- .debug_line    0x000000000000a6ef      0x6fb Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
- .debug_line    0x000000000000adea      0x425 Thirdparty/Middleware/FreeRTOS/Source/list.o
- .debug_line    0x000000000000b20f      0x8fa Thirdparty/Middleware/FreeRTOS/Source/queue.o
- .debug_line    0x000000000000bb09      0xe7c Thirdparty/Middleware/FreeRTOS/Source/tasks.o
- .debug_line    0x000000000000c985      0x5be Thirdparty/Middleware/FreeRTOS/Source/timers.o
- .debug_line    0x000000000000cf43      0x3f1 Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/port.o
- .debug_line    0x000000000000d334      0x476 Thirdparty/Middleware/FreeRTOS/Source/portable/MemMang/heap_4.o
- .debug_line    0x000000000000d7aa      0x52f Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.o
- .debug_line    0x000000000000dcd9      0x4f5 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.o
- .debug_line    0x000000000000e1ce      0x523 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc.o
- .debug_line    0x000000000000e6f1      0x42a Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc_ex.o
- .debug_line    0x000000000000eb1b      0xcda Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.o
- .debug_line    0x000000000000f7f5      0x5ae Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.o
- .debug_line    0x000000000000fda3      0x5c6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.o
- .debug_line    0x0000000000010369      0x51c Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.o
- .debug_line    0x0000000000010885     0x121b Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.o
- .debug_line    0x0000000000011aa0      0x557 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.o
- .debug_line    0x0000000000011ff7      0x393 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_msp_template.o
- .debug_line    0x000000000001238a      0x4a7 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.o
- .debug_line    0x0000000000012831      0x721 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
- .debug_line    0x0000000000012f52      0x5b7 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.o
- .debug_line    0x0000000000013509      0x758 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.o
- .debug_line    0x0000000000013c61      0xa19 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.o
- .debug_line    0x000000000001467a     0x1591 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.o
- .debug_line    0x0000000000015c0b      0x990 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.o
- .debug_line    0x000000000001659b      0xbe6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.o
- .debug_line    0x0000000000017181      0x5cb Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o
- .debug_line    0x000000000001774c      0x5be User/main.o
+.debug_line     0x0000000000000000    0x17d08
+ .debug_line    0x0000000000000000     0x238d BOS/BOS.o
+ .debug_line    0x000000000000238d      0x8e7 BOS/BOS_CLI.o
+ .debug_line    0x0000000000002c74      0x5e7 BOS/BOS_dma.o
+ .debug_line    0x000000000000325b      0x737 BOS/BOS_eeprom.o
+ .debug_line    0x0000000000003992      0x789 BOS/BOS_freertos.o
+ .debug_line    0x000000000000411b      0xbbc H0BR4/H0BR4.o
+ .debug_line    0x0000000000004cd7      0x9ab H0BR4/H0BR4_dma.o
+ .debug_line    0x0000000000005682      0x5c5 H0BR4/H0BR4_gpio.o
+ .debug_line    0x0000000000005c47      0x601 H0BR4/H0BR4_i2c.o
+ .debug_line    0x0000000000006248      0x70f H0BR4/H0BR4_it.o
+ .debug_line    0x0000000000006957      0x786 H0BR4/H0BR4_uart.o
+ .debug_line    0x00000000000070dd       0xcc H0BR4/gcc/startup_stm32f091xc.o
+ .debug_line    0x00000000000071a9      0x3b4 Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.o
+ .debug_line    0x000000000000755d      0x751 Thirdparty/LSM303AGR/src/LSM303AGR_MAG.o
+ .debug_line    0x0000000000007cae     0x1fdb Thirdparty/LSM6DS3/src/LSM6DS3.o
+ .debug_line    0x0000000000009c89      0xa64 Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
+ .debug_line    0x000000000000a6ed      0x6fb Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+ .debug_line    0x000000000000ade8      0x425 Thirdparty/Middleware/FreeRTOS/Source/list.o
+ .debug_line    0x000000000000b20d      0x8fa Thirdparty/Middleware/FreeRTOS/Source/queue.o
+ .debug_line    0x000000000000bb07      0xe7c Thirdparty/Middleware/FreeRTOS/Source/tasks.o
+ .debug_line    0x000000000000c983      0x5be Thirdparty/Middleware/FreeRTOS/Source/timers.o
+ .debug_line    0x000000000000cf41      0x3f1 Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/port.o
+ .debug_line    0x000000000000d332      0x476 Thirdparty/Middleware/FreeRTOS/Source/portable/MemMang/heap_4.o
+ .debug_line    0x000000000000d7a8      0x52f Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.o
+ .debug_line    0x000000000000dcd7      0x4f5 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.o
+ .debug_line    0x000000000000e1cc      0x523 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc.o
+ .debug_line    0x000000000000e6ef      0x42a Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc_ex.o
+ .debug_line    0x000000000000eb19      0xcda Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.o
+ .debug_line    0x000000000000f7f3      0x5ae Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.o
+ .debug_line    0x000000000000fda1      0x5c6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.o
+ .debug_line    0x0000000000010367      0x51c Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.o
+ .debug_line    0x0000000000010883     0x121b Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.o
+ .debug_line    0x0000000000011a9e      0x557 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.o
+ .debug_line    0x0000000000011ff5      0x393 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_msp_template.o
+ .debug_line    0x0000000000012388      0x4a7 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.o
+ .debug_line    0x000000000001282f      0x721 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
+ .debug_line    0x0000000000012f50      0x5b7 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.o
+ .debug_line    0x0000000000013507      0x758 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.o
+ .debug_line    0x0000000000013c5f      0xa19 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.o
+ .debug_line    0x0000000000014678     0x1591 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.o
+ .debug_line    0x0000000000015c09      0x990 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.o
+ .debug_line    0x0000000000016599      0xbe6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.o
+ .debug_line    0x000000000001717f      0x5cb Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o
+ .debug_line    0x000000000001774a      0x5be User/main.o
 
-.debug_str      0x0000000000000000    0x12ba6
- .debug_str     0x0000000000000000     0x3f1c BOS/BOS.o
-                                       0x420d (size before relaxing)
- .debug_str     0x0000000000003f1c      0x206 BOS/BOS_CLI.o
+.debug_str      0x0000000000000000    0x12bad
+ .debug_str     0x0000000000000000     0x3f23 BOS/BOS.o
+                                       0x4214 (size before relaxing)
+ .debug_str     0x0000000000003f23      0x206 BOS/BOS_CLI.o
                                        0x1a09 (size before relaxing)
- .debug_str     0x0000000000004122       0xe6 BOS/BOS_dma.o
+ .debug_str     0x0000000000004129       0xe6 BOS/BOS_dma.o
                                        0x16a8 (size before relaxing)
- .debug_str     0x0000000000004208      0x12b BOS/BOS_eeprom.o
+ .debug_str     0x000000000000420f      0x12b BOS/BOS_eeprom.o
                                        0x1864 (size before relaxing)
- .debug_str     0x0000000000004333      0x3ae BOS/BOS_freertos.o
+ .debug_str     0x000000000000433a      0x3ae BOS/BOS_freertos.o
                                        0x1c2e (size before relaxing)
- .debug_str     0x00000000000046e1     0x1237 H0BR4/H0BR4.o
+ .debug_str     0x00000000000046e8     0x1237 H0BR4/H0BR4.o
                                        0x2ae4 (size before relaxing)
- .debug_str     0x0000000000005918      0x14d H0BR4/H0BR4_dma.o
+ .debug_str     0x000000000000591f      0x14d H0BR4/H0BR4_dma.o
                                        0x19c2 (size before relaxing)
- .debug_str     0x0000000000005a65       0x5f H0BR4/H0BR4_gpio.o
+ .debug_str     0x0000000000005a6c       0x5f H0BR4/H0BR4_gpio.o
                                        0x1851 (size before relaxing)
- .debug_str     0x0000000000005ac4      0x169 H0BR4/H0BR4_i2c.o
+ .debug_str     0x0000000000005acb      0x169 H0BR4/H0BR4_i2c.o
                                        0x1717 (size before relaxing)
- .debug_str     0x0000000000005c2d      0x1c8 H0BR4/H0BR4_it.o
+ .debug_str     0x0000000000005c34      0x1c8 H0BR4/H0BR4_it.o
                                        0x17db (size before relaxing)
- .debug_str     0x0000000000005df5      0x1c9 H0BR4/H0BR4_uart.o
+ .debug_str     0x0000000000005dfc      0x1c9 H0BR4/H0BR4_uart.o
                                        0x1b0c (size before relaxing)
- .debug_str     0x0000000000005fbe       0x5e H0BR4/gcc/startup_stm32f091xc.o
+ .debug_str     0x0000000000005fc5       0x5e H0BR4/gcc/startup_stm32f091xc.o
                                          0xa1 (size before relaxing)
- .debug_str     0x000000000000601c       0xb9 Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.o
+ .debug_str     0x0000000000006023       0xb9 Thirdparty/CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.o
                                         0x6ac (size before relaxing)
- .debug_str     0x00000000000060d5     0x1158 Thirdparty/LSM303AGR/src/LSM303AGR_MAG.o
+ .debug_str     0x00000000000060dc     0x1158 Thirdparty/LSM303AGR/src/LSM303AGR_MAG.o
                                        0x14ec (size before relaxing)
- .debug_str     0x000000000000722d     0x634e Thirdparty/LSM6DS3/src/LSM6DS3.o
+ .debug_str     0x0000000000007234     0x634e Thirdparty/LSM6DS3/src/LSM6DS3.o
                                        0x6e9d (size before relaxing)
- .debug_str     0x000000000000d57b      0x7c1 Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
+ .debug_str     0x000000000000d582      0x7c1 Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
                                        0x11ae (size before relaxing)
- .debug_str     0x000000000000dd3c      0x15d Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
-                                       0x1977 (size before relaxing)
- .debug_str     0x000000000000de99      0x165 Thirdparty/Middleware/FreeRTOS/Source/list.o
+ .debug_str     0x000000000000dd43      0x15d Thirdparty/Middleware/FreeRTOS/Source/FreeRTOS_CLI.o
+                                       0x197e (size before relaxing)
+ .debug_str     0x000000000000dea0      0x165 Thirdparty/Middleware/FreeRTOS/Source/list.o
                                         0x71c (size before relaxing)
- .debug_str     0x000000000000dffe      0x521 Thirdparty/Middleware/FreeRTOS/Source/queue.o
+ .debug_str     0x000000000000e005      0x521 Thirdparty/Middleware/FreeRTOS/Source/queue.o
                                         0xdaa (size before relaxing)
- .debug_str     0x000000000000e51f      0x92f Thirdparty/Middleware/FreeRTOS/Source/tasks.o
+ .debug_str     0x000000000000e526      0x92f Thirdparty/Middleware/FreeRTOS/Source/tasks.o
                                        0x14a9 (size before relaxing)
- .debug_str     0x000000000000ee4e      0x45f Thirdparty/Middleware/FreeRTOS/Source/timers.o
+ .debug_str     0x000000000000ee55      0x45f Thirdparty/Middleware/FreeRTOS/Source/timers.o
                                         0xd0b (size before relaxing)
- .debug_str     0x000000000000f2ad       0xf8 Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/port.o
+ .debug_str     0x000000000000f2b4       0xf8 Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/port.o
                                         0x3bb (size before relaxing)
- .debug_str     0x000000000000f3a5      0x203 Thirdparty/Middleware/FreeRTOS/Source/portable/MemMang/heap_4.o
+ .debug_str     0x000000000000f3ac      0x203 Thirdparty/Middleware/FreeRTOS/Source/portable/MemMang/heap_4.o
                                         0x803 (size before relaxing)
- .debug_str     0x000000000000f5a8      0x1ab Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.o
+ .debug_str     0x000000000000f5af      0x1ab Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.o
                                         0xa3a (size before relaxing)
- .debug_str     0x000000000000f753      0x16e Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.o
+ .debug_str     0x000000000000f75a      0x16e Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.o
                                         0xa6e (size before relaxing)
- .debug_str     0x000000000000f8c1       0xbf Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc.o
+ .debug_str     0x000000000000f8c8       0xbf Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc.o
                                         0x8a6 (size before relaxing)
- .debug_str     0x000000000000f980       0xed Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc_ex.o
+ .debug_str     0x000000000000f987       0xed Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc_ex.o
                                         0x87c (size before relaxing)
- .debug_str     0x000000000000fa6d      0x139 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.o
+ .debug_str     0x000000000000fa74      0x139 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.o
                                         0x933 (size before relaxing)
- .debug_str     0x000000000000fba6      0x17d Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.o
+ .debug_str     0x000000000000fbad      0x17d Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.o
                                         0x945 (size before relaxing)
- .debug_str     0x000000000000fd23      0x277 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.o
+ .debug_str     0x000000000000fd2a      0x277 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.o
                                         0xa43 (size before relaxing)
- .debug_str     0x000000000000ff9a      0x138 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.o
+ .debug_str     0x000000000000ffa1      0x138 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.o
                                         0x84c (size before relaxing)
- .debug_str     0x00000000000100d2      0x54c Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.o
+ .debug_str     0x00000000000100d9      0x54c Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.o
                                         0xf98 (size before relaxing)
- .debug_str     0x000000000001061e       0xe8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.o
+ .debug_str     0x0000000000010625       0xe8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.o
                                         0xb89 (size before relaxing)
- .debug_str     0x0000000000010706       0x93 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_msp_template.o
+ .debug_str     0x000000000001070d       0x93 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_msp_template.o
                                         0x62d (size before relaxing)
- .debug_str     0x0000000000010799      0x1b6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.o
+ .debug_str     0x00000000000107a0      0x1b6 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.o
                                         0x7ef (size before relaxing)
- .debug_str     0x000000000001094f      0x1a8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
+ .debug_str     0x0000000000010956      0x1a8 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.o
                                         0xa26 (size before relaxing)
- .debug_str     0x0000000000010af7      0x1e7 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.o
+ .debug_str     0x0000000000010afe      0x1e7 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.o
                                         0x960 (size before relaxing)
- .debug_str     0x0000000000010cde      0x226 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.o
+ .debug_str     0x0000000000010ce5      0x226 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.o
                                         0xac9 (size before relaxing)
- .debug_str     0x0000000000010f04      0x52a Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.o
+ .debug_str     0x0000000000010f0b      0x52a Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.o
                                         0xdf3 (size before relaxing)
- .debug_str     0x000000000001142e      0xd46 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.o
+ .debug_str     0x0000000000011435      0xd46 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.o
                                        0x1742 (size before relaxing)
- .debug_str     0x0000000000012174      0x4c5 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.o
+ .debug_str     0x000000000001217b      0x4c5 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.o
                                         0xff8 (size before relaxing)
- .debug_str     0x0000000000012639      0x362 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.o
+ .debug_str     0x0000000000012640      0x362 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.o
                                         0xf84 (size before relaxing)
- .debug_str     0x000000000001299b      0x1c1 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o
+ .debug_str     0x00000000000129a2      0x1c1 Thirdparty/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.o
                                         0xcc5 (size before relaxing)
- .debug_str     0x0000000000012b5c       0x4a User/main.o
+ .debug_str     0x0000000000012b63       0x4a User/main.o
                                        0x15aa (size before relaxing)
 
 .comment        0x0000000000000000       0x7b

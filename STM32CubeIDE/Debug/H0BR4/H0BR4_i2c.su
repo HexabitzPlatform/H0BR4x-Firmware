@@ -1,4 +1,4 @@
-H0BR4_i2c.c:71:6:MX_I2C2_Init	8	static
+H0BR4_i2c.c:71:7:MX_I2C2_Init	8	static
 H0BR4_i2c.c:58:6:MX_I2C_Init	32	static
 H0BR4_i2c.c:93:9:LSM6DS3_I2C_Write	24	static
 H0BR4_i2c.c:102:9:LSM6DS3_I2C_Read	24	static

@@ -51,7 +51,7 @@ I2C_HandleTypeDef hi2c2;
 /* Configure I2C                                                             */
 /*----------------------------------------------------------------------------*/
 
-static void MX_I2C2_Init(void);
+void MX_I2C2_Init(void);
 
 /** I2C Configuration
 */
@@ -68,7 +68,7 @@ void MX_I2C_Init(void)
 }
 
 //-- Configure indicator LED
-static void MX_I2C2_Init(void)
+ void MX_I2C2_Init(void)
 {
 
   hi2c2.Instance = I2C2;

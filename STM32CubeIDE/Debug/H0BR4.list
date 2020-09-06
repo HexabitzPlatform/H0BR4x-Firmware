@@ -31851,75 +31851,170 @@ BOS_Status UpdateBaudrate(uint8_t port, uint32_t baudrate)
 	...
 
 0800e01c <Reset_Handler>:
+
+  .section .text.Reset_Handler
+  .weak Reset_Handler
+  .type Reset_Handler, %function
+Reset_Handler:
+  ldr   r0, =_estack
  800e01c:	4816      	ldr	r0, [pc, #88]	; (800e078 <LoopForever+0x4>)
+  mov   sp, r0          /* set stack pointer */
  800e01e:	4685      	mov	sp, r0
+
+/* Copy the data segment initializers from flash to SRAM */
+  movs r1, #0
  800e020:	2100      	movs	r1, #0
+  b LoopCopyDataInit
  800e022:	e003      	b.n	800e02c <LoopCopyDataInit>
 
 0800e024 <CopyDataInit>:
+
+CopyDataInit:
+  ldr r3, =_sidata
  800e024:	4b15      	ldr	r3, [pc, #84]	; (800e07c <LoopForever+0x8>)
+  ldr r3, [r3, r1]
  800e026:	585b      	ldr	r3, [r3, r1]
+  str r3, [r0, r1]
  800e028:	5043      	str	r3, [r0, r1]
+  adds r1, r1, #4
  800e02a:	3104      	adds	r1, #4
 
 0800e02c <LoopCopyDataInit>:
+
+LoopCopyDataInit:
+  ldr r0, =_sdata
  800e02c:	4814      	ldr	r0, [pc, #80]	; (800e080 <LoopForever+0xc>)
+  ldr r3, =_edata
  800e02e:	4b15      	ldr	r3, [pc, #84]	; (800e084 <LoopForever+0x10>)
+  adds r2, r0, r1
  800e030:	1842      	adds	r2, r0, r1
+  cmp r2, r3
  800e032:	429a      	cmp	r2, r3
+  bcc CopyDataInit
  800e034:	d3f6      	bcc.n	800e024 <CopyDataInit>
+  ldr r2, =_sbss
  800e036:	4a14      	ldr	r2, [pc, #80]	; (800e088 <LoopForever+0x14>)
+  b LoopFillZerobss
  800e038:	e002      	b.n	800e040 <LoopFillZerobss>
 
 0800e03a <FillZerobss>:
+/* Zero fill the bss segment. */
+FillZerobss:
+  movs r3, #0
  800e03a:	2300      	movs	r3, #0
+  str  r3, [r2]
  800e03c:	6013      	str	r3, [r2, #0]
+  adds r2, r2, #4
  800e03e:	3204      	adds	r2, #4
 
 0800e040 <LoopFillZerobss>:
+
+
+LoopFillZerobss:
+  ldr r3, = _ebss
  800e040:	4b12      	ldr	r3, [pc, #72]	; (800e08c <LoopForever+0x18>)
+  cmp r2, r3
  800e042:	429a      	cmp	r2, r3
+  bcc FillZerobss
  800e044:	d3f9      	bcc.n	800e03a <FillZerobss>
+
+//------------------------------------------------------------------------------
+// Modified Reset Handler for bootloader reboot (sourcer32@gmail.com)
+	LDR        R0, =0x20007FF0  	// Address for RAM signature (STM32F09x)
  800e046:	4812      	ldr	r0, [pc, #72]	; (800e090 <LoopForever+0x1c>)
+	LDR        R1, =0xDEADBEEF
  800e048:	4912      	ldr	r1, [pc, #72]	; (800e094 <LoopForever+0x20>)
+	LDR        R2, [R0, #0] 		// Read current
  800e04a:	6802      	ldr	r2, [r0, #0]
+	STR        R0, [R0, #0] 		// Invalidate
  800e04c:	6000      	str	r0, [r0, #0]
+	CMP        R2, R1
  800e04e:	428a      	cmp	r2, r1
+	BEQ        Reboot_Loader
  800e050:	d005      	beq.n	800e05e <Reboot_Loader>
+
+// Normal startup path
+
+/* Call the clock system intitialization function.*/
+  bl  SystemInit
  800e052:	f000 f82b 	bl	800e0ac <SystemInit>
+/* Call static constructors */
+  bl __libc_init_array
  800e056:	f005 fea3 	bl	8013da0 <__libc_init_array>
+/* Call the application's entry point.*/
+  bl main
  800e05a:	f005 fe82 	bl	8013d62 <main>
 
 0800e05e <Reboot_Loader>:
+
+// Vector into System Loader
+Reboot_Loader:
+	LDR     R0, =0x40021018 	// RCC_APB2ENR (+0x18)
  800e05e:	480e      	ldr	r0, [pc, #56]	; (800e098 <LoopForever+0x24>)
+	LDR     R1, =0x00000001 	// ENABLE SYSCFG CLOCK
  800e060:	490e      	ldr	r1, [pc, #56]	; (800e09c <LoopForever+0x28>)
+	STR     R1, [R0, #0]
  800e062:	6001      	str	r1, [r0, #0]
+	LDR     R0, =0x40010000 	// SYSCFG_CFGR1 (+0x00)
  800e064:	480e      	ldr	r0, [pc, #56]	; (800e0a0 <LoopForever+0x2c>)
+	LDR     R1, =0x00000001 	// MAP ROM AT ZERO
  800e066:	490d      	ldr	r1, [pc, #52]	; (800e09c <LoopForever+0x28>)
+	STR     R1, [R0, #0]
  800e068:	6001      	str	r1, [r0, #0]
+	//                LDR     R0, =0x1FFFEC00 ; ROM BASE (STM32F03x)
+	//                LDR     R0, =0x1FFFC400 ; ROM BASE (STM32F04x)
+	//                LDR     R0, =0x1FFFEC00 ; ROM BASE (STM32F05x)
+	//                LDR     R0, =0x1FFFC800 ; ROM BASE (STM32F07x)
+	LDR     R0, =0x1FFFD800 	// ROM BASE (STM32F09x)
  800e06a:	480e      	ldr	r0, [pc, #56]	; (800e0a4 <LoopForever+0x30>)
+	LDR     R1, [R0, #0]    	// SP @ +0
  800e06c:	6801      	ldr	r1, [r0, #0]
+	MOV     SP, R1
  800e06e:	468d      	mov	sp, r1
+	LDR     R0, [R0, #4]    	// PC @ +4
  800e070:	6840      	ldr	r0, [r0, #4]
+	BX      R0
  800e072:	4700      	bx	r0
 
 0800e074 <LoopForever>:
+
+
+LoopForever:
+    b LoopForever
  800e074:	e7fe      	b.n	800e074 <LoopForever>
  800e076:	0000      	.short	0x0000
+  ldr   r0, =_estack
  800e078:	20008000 	.word	0x20008000
+  ldr r3, =_sidata
  800e07c:	0801bd60 	.word	0x0801bd60
+  ldr r0, =_sdata
  800e080:	20000000 	.word	0x20000000
+  ldr r3, =_edata
  800e084:	20000aa0 	.word	0x20000aa0
+  ldr r2, =_sbss
  800e088:	20000aa0 	.word	0x20000aa0
+  ldr r3, = _ebss
  800e08c:	20006e98 	.word	0x20006e98
+	LDR        R0, =0x20007FF0  	// Address for RAM signature (STM32F09x)
  800e090:	20007ff0 	.word	0x20007ff0
+	LDR        R1, =0xDEADBEEF
  800e094:	deadbeef 	.word	0xdeadbeef
+	LDR     R0, =0x40021018 	// RCC_APB2ENR (+0x18)
  800e098:	40021018 	.word	0x40021018
+	LDR     R1, =0x00000001 	// ENABLE SYSCFG CLOCK
  800e09c:	00000001 	.word	0x00000001
+	LDR     R0, =0x40010000 	// SYSCFG_CFGR1 (+0x00)
  800e0a0:	40010000 	.word	0x40010000
+	LDR     R0, =0x1FFFD800 	// ROM BASE (STM32F09x)
  800e0a4:	1fffd800 	.word	0x1fffd800
 
 0800e0a8 <ADC1_COMP_IRQHandler>:
+ * @retval : None
+*/
+    .section .text.Default_Handler,"ax",%progbits
+Default_Handler:
+Infinite_Loop:
+  b Infinite_Loop
  800e0a8:	e7fe      	b.n	800e0a8 <ADC1_COMP_IRQHandler>
 	...
 

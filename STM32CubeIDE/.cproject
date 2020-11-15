@@ -54,11 +54,11 @@
 									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/FreeRTOS/Source/include"/>
 									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0"/>
 									<listOptionValue builtIn="false" value="../../Thirdparty/Middleware/FreeRTOS/Source/CMSIS_RTOS"/>
+									<listOptionValue builtIn="false" value="&quot;../..\Thirdparty\LSM6DS3\inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../..\Thirdparty\LSM303AGR\inc&quot;"/>
 									<listOptionValue builtIn="false" value="../../H0BR4"/>
 									<listOptionValue builtIn="false" value="../../BOS"/>
 									<listOptionValue builtIn="false" value="../../User"/>
-									<listOptionValue builtIn="false" value="&quot;../..\Thirdparty\LSM6DS3\inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../..\Thirdparty\LSM303AGR\inc&quot;"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.95898393" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.isoc99" valueType="enumerated"/>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.warnings.all.632380765" name="Enable all warnings about questionable constructions (-Wall)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.warnings.all" useByScannerDiscovery="false" value="false" valueType="boolean"/>

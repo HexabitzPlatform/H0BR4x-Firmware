@@ -54,9 +54,10 @@ H0BR4/H0BR4_gpio.o: \
  ../../Thirdparty/Middleware/FreeRTOS/Source/include/timers.h \
  ../../Thirdparty/Middleware/FreeRTOS/Source/include/FreeRTOS_CLI.h \
  ../../BOS/BOS_eeprom.h ../../BOS/BOS.h ../../BOS/BOS_utils.h \
- ../../H0BR4/H0BR4.h ../../H0BR4/H0BR4_MemoryMap.h \
- ../../H0BR4/H0BR4_uart.h ../../H0BR4/H0BR4_i2c.h \
- ../../H0BR4/H0BR4_gpio.h ../../H0BR4/H0BR4_dma.h ../../BOS/BOS_DMA.h
+ ../../BOS/BOS_messaging.h ../../H0BR4/H0BR4.h \
+ ../../H0BR4/H0BR4_MemoryMap.h ../../H0BR4/H0BR4_uart.h \
+ ../../H0BR4/H0BR4_i2c.h ../../H0BR4/H0BR4_gpio.h ../../H0BR4/H0BR4_dma.h \
+ ../../BOS/BOS_DMA.h
 
 ../../BOS/BOS.h:
 
@@ -171,6 +172,8 @@ H0BR4/H0BR4_gpio.o: \
 ../../BOS/BOS.h:
 
 ../../BOS/BOS_utils.h:
+
+../../BOS/BOS_messaging.h:
 
 ../../H0BR4/H0BR4.h:
 

@@ -15,3 +15,4 @@ H0BR4_dma.c:211:6:DMA_MSG_TX_Setup	8	static
 H0BR4_dma.c:578:6:CRC_Init	8	static
 H0BR4_dma.c:590:6:HAL_CRC_MspInit	8	static
 H0BR4_dma.c:596:6:HAL_CRC_MspDeInit	0	static
+H0BR4_dma.c:606:10:CalculateCRC8	16	static

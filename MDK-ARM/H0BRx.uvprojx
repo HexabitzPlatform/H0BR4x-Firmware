@@ -10,13 +10,13 @@
       <TargetName>Module 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F091CBTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F0xx_DFP.2.0.0</PackID>
+          <PackID>Keil.STM32F0xx_DFP.2.1.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00008000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M0") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -388,11 +388,6 @@
               <FileType>1</FileType>
               <FilePath>..\User\main.c</FilePath>
             </File>
-            <File>
-              <FileName>topology_1.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\User\topology_1.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -538,6 +533,26 @@
               <FileType>1</FileType>
               <FilePath>..\BOS\BOS_freertos.c</FilePath>
             </File>
+            <File>
+              <FileName>BOS_CLIcommands.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BOS\BOS_CLIcommands.c</FilePath>
+            </File>
+            <File>
+              <FileName>BOS_inputs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BOS\BOS_inputs.c</FilePath>
+            </File>
+            <File>
+              <FileName>BOS_messaging.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BOS\BOS_messaging.c</FilePath>
+            </File>
+            <File>
+              <FileName>BOS_msgparser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BOS\BOS_msgparser.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -577,6 +592,16 @@
               <FileName>startup_stm32f091xc.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\H0BR4\arm\startup_stm32f091xc.s</FilePath>
+            </File>
+            <File>
+              <FileName>H0BR4_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\H0BR4\H0BR4_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>H0BR4_timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\H0BR4\H0BR4_timers.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -673,12 +698,7 @@
   <LayerInfo>
     <Layers>
       <Layer>
-        <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
+        <LayName>H0BRx</LayName>
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>

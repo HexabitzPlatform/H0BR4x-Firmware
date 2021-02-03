@@ -54,10 +54,10 @@ H0BR4/H0BR4.o: \
  ../../Thirdparty/Middleware/FreeRTOS/Source/include/timers.h \
  ../../Thirdparty/Middleware/FreeRTOS/Source/include/FreeRTOS_CLI.h \
  ../../BOS/BOS_eeprom.h ../../BOS/BOS.h ../../BOS/BOS_utils.h \
- ../../H0BR4/H0BR4.h ../../H0BR4/H0BR4_MemoryMap.h \
- ../../H0BR4/H0BR4_uart.h ../../H0BR4/H0BR4_i2c.h \
- ../../H0BR4/H0BR4_gpio.h ../../H0BR4/H0BR4_dma.h ../../BOS/BOS_DMA.h \
- ../../Thirdparty/LSM6DS3/inc/LSM6DS3.h \
+ ../../BOS/BOS_messaging.h ../../H0BR4/H0BR4.h \
+ ../../H0BR4/H0BR4_MemoryMap.h ../../H0BR4/H0BR4_uart.h \
+ ../../H0BR4/H0BR4_i2c.h ../../H0BR4/H0BR4_gpio.h ../../H0BR4/H0BR4_dma.h \
+ ../../BOS/BOS_DMA.h ../../Thirdparty/LSM6DS3/inc/LSM6DS3.h \
  ../../Thirdparty/LSM303AGR/inc/LSM303AGR_ACC.h \
  ../../Thirdparty/LSM303AGR/inc/LSM303AGR_MAG.h
 
@@ -174,6 +174,8 @@ H0BR4/H0BR4.o: \
 ../../BOS/BOS.h:
 
 ../../BOS/BOS_utils.h:
+
+../../BOS/BOS_messaging.h:
 
 ../../H0BR4/H0BR4.h:
 

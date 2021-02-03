@@ -13,6 +13,8 @@ SIZE_OUTPUT :=
 OBJDUMP_LIST := 
 EXECUTABLES := 
 OBJS := 
+S_DEPS := 
+S_UPPER_DEPS := 
 C_DEPS := 
 
 # Every subdirectory with source files must be described here

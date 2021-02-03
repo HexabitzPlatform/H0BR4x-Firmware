@@ -72,6 +72,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_CLI.c</locationURI>
 		</link>
 		<link>
+			<name>BOS/BOS_CLIcommands.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_CLIcommands.c</locationURI>
+		</link>
+		<link>
 			<name>BOS/BOS_MsgCodes.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_MsgCodes.h</locationURI>
@@ -100,6 +105,21 @@
 			<name>BOS/BOS_freertos.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_freertos.c</locationURI>
+		</link>
+		<link>
+			<name>BOS/BOS_inputs.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_inputs.c</locationURI>
+		</link>
+		<link>
+			<name>BOS/BOS_messaging.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_messaging.c</locationURI>
+		</link>
+		<link>
+			<name>BOS/BOS_msgparser.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_msgparser.c</locationURI>
 		</link>
 		<link>
 			<name>BOS/BOS_utils.h</name>
@@ -170,6 +190,16 @@
 			<name>H0BR4/H0BR4_it.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_it.c</locationURI>
+		</link>
+		<link>
+			<name>H0BR4/H0BR4_rtc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_rtc.c</locationURI>
+		</link>
+		<link>
+			<name>H0BR4/H0BR4_timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_timers.c</locationURI>
 		</link>
 		<link>
 			<name>H0BR4/H0BR4_uart.c</name>

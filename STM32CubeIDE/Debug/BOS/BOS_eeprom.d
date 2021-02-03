@@ -56,6 +56,7 @@ BOS/BOS_eeprom.o: \
  ../../Thirdparty/Middleware/FreeRTOS/Source/include/FreeRTOS_CLI.h \
  D:/Hexabitz/for\ Release/Modules\ firmware/H0BR4x/BOS/BOS_eeprom.h \
  D:/Hexabitz/for\ Release/Modules\ firmware/H0BR4x/BOS/BOS_utils.h \
+ D:/Hexabitz/for\ Release/Modules\ firmware/H0BR4x/BOS/BOS_messaging.h \
  ../../H0BR4/H0BR4.h ../../BOS/BOS.h ../../H0BR4/H0BR4_MemoryMap.h \
  ../../H0BR4/H0BR4_uart.h ../../H0BR4/H0BR4_i2c.h \
  ../../H0BR4/H0BR4_gpio.h ../../H0BR4/H0BR4_dma.h \
@@ -172,6 +173,8 @@ D:/Hexabitz/for\ Release/Modules\ firmware/H0BR4x/BOS/BOS_MsgCodes.h:
 D:/Hexabitz/for\ Release/Modules\ firmware/H0BR4x/BOS/BOS_eeprom.h:
 
 D:/Hexabitz/for\ Release/Modules\ firmware/H0BR4x/BOS/BOS_utils.h:
+
+D:/Hexabitz/for\ Release/Modules\ firmware/H0BR4x/BOS/BOS_messaging.h:
 
 ../../H0BR4/H0BR4.h:
 

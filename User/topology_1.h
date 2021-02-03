@@ -1,5 +1,5 @@
 /*
-    BitzOS (BOS) V0.2.3 - Copyright (C) 2016 Hexabitz
+    BitzOS (BOS) V0.2.4 - Copyright (C) 2016 Hexabitz
     All rights reserved
 
     File Name     : topology_1.h
@@ -17,14 +17,14 @@
 #include "stm32f0xx_hal.h"
 
 
-#define _N	2					// Number of array modules
+#define __N	2					// Number of array modules
 
 // Array modules
 #define _mod1	1<<3
 #define _mod2	2<<3
 
 // Topology
-static uint16_t array[_N][7] = {
+static uint16_t array[__N][7] = {
 { _H0BR4, 0, 0,0, 0, 0,  _mod2|P5},							// Module 1
 { _H01R0, 0, 0, 0, 0, _mod1|P5, 0},			        // Module 2
 };

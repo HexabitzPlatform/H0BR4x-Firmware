@@ -1,9 +1,0 @@
-stm32f0xx_hal_pwr_ex.c:126:6:HAL_PWR_ConfigPVD	0	static
-stm32f0xx_hal_pwr_ex.c:168:6:HAL_PWR_EnablePVD	0	static
-stm32f0xx_hal_pwr_ex.c:177:6:HAL_PWR_DisablePVD	0	static
-stm32f0xx_hal_pwr_ex.c:204:13:HAL_PWR_PVDCallback	0	static
-stm32f0xx_hal_pwr_ex.c:187:6:HAL_PWR_PVD_IRQHandler	8	static
-stm32f0xx_hal_pwr_ex.c:225:6:HAL_PWREx_EnableVddio2Monitor	0	static
-stm32f0xx_hal_pwr_ex.c:235:6:HAL_PWREx_DisableVddio2Monitor	0	static
-stm32f0xx_hal_pwr_ex.c:264:13:HAL_PWREx_Vddio2MonitorCallback	0	static
-stm32f0xx_hal_pwr_ex.c:247:6:HAL_PWREx_Vddio2Monitor_IRQHandler	8	static

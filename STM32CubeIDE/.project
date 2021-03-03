@@ -212,9 +212,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_uart.h</locationURI>
 		</link>
 		<link>
-			<name>H0BR4/gcc</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<name>H0BR4/startup_stm32f091xc.s</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/startup_stm32f091xc.s</locationURI>
 		</link>
 		<link>
 			<name>H0BR4/stm32f0xx_hal_conf.h</name>
@@ -270,11 +270,6 @@
 			<name>User/topology_1.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/User/topology_1.h</locationURI>
-		</link>
-		<link>
-			<name>H0BR4/gcc/startup_stm32f091xc.s</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/gcc/startup_stm32f091xc.s</locationURI>
 		</link>
 		<link>
 			<name>Thirdparty/CMSIS/Device</name>

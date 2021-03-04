@@ -4,7 +4,7 @@
 
     File Name     : H0BR4.c
     Description   : Source code for module H0BR4.
-										IMU (ST LSM6DS3TR) + Digital Compass (ST LSM303AGRTR)
+					IMU (ST LSM6DS3TR) + Digital Compass (ST LSM303AGRTR)
 		
 		Required MCU resources : 
 		

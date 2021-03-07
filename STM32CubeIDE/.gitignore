@@ -1,4 +1,5 @@
 /Debug/
+<<<<<<< HEAD
 /Debug/BOS/
 /Debug/H0BR4/
 /Debug/Thirdparty/
@@ -7,3 +8,5 @@
 *.d
 *.su
 *.mk
+=======
+>>>>>>> master

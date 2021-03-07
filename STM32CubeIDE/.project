@@ -72,11 +72,14 @@
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_CLI.c</locationURI>
 		</link>
 		<link>
+<<<<<<< HEAD
 			<name>BOS/BOS_CLIcommands.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_CLIcommands.c</locationURI>
 		</link>
 		<link>
+=======
+>>>>>>> master
 			<name>BOS/BOS_MsgCodes.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_MsgCodes.h</locationURI>
@@ -107,6 +110,7 @@
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_freertos.c</locationURI>
 		</link>
 		<link>
+<<<<<<< HEAD
 			<name>BOS/BOS_inputs.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_inputs.c</locationURI>
@@ -122,6 +126,8 @@
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_msgparser.c</locationURI>
 		</link>
 		<link>
+=======
+>>>>>>> master
 			<name>BOS/BOS_utils.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/BOS/BOS_utils.h</locationURI>
@@ -192,6 +198,7 @@
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_it.c</locationURI>
 		</link>
 		<link>
+<<<<<<< HEAD
 			<name>H0BR4/H0BR4_rtc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_rtc.c</locationURI>
@@ -202,6 +209,8 @@
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_timers.c</locationURI>
 		</link>
 		<link>
+=======
+>>>>>>> master
 			<name>H0BR4/H0BR4_uart.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_uart.c</locationURI>
@@ -212,9 +221,15 @@
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_uart.h</locationURI>
 		</link>
 		<link>
+<<<<<<< HEAD
 			<name>H0BR4/startup_stm32f091xc.s</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/startup_stm32f091xc.s</locationURI>
+=======
+			<name>H0BR4/gcc</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+>>>>>>> master
 		</link>
 		<link>
 			<name>H0BR4/stm32f0xx_hal_conf.h</name>
@@ -272,6 +287,14 @@
 			<locationURI>PARENT-1-PROJECT_LOC/User/topology_1.h</locationURI>
 		</link>
 		<link>
+<<<<<<< HEAD
+=======
+			<name>H0BR4/gcc/startup_stm32f091xc.s</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/gcc/startup_stm32f091xc.s</locationURI>
+		</link>
+		<link>
+>>>>>>> master
 			<name>Thirdparty/CMSIS/Device</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -1162,6 +1185,7 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/portmacro.h</locationURI>
 		</link>
 	</linkedResources>
+<<<<<<< HEAD
 	<filteredResources>
 		<filter>
 			<id>1614855379168</id>
@@ -1173,4 +1197,6 @@
 			</matcher>
 		</filter>
 	</filteredResources>
+=======
+>>>>>>> master
 </projectDescription>

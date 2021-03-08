@@ -33,7 +33,7 @@
   */
 
 /*
-    MODIFIED by Hexabitz for BitzOS (BOS) V0.2.2 - Copyright (C) 2017-2020 Hexabitz
+    MODIFIED by Hexabitz for BitzOS (BOS) V0.2.4 - Copyright (C) 2017-2021 Hexabitz
     All rights reserved
 */
 
@@ -68,7 +68,7 @@ void MX_I2C_Init(void)
 }
 
 //-- Configure indicator LED
-void MX_I2C2_Init(void)
+ void MX_I2C2_Init(void)
 {
 
   hi2c2.Instance = I2C2;

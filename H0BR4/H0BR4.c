@@ -237,35 +237,34 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 	{
 		case CODE_H0BR4_GET_GYRO:
 		{
-			SampleGyroDPS(&H0BR4_gyroX, &H0BR4_gyroY, &H0BR4_gyroZ);
+			SampleGyroDPSToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift] );
 			
 			break;
 		}
 		case CODE_H0BR4_GET_ACC:
 		{
-			SampleAccG(&H0BR4_accX, &H0BR4_accY, &H0BR4_accZ);
+			SampleAccGToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift] );
 			
 			break;
 		}
 		case CODE_H0BR4_GET_MAG:
 		{
-			SampleMagMGauss(&H0BR4_magX, &H0BR4_magY, &H0BR4_magZ);
+			SampleMagMGaussToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift]);
 
-			
 			break;
 		}
 		case CODE_H0BR4_GET_TEMP:
 		{
-			SampleTempCelsius(&H0BR4_temp);
+			SampleTempCToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift]);
 			
 			break;
 		}
 		
 		case CODE_H0BR4_STREAM_GYRO:
 		{
-			period = ( (uint32_t) cMessage[port-1][3+shift] << 24 ) + ( (uint32_t) cMessage[port-1][2+shift] << 16 ) + ( (uint32_t) cMessage[port-1][1+shift] << 8 ) + cMessage[port-1][shift];
-			timeout = ( (uint32_t) cMessage[port-1][7+shift] << 24 ) + ( (uint32_t) cMessage[port-1][6+shift] << 16 ) + ( (uint32_t) cMessage[port-1][5+shift] << 8 ) + cMessage[port-1][4+shift];
-			if ((result = StreamGyroDPSToPort(port, dst, period, timeout)) != H0BR4_OK)
+			period = ((uint32_t) cMessage[port - 1][5 + shift] << 24) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
+			timeout = ((uint32_t) cMessage[port - 1][9 + shift] << 24) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
+			if ((result = StreamGyroDPSToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout)) != H0BR4_OK)
 				break;
 			
 			break;
@@ -273,27 +272,27 @@ Module_Status Module_MessagingTask(uint16_t code, uint8_t port, uint8_t src, uin
 
 		case CODE_H0BR4_STREAM_ACC:
 		{
-			period = ( (uint32_t) cMessage[port-1][3+shift] << 24 ) + ( (uint32_t) cMessage[port-1][2+shift] << 16 ) + ( (uint32_t) cMessage[port-1][1+shift] << 8 ) + cMessage[port-1][shift];
-			timeout = ( (uint32_t) cMessage[port-1][7+shift] << 24 ) + ( (uint32_t) cMessage[port-1][6+shift] << 16 ) + ( (uint32_t) cMessage[port-1][5+shift] << 8 ) + cMessage[port-1][4+shift];
-			if ((result = StreamAccGToPort(port, dst, period, timeout)) != H0BR4_OK)
+			period = ((uint32_t) cMessage[port - 1][5 + shift] << 24) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
+			timeout = ((uint32_t) cMessage[port - 1][9 + shift] << 24) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
+			if ((result = StreamAccGToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout)) != H0BR4_OK)
 				break;
 			
 			break;
 		}
 		case CODE_H0BR4_STREAM_MAG:
 		{
-			period = ( (uint32_t) cMessage[port-1][3+shift] << 24 ) + ( (uint32_t) cMessage[port-1][2+shift] << 16 ) + ( (uint32_t) cMessage[port-1][1+shift] << 8 ) + cMessage[port-1][shift];
-			timeout = ( (uint32_t) cMessage[port-1][7+shift] << 24 ) + ( (uint32_t) cMessage[port-1][6+shift] << 16 ) + ( (uint32_t) cMessage[port-1][5+shift] << 8 ) + cMessage[port-1][4+shift];
-			if ((result = StreamMagMGaussToPort(port, dst, period, timeout)) != H0BR4_OK)
+			period = ((uint32_t) cMessage[port - 1][5 + shift] << 24) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
+			timeout = ((uint32_t) cMessage[port - 1][9 + shift] << 24) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
+			if ((result = StreamMagMGaussToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout)) != H0BR4_OK)
 				break;
 			
 			break;
 		}
 		case CODE_H0BR4_STREAM_TEMP:
 		{
-			period = ( (uint32_t) cMessage[port-1][3+shift] << 24 ) + ( (uint32_t) cMessage[port-1][2+shift] << 16 ) + ( (uint32_t) cMessage[port-1][1+shift] << 8 ) + cMessage[port-1][shift];
-			timeout = ( (uint32_t) cMessage[port-1][7+shift] << 24 ) + ( (uint32_t) cMessage[port-1][6+shift] << 16 ) + ( (uint32_t) cMessage[port-1][5+shift] << 8 ) + cMessage[port-1][4+shift];
-			if ((result = StreamTempCToPort(port, dst, period, timeout)) != H0BR4_OK)
+			period = ((uint32_t) cMessage[port - 1][5 + shift] << 24) + ((uint32_t) cMessage[port - 1][4 + shift] << 16) + ((uint32_t) cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
+			timeout = ((uint32_t) cMessage[port - 1][9 + shift] << 24) + ((uint32_t) cMessage[port - 1][8 + shift] << 16) + ((uint32_t) cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
+			if ((result = StreamTempCToPort(cMessage[port-1][1+shift] ,cMessage[port-1][shift], period, timeout)) != H0BR4_OK)
 				break;
 			
 			break;
@@ -940,27 +939,32 @@ Module_Status SampleGyroDPSToPort(uint8_t port, uint8_t module)
 		status = H0BR4_ERR_IO;*/
 	
 	if (module==myID){
-						temp[0] = *((__IO uint8_t *)(&buffer[0])+3);  temp[1] = *((__IO uint8_t *)(&buffer[0])+2);
-						temp[2] = *((__IO uint8_t *)(&buffer[0])+1);  temp[3] = *((__IO uint8_t *)(&buffer[0])+0);
+		temp[0] =* ((__IO uint8_t*) (&buffer[0]) + 3);
+		temp[1] =* ((__IO uint8_t*) (&buffer[0]) + 2);
+		temp[2] =* ((__IO uint8_t*) (&buffer[0]) + 1);
+		temp[3] =* ((__IO uint8_t*) (&buffer[0]) + 0);
+
+		temp[4] =* ((__IO uint8_t*) (&buffer[1]) + 3);
+		temp[5] =* ((__IO uint8_t*) (&buffer[1]) + 2);
+		temp[6] =* ((__IO uint8_t*) (&buffer[1]) + 1);
+		temp[7] =* ((__IO uint8_t*) (&buffer[1]) + 0);
+
+		temp[8] =* ((__IO uint8_t*) (&buffer[2]) + 3);
+		temp[9] =* ((__IO uint8_t*) (&buffer[2]) + 2);
+		temp[10] =* ((__IO uint8_t*) (&buffer[2]) + 1);
+		temp[11] =* ((__IO uint8_t*) (&buffer[2]) + 0);
 		
-		        temp[4] = *((__IO uint8_t *)(&buffer[1])+3);  temp[5] = *((__IO uint8_t *)(&buffer[1])+2);
-						temp[6] = *((__IO uint8_t *)(&buffer[1])+1);  temp[7] = *((__IO uint8_t *)(&buffer[1])+0);
-
-		        temp[8] = *((__IO uint8_t *)(&buffer[2])+3);  temp[9] = *((__IO uint8_t *)(&buffer[2])+2);
-						temp[10] = *((__IO uint8_t *)(&buffer[2])+1); temp[11] = *((__IO uint8_t *)(&buffer[2])+0);
-
-						writePxITMutex(port, (char *)&temp[0],12*sizeof(uint8_t), 10);
-						//memset(temp,0,12*sizeof(uint8_t));
+		writePxITMutex(port,(char*) &temp[0],12 * sizeof(uint8_t),10);
 				}
 			else{
 						messageParams[0]=port;
-					  messageParams[1] = *((__IO uint8_t *)(&buffer[0])+3);  messageParams[2] = *((__IO uint8_t *)(&buffer[0])+2);
+						messageParams[1] = *((__IO uint8_t *)(&buffer[0])+3);  messageParams[2] = *((__IO uint8_t *)(&buffer[0])+2);
 						messageParams[3] = *((__IO uint8_t *)(&buffer[0])+1);  messageParams[4] = *((__IO uint8_t *)(&buffer[0])+0);
 				
-					  messageParams[5] = *((__IO uint8_t *)(&buffer[1])+3);  messageParams[6] = *((__IO uint8_t *)(&buffer[1])+2);
+						messageParams[5] = *((__IO uint8_t *)(&buffer[1])+3);  messageParams[6] = *((__IO uint8_t *)(&buffer[1])+2);
 						messageParams[7] = *((__IO uint8_t *)(&buffer[1])+1);  messageParams[8] = *((__IO uint8_t *)(&buffer[1])+0);
 				
-					  messageParams[9] = *((__IO uint8_t *)(&buffer[2])+3);  messageParams[10] = *((__IO uint8_t *)(&buffer[2])+2);
+						messageParams[9] = *((__IO uint8_t *)(&buffer[2])+3);  messageParams[10] = *((__IO uint8_t *)(&buffer[2])+2);
 						messageParams[11] = *((__IO uint8_t *)(&buffer[2])+1); messageParams[12] = *((__IO uint8_t *)(&buffer[2])+0);
 						SendMessageToModule(module, CODE_PORT_FORWARD, (sizeof(float)*3)+1);
 					}

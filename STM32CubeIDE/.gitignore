@@ -1,9 +1,0 @@
-/Debug/
-/Debug/BOS/
-/Debug/H0BR4/
-/Debug/Thirdparty/
-/Debug/User
-*.o
-*.d
-*.su
-*.mk

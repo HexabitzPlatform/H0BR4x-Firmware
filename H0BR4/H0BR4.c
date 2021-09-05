@@ -198,28 +198,28 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 	uint32_t period =0, timeout =0;
 	
 	switch(code){
-		case CODE_H0BR4_GET_GYRO: {
+		case CODE_H0BR4_SAMPLE_PORT_GYRO: {
 			SampleGyroDPSToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
 			
 			break;
 		}
-		case CODE_H0BR4_GET_ACC: {
+		case CODE_H0BR4_SAMPLE_PORT_ACC: {
 			SampleAccGToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
 			
 			break;
 		}
-		case CODE_H0BR4_GET_MAG: {
+		case CODE_H0BR4_SAMPLE_PORT_MAG: {
 			SampleMagMGaussToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
 			
 			break;
 		}
-		case CODE_H0BR4_GET_TEMP: {
+		case CODE_H0BR4_SAMPLE_PORT_TEMP: {
 			SampleTempCToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
 			
 			break;
 		}
 			
-		case CODE_H0BR4_STREAM_GYRO: {
+		case CODE_H0BR4_STREAM_PORT_GYRO: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
 			if((result =StreamGyroDPSToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
@@ -228,7 +228,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 			break;
 		}
 			
-		case CODE_H0BR4_STREAM_ACC: {
+		case CODE_H0BR4_STREAM_PORT_ACC: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
 			if((result =StreamAccGToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
@@ -236,7 +236,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 			
 			break;
 		}
-		case CODE_H0BR4_STREAM_MAG: {
+		case CODE_H0BR4_STREAM_PORT_MAG: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
 			if((result =StreamMagMGaussToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
@@ -244,7 +244,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 			
 			break;
 		}
-		case CODE_H0BR4_STREAM_TEMP: {
+		case CODE_H0BR4_STREAM_PORT_TEMP: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
 			if((result =StreamTempCToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
@@ -461,159 +461,7 @@ static Module_Status LSM6DS3Init(void){
 	return status;
 }
 
-//static Module_Status LSM303AccInit(void)
-//{
-//	// Check WhoAmI
-//	uint8_t who_am_i;
-//	if (LSM303AGR_ACC_R_WHO_AM_I(&hi2c2, &who_am_i ) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//
-//	if (who_am_i != LSM303AGR_ACC_WHO_AM_I)
-//		return H0BR4_ERR_LSM303;
-//	
-//	// Enable Block Data update
-//	if (LSM303AGR_ACC_W_BlockDataUpdate(&hi2c2, LSM303AGR_ACC_BDU_ENABLED) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	// FIFO Mode: ByPass
-//	if (LSM303AGR_ACC_W_FifoMode(&hi2c2, LSM303AGR_ACC_FM_BYPASS) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	// ODR: Power Down
-//	if (LSM303AGR_ACC_W_ODR(&hi2c2, LSM303AGR_ACC_ODR_DO_PWR_DOWN) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	// Operating mode Selection: High Resolution
-//	if (LSM303AGR_ACC_W_HiRes(&hi2c2, LSM303AGR_ACC_HR_ENABLED) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	// Operating mode Selection: Low Power Disable
-//	if (LSM303AGR_ACC_W_LOWPWR_EN(&hi2c2, LSM303AGR_ACC_LPEN_DISABLED) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	// Full Scale Selection
-//	if (LSM303AGR_ACC_W_FullScale(&hi2c2, LSM303AGR_ACC_FS_8G) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	// Enable Axes: X, Y, Z
-//	if (LSM303AGR_ACC_W_XEN(&hi2c2, LSM303AGR_ACC_XEN_ENABLED) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	if (LSM303AGR_ACC_W_YEN(&hi2c2, LSM303AGR_ACC_YEN_ENABLED) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	if (LSM303AGR_ACC_W_ZEN(&hi2c2, LSM303AGR_ACC_ZEN_ENABLED) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	return H0BR4_OK;
-//}
 
-//static Module_Status LSM303AccDeInit(void)
-//{
-//	// Check WhoAmI
-//	uint8_t who_am_i;
-//	if ( LSM303AGR_ACC_R_WHO_AM_I(&hi2c2, &who_am_i ) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//  
-//	if (who_am_i != LSM303AGR_ACC_WHO_AM_I)
-//		return H0BR4_ERR_LSM303;
-//	
-//	// ODR: Power Down
-//	if (LSM303AGR_ACC_W_ODR(&hi2c2, LSM303AGR_ACC_ODR_DO_PWR_DOWN) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	return H0BR4_OK;
-//}
-
-//static Module_Status LSM303AccGetAxis(int *accX, int *accY, int *accZ)
-//{
-//	int data[3];
-//  /* Read data from LSM303AGR. */
-//  if (LSM303AGR_ACC_Get_Acceleration(&hi2c2, data) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//  /* Calculate the data. */
-//  *accX = data[0];
-//  *accX = data[1];
-//  *accZ = data[2];
-//
-//  return H0BR4_OK;
-//}
-
-//static Module_Status LSM303AccGetAxesRaw(int16_t *accX, int16_t *accY, int16_t *accZ)
-//{
-//  Type3Axis16bit_U raw_data_tmp;
-//  uint8_t shift = 0;
-//  LSM303AGR_ACC_LPEN_t lp;
-//  LSM303AGR_ACC_HR_t hr;
-//
-//  /* Determine which operational mode the acc is set */
-//  if (LSM303AGR_ACC_R_HiRes(&hi2c2, &hr) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//
-//  if (LSM303AGR_ACC_R_LOWPWR_EN(&hi2c2, &lp) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//
-//  if ((lp == LSM303AGR_ACC_LPEN_ENABLED) && (hr == LSM303AGR_ACC_HR_DISABLED)) {
-//    /* op mode is LP 8-bit */
-//    shift = 8;
-//  } else if ((lp == LSM303AGR_ACC_LPEN_DISABLED) && (hr == LSM303AGR_ACC_HR_DISABLED)) {
-//    /* op mode is Normal 10-bit */
-//    shift = 6;
-//  } else if ((lp == LSM303AGR_ACC_LPEN_DISABLED) && (hr == LSM303AGR_ACC_HR_ENABLED)) {
-//    /* op mode is HR 12-bit */
-//    shift = 4;
-//  } else {
-//    return H0BR4_ERR_LSM303;
-//  }
-//
-//  /* Read output registers from LSM303AGR_ACC_GYRO_OUTX_L_XL to LSM303AGR_ACC_GYRO_OUTZ_H_XL. */
-//  if (LSM303AGR_ACC_Get_Raw_Acceleration(&hi2c2, raw_data_tmp.u8bit) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//
-//  /* Format the data. */
-//  *accX = (raw_data_tmp.i16bit[0] >> shift);
-//  *accY = (raw_data_tmp.i16bit[1] >> shift);
-//  *accZ = (raw_data_tmp.i16bit[2] >> shift);
-//
-//  return H0BR4_OK;
-//}
-
-//static Module_Status LSM303AccGetDRDYStatus(bool *status)
-//{
-//  LSM303AGR_ACC_XDA_t status_raw;
-//  if (LSM303AGR_ACC_R_XDataAvail(&hi2c2, &status_raw ) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//  
-//  switch (status_raw) {
-//    case LSM303AGR_ACC_XDA_AVAILABLE:
-//      *status = true;
-//      break;
-//    case LSM303AGR_ACC_XDA_NOT_AVAILABLE:
-//      *status = false;
-//      break;
-//    default:
-//      return H0BR4_ERR_LSM303;
-//  }
-//  return H0BR4_OK;
-//}
-
-//static Module_Status LSM303AccClearDRDY(void)
-//{
-//  uint8_t regValue[6];
-//	
-//	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_X_L, regValue, 2) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//  
-//	
-//	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_Y_L, regValue, 2) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	if (LSM303AGR_ACC_ReadReg(&hi2c2, LSM303AGR_ACC_OUT_Z_L, regValue, 2) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//  return H0BR4_OK;
-//}
 
 static Module_Status LSM303MagEnable(void){
 	if(LSM303AGR_MAG_W_MD(&hi2c2,LSM303AGR_MAG_MD_CONTINUOS_MODE) != MEMS_SUCCESS)
@@ -622,13 +470,6 @@ static Module_Status LSM303MagEnable(void){
 	return H0BR4_OK;
 }
 
-//static Module_Status LSM303MagDisable(void)
-//{
-//	if (LSM303AGR_MAG_W_MD(&hi2c2, LSM303AGR_MAG_MD_IDLE1_MODE) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//	return H0BR4_OK;
-//}
 
 static Module_Status LSM303MagInit(void){
 	// Check the Sensor
@@ -658,18 +499,7 @@ static Module_Status LSM303MagInit(void){
 	return LSM303MagEnable();
 }
 
-//static Module_Status LSM303MagDeInit(void)
-//{
-//	// Check the Sensor
-//	uint8_t who_am_i = 0x00;
-//  if (LSM303AGR_MAG_R_WHO_AM_I(&hi2c2, &who_am_i ) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//	
-//  if (who_am_i != LSM303AGR_MAG_WHO_AM_I)
-//    return H0BR4_ERR_LSM303;
-//	
-//	return LSM303MagDisable();
-//}
+
 
 static Module_Status LSM303SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
 	int16_t *pData;
@@ -703,25 +533,6 @@ static Module_Status LSM303SampleMagMGauss(int *magX,int *magY,int *magZ){
 	return status;
 }
 
-//static Module_Status LSM303MagGetDRDYStatus(bool *status)
-//{
-//  LSM303AGR_MAG_ZYXDA_t status_raw;
-//
-//  if (LSM303AGR_MAG_R_ZYXDA(&hi2c2, &status_raw ) != MEMS_SUCCESS)
-//    return H0BR4_ERR_LSM303;
-//
-//  switch (status_raw) {
-//    case LSM303AGR_MAG_ZYXDA_EV_ON:
-//      *status = true;
-//      break;
-//    case LSM303AGR_MAG_ZYXDA_EV_OFF:
-//      *status = false;
-//      break;
-//    default:
-//      return H0BR4_ERR_LSM303;
-//  }
-//  return H0BR4_OK;
-//}
 
 static Module_Status PollingSleepCLISafe(uint32_t period){
 	const unsigned DELTA_SLEEP_MS =100; // milliseconds

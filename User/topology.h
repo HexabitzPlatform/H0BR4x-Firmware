@@ -27,16 +27,15 @@
 #define _mod5	5<<3
 // Topology
 static uint16_t array[__N ][7] ={
-	{_H01R0, 0, 0, 0, 0, 0, _mod2 | P1}, 								 // Module 1
+	{_H0BR4, 0, 0, 0, 0, 0, _mod2 | P1}, 								 // Module 1
 	{_H26R0, _mod1 | P6, 0,0, _mod3 | P2, 0, 0},					     // Module 2
-	{_H0BR4, _mod4 | P3,  0, 0,_mod2 | P4, 0, 0},					     // Module 3
-	{_H07R3,  _mod5 | P3, 0, _mod3 | P1,0, 0, 0},					     // Module 4
-	{_P01R0, 0, 0, _mod4 | P1,0, 0, 0},					  			     // Module 5
+
+
 };
 
 // Configurations for duplex serial ports
 #if ( _module == 1 )
-	#define	H01R0	1
+	#define	H0BR4			1
 	#define	_P1pol_normal	1
 	#define	_P2pol_normal	1
 	#define	_P3pol_normal	1
@@ -56,36 +55,7 @@ static uint16_t array[__N ][7] ={
 
 #endif
 
-#if ( _module == 3 )
-	#define	H0BR4	1
-	#define	_P1pol_normal	1
-	#define	_P2pol_normal	1
-	#define	_P3pol_normal   1
-	#define	_P4pol_reversed	1
-	#define	_P5pol_normal	1
-	#define	_P6pol_normal	1
 
-#endif
-#if ( _module == 4 )
-	#define	H07R3	1
-	#define	_P1pol_normal	1
-	#define	_P2pol_normal	1
-	#define	_P3pol_reversed	1
-	#define	_P4pol_normal	1
-	#define	_P5pol_normal	1
-	#define	_P6pol_normal	1
-
-#endif
-#if ( _module == 5 )
-	#define	P01R0	1
-	#define	_P1pol_normal	1
-	#define	_P2pol_normal	1
-	#define	_P3pol_reversed	1
-	#define	_P4pol_normal	1
-	#define	_P5pol_normal	1
-	#define	_P6pol_normal	1
-
-#endif
 #ifdef __cplusplus
 }
 #endif

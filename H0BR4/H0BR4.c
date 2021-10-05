@@ -53,6 +53,23 @@ int H0BR4_magX =0.0f;
 int H0BR4_magY =0.0f;
 int H0BR4_magZ =0.0f;
 float H0BR4_temp =0.0f;
+//float x __attribute__((section(".mySection")));
+//float y __attribute__((section(".mySection")));
+//float z __attribute__((section(".mySection")));
+float xGyro __attribute__((section(".mySection")));
+float yGyro __attribute__((section(".mySection")));
+float zGyro __attribute__((section(".mySection")));
+float xAcc __attribute__((section(".mySection")));
+float yAcc __attribute__((section(".mySection")));
+float zAcc __attribute__((section(".mySection")));
+int xMag __attribute__((section(".mySection")));
+int yMag __attribute__((section(".mySection")));
+int zMag __attribute__((section(".mySection")));
+float temperature __attribute__((section(".mySection")));
+//float xAcc,yAcc,zAcc;
+//float xGyro,yGyro,zGyro;
+//int xMag,yMag,zMag;
+//float temperature;
 
 module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr =&H0BR4_gyroX, .paramFormat =FMT_FLOAT, .paramName ="gyroX"}, {.paramPtr =&H0BR4_gyroY, .paramFormat =FMT_FLOAT, .paramName ="gyroY"}, {.paramPtr =&H0BR4_gyroZ, .paramFormat =FMT_FLOAT, .paramName ="gyroZ"}, {.paramPtr =&H0BR4_accX, .paramFormat =FMT_FLOAT, .paramName ="accX"}, {.paramPtr =&H0BR4_accY, .paramFormat =FMT_FLOAT, .paramName ="accY"}, {.paramPtr =&H0BR4_accZ, .paramFormat =FMT_FLOAT, .paramName ="accZ"}, {.paramPtr =&H0BR4_magX, .paramFormat =FMT_INT32, .paramName ="magX"}, {.paramPtr =&H0BR4_magY, .paramFormat =FMT_INT32, .paramName ="magY"}, {.paramPtr =&H0BR4_magZ, .paramFormat =FMT_INT32, .paramName ="magZ"}, {.paramPtr =&H0BR4_temp, .paramFormat =FMT_FLOAT, .paramName ="temp"}, };
 
@@ -189,6 +206,20 @@ void Module_Peripheral_Init(void){
 	
 }
 
+void initialValue(void)
+{
+	xGyro=0;
+	yGyro=0;
+	zGyro=0;
+	xAcc=0;
+	yAcc=0;
+	zAcc=0;
+	xMag=0;
+	yMag=0;
+	zMag=0;
+	temperature=0;
+}
+
 /*-----------------------------------------------------------*/
 
 /* --- H0BR4 message processing task. 
@@ -199,22 +230,22 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 	
 	switch(code){
 		case CODE_H0BR4_SAMPLE_PORT_GYRO: {
-			SampleGyroDPSToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
+			SampleGyroDPSToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift]);
 			
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_PORT_ACC: {
-			SampleAccGToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
+			SampleAccGToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift]);
 			
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_PORT_MAG: {
-			SampleMagMGaussToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
+			SampleMagMGaussToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift]);
 			
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_PORT_TEMP: {
-			SampleTempCToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift]);
+			SampleTempCToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift]);
 			
 			break;
 		}
@@ -222,7 +253,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case CODE_H0BR4_STREAM_PORT_GYRO: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
-			if((result =StreamGyroDPSToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
+			if((result =StreamGyroDPSToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift],period,timeout)) != H0BR4_OK)
 				break;
 			
 			break;
@@ -231,7 +262,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case CODE_H0BR4_STREAM_PORT_ACC: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
-			if((result =StreamAccGToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
+			if((result =StreamAccGToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift],period,timeout)) != H0BR4_OK)
 				break;
 			
 			break;
@@ -239,7 +270,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case CODE_H0BR4_STREAM_PORT_MAG: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
-			if((result =StreamMagMGaussToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
+			if((result =StreamMagMGaussToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift],period,timeout)) != H0BR4_OK)
 				break;
 			
 			break;
@@ -247,7 +278,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 		case CODE_H0BR4_STREAM_PORT_TEMP: {
 			period =((uint32_t )cMessage[port - 1][5 + shift] << 24) + ((uint32_t )cMessage[port - 1][4 + shift] << 16) + ((uint32_t )cMessage[port - 1][3 + shift] << 8) + cMessage[port - 1][2 + shift];
 			timeout =((uint32_t )cMessage[port - 1][9 + shift] << 24) + ((uint32_t )cMessage[port - 1][8 + shift] << 16) + ((uint32_t )cMessage[port - 1][7 + shift] << 8) + cMessage[port - 1][6 + shift];
-			if((result =StreamTempCToPort(cMessage[port - 1][1 + shift],cMessage[port - 1][shift],period,timeout)) != H0BR4_OK)
+			if((result =StreamTempCToPort(cMessage[port - 1][shift],cMessage[port - 1][1+shift],period,timeout)) != H0BR4_OK)
 				break;
 			
 			break;
@@ -275,9 +306,7 @@ void RegisterModuleCLICommands(void){
 	FreeRTOS_CLIRegisterCommand(&StreamCommandDefinition);
 	FreeRTOS_CLIRegisterCommand(&StopCommandDefinition);
 }
-void ExecuteMonitor(void){
-	
-}
+
 /*-----------------------------------------------------------*/
 
 /* --- Get the port for a given UART. 
@@ -717,7 +746,9 @@ Module_Status SampleGyroDPSToString(char *cstring,size_t maxLen){
 	
 	if((status =SampleGyroDPS(&x,&y,&z)) != H0BR4_OK)
 		return status;
-	
+	xGyro=x;
+	yGyro=y;
+	zGyro=z;
 	snprintf(cstring,maxLen,"Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z);
 	return status;
 }
@@ -806,7 +837,9 @@ Module_Status SampleAccGToString(char *cstring,size_t maxLen){
 	
 	if((status =SampleAccG(&x,&y,&z)) != H0BR4_OK)
 		return status;
-	
+	xAcc=x;
+	yAcc=y;
+	zAcc=z;
 	snprintf(cstring,maxLen,"Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z);
 	return status;
 }
@@ -895,7 +928,9 @@ Module_Status SampleMagMGaussToString(char *cstring,size_t maxLen){
 	
 	if((status =LSM303SampleMagMGauss(&x,&y,&z)) != H0BR4_OK)
 		return status;
-	
+	xMag=x;
+	yMag=y;
+	zMag=z;
 	snprintf(cstring,maxLen,"Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n",x,y,z);
 	return status;
 }
@@ -957,7 +992,7 @@ Module_Status SampleTempCToString(char *cstring,size_t maxLen){
 	
 	if((status =LSM6DS3SampleTempCelsius(&temp)) != H0BR4_OK)
 		return status;
-	
+	temperature=temp;
 	snprintf(cstring,maxLen,"Temp(Celsius) | %0.2f\r\n",temp);
 	return status;
 }
@@ -1305,5 +1340,8 @@ uint8_t ClearROtopology(void){
 	
 	return SaveToRO();
 }
+
+
+
 /*-----------------------------------------------------------*/
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

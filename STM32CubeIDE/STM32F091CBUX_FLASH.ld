@@ -147,7 +147,7 @@ SECTIONS
   
   
 /* my sectin  */
-      .myBufBlock 0x20000000 :
+      .mySection 0x20000000 :
   {
   . = ALIGN(4);
   _ssection = .;  

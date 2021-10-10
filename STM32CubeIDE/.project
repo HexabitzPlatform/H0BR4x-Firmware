@@ -212,9 +212,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_uart.h</locationURI>
 		</link>
 		<link>
-			<name>H0BR4/gcc</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<name>H0BR4/startup_stm32f091xc.s</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/startup_stm32f091xc.s</locationURI>
 		</link>
 		<link>
 			<name>H0BR4/stm32f0xx_hal_conf.h</name>
@@ -267,14 +267,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/User/project.h</locationURI>
 		</link>
 		<link>
-			<name>User/topology_1.h</name>
+			<name>User/topology.h</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/User/topology_1.h</locationURI>
-		</link>
-		<link>
-			<name>H0BR4/gcc/startup_stm32f091xc.s</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/gcc/startup_stm32f091xc.s</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/User/topology.h</locationURI>
 		</link>
 		<link>
 			<name>Thirdparty/CMSIS/Device</name>
@@ -1167,15 +1162,4 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/Middleware/FreeRTOS/Source/portable/GCC/ARM_CM0/portmacro.h</locationURI>
 		</link>
 	</linkedResources>
-	<filteredResources>
-		<filter>
-			<id>1615120685109</id>
-			<name></name>
-			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-H0BR4x</arguments>
-			</matcher>
-		</filter>
-	</filteredResources>
 </projectDescription>

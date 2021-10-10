@@ -1,3 +1,5 @@
 MDK-ARM/Objects/
 MDK-ARM/Listings/
 *.Admin
+*.o
+*.su

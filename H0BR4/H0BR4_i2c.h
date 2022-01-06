@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
  All rights reserved
 
- File Name          : H08R6_i2c.h
+ File Name          : H0BR4_i2c.h
  Description        : This file contains all the functions prototypes for
  the i2c
 

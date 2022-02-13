@@ -272,6 +272,71 @@ void DMA_STREAM_Setup(UART_HandleTypeDef* huartSrc, UART_HandleTypeDef* huartDst
 /*-----------------------------------------------------------*/
 /* Private functions ----------------------------------------*/
 /*-----------------------------------------------------------*/
+/*-----------------------------------------------------------*/
+
+/* --- Stop a streaming DMA ---
+ */
+void StopStreamDMA(uint8_t port) {
+	DMA_HandleTypeDef *hDMA;
+
+	/* Select DMA struct */
+	hDMA = &streamDMA[port - 1];
+
+	HAL_DMA_Abort(hDMA);
+	hDMA->Instance->CNDTR = 0;
+	dmaStreamCount[port - 1] = 0;
+	dmaStreamTotal[port - 1] = 0;
+
+}
+
+
+/* --- Stop a messaging DMA ---
+ */
+void StopMsgDMA(uint8_t port){
+	DMA_HandleTypeDef *hDMA;
+
+	/* Select DMA struct */
+	hDMA =&msgRxDMA[port - 1];
+
+	HAL_DMA_Abort(hDMA);
+	hDMA->Instance->CNDTR =0;
+}
+
+
+/*-----------------------------------------------------------*/
+
+/* Switch messaging DMA channels to streaming
+ */
+void SwitchMsgDMAToStream(uint8_t port) {
+	// TODO - Make sure all messages in the RX buffer have been parsed?
+
+	// Stop the messaging DMA
+	StopMsgDMA(port);
+
+	// Initialize a streaming DMA using same channel
+	DMA_STREAM_CH_Init(&streamDMA[port - 1], msgRxDMA[port - 1].Instance);
+}
+
+/*-----------------------------------------------------------*/
+
+/* Switch streaming DMA channel to messaging
+ */
+void SwitchStreamDMAToMsg(uint8_t port) {
+	// Stop the streaming DMA
+	StopStreamDMA(port);
+
+	// Initialize a messaging DMA using same channels
+	DMA_MSG_RX_CH_Init(&msgRxDMA[port - 1], streamDMA[port - 1].Instance);
+
+	// Remove stream DMA and change port status
+	portStatus[GetPort(streamDMA[port - 1].Parent)] = FREE;
+	streamDMA[port - 1].Instance = 0;
+	dmaStreamDst[port - 1] = 0;
+
+	// Read this port again in messaging mode
+	DMA_MSG_RX_Setup(GetUart(port), &msgRxDMA[port - 1]);
+
+}
 
 /* Setup DMA interrupts  
 */

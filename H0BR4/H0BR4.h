@@ -17,7 +17,8 @@
 #include "H0BR4_uart.h"
 #include "H0BR4_i2c.h"
 #include "H0BR4_gpio.h"	
-#include "H0BR4_dma.h"		
+#include "H0BR4_inputs.h"
+#include "H0BR4_eeprom.h"
 
 /* Exported definitions -------------------------------------------------------*/
 
@@ -190,7 +191,7 @@ Module_Status StreamTempCToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamTempCToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 void stopStreamMems(void);
-
+void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 /* -----------------------------------------------------------------------
  |															Commands																 	|
  ----------------------------------------------------------------------- 

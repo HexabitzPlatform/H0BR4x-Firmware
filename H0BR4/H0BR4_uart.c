@@ -482,5 +482,68 @@ void SwapUartPins(UART_HandleTypeDef *huart,uint8_t direction){
 		}
 	}
 }
+/* --- Read Ports directions when a pre-defined topology file is used ---
+ */
+BOS_Status ReadPortsDir(void) {
+	BOS_Status result = BOS_OK;
+	/* Ask all other modules for their ports directions */
+	for (uint8_t i = 1; i <= N; i++) {
+		if (i != myID) {
+			SendMessageToModule(i, CODE_READ_PORT_DIR, 0);
+			Delay_ms_no_rtos(50);
+			if (responseStatus != BOS_OK) {
+				result = BOS_ERR_NoResponse;
+			}
+		} else {
+			/* Check my own ports */
+			for (uint8_t p = 1; p <= NumOfPorts; p++) {
+				arrayPortsDir[myID - 1] |= (0x0000); /* Set bit to 1 */
+			}
+		}
+	}
+
+	return result;
+}
+
+/* --- Read Ports directions when a pre-defined topology file is used ---
+ */
+BOS_Status ReadPortsDirMSG(uint8_t SourceModule) {
+	BOS_Status result = BOS_OK;
+	uint16_t temp =0;
+	/* Check my own ports */
+	for (int p = 1; p <= NumOfPorts; p++) {
+		if (GetUart(p)->AdvancedInit.Swap== UART_ADVFEATURE_SWAP_ENABLE) {
+			messageParams[temp++] = p;
+		}
+	}
+	/* Send response */
+	SendMessageToModule(SourceModule, CODE_READ_PORT_DIR_RESPONSE, temp);
+	return result;
+}
+/*-----------------------------------------------------------*/
+#ifndef __N
+/* --- Update module port directions based on what is stored in eeprom ---
+*/
+BOS_Status UpdateMyPortsDir(void)
+{
+	BOS_Status result = BOS_OK;
+
+	/* Check port direction */
+	for (uint8_t p=1 ; p<=NumOfPorts ; p++)
+	{
+		if ( !(arrayPortsDir[myID-1] & (0x8000>>(p-1))) ) {
+			/* Port is normal */
+			SwapUartPins(GetUart(p), NORMAL);
+		} else {
+			/* Port is reversed */
+			SwapUartPins(GetUart(p), REVERSED);
+		}
+	}
+
+	return result;
+}
+#endif
+
+/*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

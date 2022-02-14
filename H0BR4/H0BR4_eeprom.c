@@ -799,23 +799,6 @@ BOS_Status EraseSector(uint32_t sector ) {
 
 	return result;
 }
-
-/* Erase sector if force write is requested */
-BOS_Status EraseSector(uint32_t sector ) {
-	BOS_Status result = BOS_OK;
-	HAL_StatusTypeDef status;
-
-		FLASH_EraseInitTypeDef erase;
-		uint32_t eraseError;
-		erase.TypeErase = FLASH_TYPEERASE_PAGES;
-		erase.PageAddress = temp32;
-		erase.NbPages =1;
-		status =HAL_FLASHEx_Erase(&erase,&eraseError);
-		if(status != HAL_OK || eraseError != 0xFFFFFFFF)
-			responseStatus =BOS_ERR_REMOTE_WRITE_FLASH;
-
-	return result;
-}
 /**
  * @}
  */

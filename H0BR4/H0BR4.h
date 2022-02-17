@@ -19,7 +19,7 @@
 #include "H0BR4_gpio.h"	
 #include "H0BR4_inputs.h"
 #include "H0BR4_eeprom.h"
-
+#include "H0BR4_dma.h"
 /* Exported definitions -------------------------------------------------------*/
 
 #define	modulePN		_H0BR4

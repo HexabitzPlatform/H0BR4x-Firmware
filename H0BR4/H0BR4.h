@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
  All rights reserved
  
  File Name     : H0BR4.c
@@ -17,8 +17,9 @@
 #include "H0BR4_uart.h"
 #include "H0BR4_i2c.h"
 #include "H0BR4_gpio.h"	
-#include "H0BR4_dma.h"		
-
+#include "H0BR4_inputs.h"
+#include "H0BR4_eeprom.h"
+#include "H0BR4_dma.h"
 /* Exported definitions -------------------------------------------------------*/
 
 #define	modulePN		_H0BR4
@@ -190,7 +191,7 @@ Module_Status StreamTempCToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamTempCToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 void stopStreamMems(void);
-
+void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 /* -----------------------------------------------------------------------
  |															Commands																 	|
  ----------------------------------------------------------------------- 

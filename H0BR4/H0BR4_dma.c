@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_dma.c
@@ -272,6 +272,71 @@ void DMA_STREAM_Setup(UART_HandleTypeDef* huartSrc, UART_HandleTypeDef* huartDst
 /*-----------------------------------------------------------*/
 /* Private functions ----------------------------------------*/
 /*-----------------------------------------------------------*/
+/*-----------------------------------------------------------*/
+
+/* --- Stop a streaming DMA ---
+ */
+void StopStreamDMA(uint8_t port) {
+	DMA_HandleTypeDef *hDMA;
+
+	/* Select DMA struct */
+	hDMA = &streamDMA[port - 1];
+
+	HAL_DMA_Abort(hDMA);
+	hDMA->Instance->CNDTR = 0;
+	dmaStreamCount[port - 1] = 0;
+	dmaStreamTotal[port - 1] = 0;
+
+}
+
+
+/* --- Stop a messaging DMA ---
+ */
+void StopMsgDMA(uint8_t port){
+	DMA_HandleTypeDef *hDMA;
+
+	/* Select DMA struct */
+	hDMA =&msgRxDMA[port - 1];
+
+	HAL_DMA_Abort(hDMA);
+	hDMA->Instance->CNDTR =0;
+}
+
+
+/*-----------------------------------------------------------*/
+
+/* Switch messaging DMA channels to streaming
+ */
+void SwitchMsgDMAToStream(uint8_t port) {
+	// TODO - Make sure all messages in the RX buffer have been parsed?
+
+	// Stop the messaging DMA
+	StopMsgDMA(port);
+
+	// Initialize a streaming DMA using same channel
+	DMA_STREAM_CH_Init(&streamDMA[port - 1], msgRxDMA[port - 1].Instance);
+}
+
+/*-----------------------------------------------------------*/
+
+/* Switch streaming DMA channel to messaging
+ */
+void SwitchStreamDMAToMsg(uint8_t port) {
+	// Stop the streaming DMA
+	StopStreamDMA(port);
+
+	// Initialize a messaging DMA using same channels
+	DMA_MSG_RX_CH_Init(&msgRxDMA[port - 1], streamDMA[port - 1].Instance);
+
+	// Remove stream DMA and change port status
+	portStatus[GetPort(streamDMA[port - 1].Parent)] = FREE;
+	streamDMA[port - 1].Instance = 0;
+	dmaStreamDst[port - 1] = 0;
+
+	// Read this port again in messaging mode
+	DMA_MSG_RX_Setup(GetUart(port), &msgRxDMA[port - 1]);
+
+}
 
 /* Setup DMA interrupts  
 */
@@ -604,22 +669,21 @@ void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
 /*
  * calculate CRC8 byte for a data buffer
  */
-uint8_t  CalculateCRC8(uint32_t pBuffer[], uint16_t size)
+uint8_t  CalculateCRC8(uint8_t pBuffer[], uint16_t size)
 {
-	uint8_t pTemp;
-	//uint32_t crcBuffer[size]=*pData;
-	/* check if the passed variables are null */
-	if (NULL!=pBuffer && 0!=size)
-	{
-		pTemp=HAL_CRC_Calculate(&hcrc, pBuffer, size/4);
-		if ((size%4)!=0)
-		{
-			pTemp=HAL_CRC_Accumulate(&hcrc, &pBuffer[(size/4)*4], 1);
-		}
-		return pTemp;
-	}
-	else
-	return 0;
+  uint8_t pTemp;
+  /* check if the passed variables are null */
+  if (NULL!=pBuffer && 0!=size)
+  {
+    pTemp=HAL_CRC_Calculate(&hcrc, (uint32_t*)pBuffer, size/4);
+    if ((size%4)!=0)
+    {
+      pTemp=HAL_CRC_Accumulate(&hcrc, (uint32_t*)&pBuffer[(size/4)*4], 1);
+    }
+    return pTemp;
+  }
+  else
+  return 0;
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

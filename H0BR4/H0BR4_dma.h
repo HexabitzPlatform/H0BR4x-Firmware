@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_dma.h
@@ -40,7 +40,11 @@ extern void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
 extern void DMA_MSG_TX_Setup(UART_HandleTypeDef *huart);
 extern void DMA_MSG_TX_UnSetup(UART_HandleTypeDef *huart);
 extern void CRC_Init(void);
-
+extern uint8_t  CalculateCRC8(uint8_t pBuffer[], uint16_t size);
+extern void StopMsgDMA(uint8_t port);
+extern void StopStreamDMA(uint8_t port);
+extern void SwitchMsgDMAToStream(uint8_t port);
+extern void SwitchStreamDMAToMsg(uint8_t port);
 #ifdef __cplusplus
 }
 #endif

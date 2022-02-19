@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.5 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.6 - Copyright (C) 2017-2022 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_uart.h
@@ -41,7 +41,7 @@ extern HAL_StatusTypeDef writePxMutex(uint8_t port,char *buffer,uint16_t n,uint3
 extern HAL_StatusTypeDef readPxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout);
 extern HAL_StatusTypeDef writePxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout);
 extern HAL_StatusTypeDef writePxDMAMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout);
-
+extern BOS_Status ReadPortsDirMSG(uint8_t SourceModule);
 #ifdef __cplusplus
 }
 #endif

@@ -672,18 +672,47 @@ void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
 uint8_t  CalculateCRC8(uint8_t pBuffer[], uint16_t size)
 {
   uint8_t pTemp;
+  uint8_t temp_index;
+  uint8_t temp_buffer[4] = {0};
+
   /* check if the passed variables are null */
   if (NULL!=pBuffer && 0!=size)
   {
-    pTemp=HAL_CRC_Calculate(&hcrc, (uint32_t*)pBuffer, size/4);
-    if ((size%4)!=0)
-    {
-      pTemp=HAL_CRC_Accumulate(&hcrc, (uint32_t*)&pBuffer[(size/4)*4], 1);
-    }
-    return pTemp;
+	if(size < 4)
+	{
+		temp_index = 0;
+		for(int i=0; i<4; i++)
+		{
+			temp_buffer[i] = pBuffer[temp_index++];
+			if(--size == 0) break;
+		}
+		pTemp=HAL_CRC_Calculate(&hcrc, (uint32_t*)temp_buffer, 1);
+
+	}
+
+	else
+	{
+		pTemp=HAL_CRC_Calculate(&hcrc, (uint32_t*)pBuffer, size/4);
+		if ((size%4)!=0)
+		{
+			temp_index = size - (size%4);
+			size %= 4;
+			for(int i=0; i<4; i++)
+			{
+				temp_buffer[i] = pBuffer[temp_index++];
+				if(--size == 0) break;
+			}
+		  	pTemp=HAL_CRC_Accumulate(&hcrc, (uint32_t*)temp_buffer, 1);
+
+		}
+	}
+
+	return pTemp;
   }
-  else
-  return 0;
+  
+else
+	return 0;
 }
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -202,7 +202,8 @@ void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart, DMA_HandleTypeDef *hDMA)
 	SetupDMAInterrupts(hDMA, MSG_DMA_INT_PRIORITY);
 	
 	/* Start DMA stream	*/	
-	HAL_UART_Receive_DMA(huart, (uint8_t *)&UARTRxBuf[GetPort(huart)-1], MSG_RX_BUF_SIZE);			
+	//HAL_UART_Receive_DMA(huart, (uint8_t *)&UARTRxBuf[GetPort(huart)-1], MSG_RX_BUF_SIZE);
+	HAL_UART_Receive_DMA(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);			
 }
 
 /*-----------------------------------------------------------*/

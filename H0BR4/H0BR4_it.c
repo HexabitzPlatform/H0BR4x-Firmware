@@ -216,7 +216,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	uint8_t port_index = port_number - 1;
 	if(Rx_Data[port_index] == 0x0D && portStatus[port_number] == FREE)
 	{
-		for(int i=0;i<=NumOfPorts;i++) portStatus[i] = FREE; // Free all ports
+		for(int i=0;i<=NumOfPorts;i++) // Free previous CLI port
+		{
+			if(portStatus[i] == CLI)
+			{
+				portStatus[i] = FREE;
+			}
+		}
 		portStatus[port_number] =CLI; // Continue the CLI session on this port
 		PcPort = port_number;
 		xTaskNotifyGive(xCommandConsoleTaskHandle);

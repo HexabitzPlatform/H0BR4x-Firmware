@@ -8,6 +8,7 @@
 
  */
 
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __gpio_H
 #define __gpio_H
@@ -16,11 +17,10 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f0xx_hal.h"
+#include "stm32g0xx_hal.h"
 
 extern void GPIO_Init(void);
 extern void IND_LED_Init(void);
-extern void MEMS_GPIO_Init(void);
 
 #ifdef __cplusplus
 }

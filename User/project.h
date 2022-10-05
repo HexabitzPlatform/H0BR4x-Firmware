@@ -15,6 +15,7 @@
 
 /* Include a predefined topology here */
 //#include "topology.h"
+
 /* Emulated EEPROM Virtual addresses for user parameters */
 
 #endif /* PROJECT_H */

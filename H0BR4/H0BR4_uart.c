@@ -14,11 +14,8 @@
 #ifndef __N
 uint16_t arrayPortsDir[MaxNumOfModules]; /* Array ports directions */
 #else
-	 uint16_t arrayPortsDir[__N];
+uint16_t arrayPortsDir[__N ];
 #endif 
-
-FlagStatus UartRxReady =RESET;
-FlagStatus UartTxReady =RESET;
 
 /* USART1 init function */
 #ifdef _Usart1
@@ -42,7 +39,6 @@ void MX_USART1_UART_Init(void){
 }
 #endif
 
-/*-----------------------------------------------------------*/
 /* USART2 init function */
 #ifdef _Usart2
 void MX_USART2_UART_Init(void){
@@ -157,23 +153,22 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	
 	GPIO_InitTypeDef GPIO_InitStruct;
 	if(huart->Instance == USART1){
-#ifdef _Usart1
+	#ifdef _Usart1
 		/* Peripheral clock enable */
-		__USART1_CLK_ENABLE()
-		;
+		__USART1_CLK_ENABLE();
 		
 		/* USART1 GPIO Configuration */
 		GPIO_InitStruct.Pin = USART1_TX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART1_AF;
 		HAL_GPIO_Init(USART1_TX_PORT,&GPIO_InitStruct);
 		
 		GPIO_InitStruct.Pin = USART1_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART1_AF;
 		HAL_GPIO_Init(USART1_RX_PORT,&GPIO_InitStruct);
 		
@@ -183,133 +178,135 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 #endif
 	}
 	else if(huart->Instance == USART2){
-#ifdef _Usart2
+	#ifdef _Usart2
 		/* Peripheral clock enable */
-		__USART2_CLK_ENABLE()
-		;
+		__USART2_CLK_ENABLE();
 		
 		/* USART2 GPIO Configuration */
 		GPIO_InitStruct.Pin = USART2_TX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART2_AF;
 		HAL_GPIO_Init(USART2_TX_PORT,&GPIO_InitStruct);
 		
 		GPIO_InitStruct.Pin = USART2_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART2_AF;
 		HAL_GPIO_Init(USART2_RX_PORT,&GPIO_InitStruct);
 		
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(USART2_IRQn,1,0);
-		HAL_NVIC_EnableIRQ(USART2_IRQn);
+		HAL_NVIC_SetPriority(USART2_LPUART2_IRQn,1,0);
+		//TOBECHECKED
+		HAL_NVIC_EnableIRQ(USART2_LPUART2_IRQn);
+		//TOBECHECKED
 #endif
 	}
 	else if(huart->Instance == USART3){
-#ifdef _Usart3
+	#ifdef _Usart3
 		/* Peripheral clock enable */
-		__USART3_CLK_ENABLE()
-		;
+		__USART3_CLK_ENABLE();
 		
 		/* USART3 GPIO Configuration */
 		GPIO_InitStruct.Pin = USART3_TX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART3_AF;
 		HAL_GPIO_Init(USART3_TX_PORT,&GPIO_InitStruct);
 		
 		GPIO_InitStruct.Pin = USART3_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART3_AF;
 		HAL_GPIO_Init(USART3_RX_PORT,&GPIO_InitStruct);
 		
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(USART3_8_IRQn,1,0);
-		HAL_NVIC_EnableIRQ(USART3_8_IRQn);
+		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+		//TOBECHECKED
+		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
+		//TOBECHECKED
 #endif
 	}
 	else if(huart->Instance == USART4){
-#ifdef _Usart4
+	#ifdef _Usart4
 		/* Peripheral clock enable */
-		__USART4_CLK_ENABLE()
-		;
+		__USART4_CLK_ENABLE();
 		
 		/* USART4 GPIO Configuration */
 		GPIO_InitStruct.Pin = USART4_TX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART4_AF;
 		HAL_GPIO_Init(USART4_TX_PORT,&GPIO_InitStruct);
 		
 		GPIO_InitStruct.Pin = USART4_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART4_AF;
 		HAL_GPIO_Init(USART4_RX_PORT,&GPIO_InitStruct);
 		
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(USART3_8_IRQn,1,0);
-		HAL_NVIC_EnableIRQ(USART3_8_IRQn);
+		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
+		//TOBECHECKED
 #endif
 	}
 	else if(huart->Instance == USART5){
-#ifdef _Usart5
+	#ifdef _Usart5
 		/* Peripheral clock enable */
-		__USART5_CLK_ENABLE()
-		;
+		__USART5_CLK_ENABLE();
 		
 		/* USART5 GPIO Configuration */
 		GPIO_InitStruct.Pin = USART5_TX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART5_AF;
 		HAL_GPIO_Init(USART5_TX_PORT,&GPIO_InitStruct);
 		
 		GPIO_InitStruct.Pin = USART5_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART5_AF;
 		HAL_GPIO_Init(USART5_RX_PORT,&GPIO_InitStruct);
 		
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(USART3_8_IRQn,1,0);
-		HAL_NVIC_EnableIRQ(USART3_8_IRQn);
+		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
+		//TOBECHECKED
 #endif
 	}
 	else if(huart->Instance == USART6){
-#ifdef _Usart6
+	#ifdef _Usart6
 		/* Peripheral clock enable */
-		__USART6_CLK_ENABLE()
-		;
+		__USART6_CLK_ENABLE();
 		
 		/* USART6 GPIO Configuration */
 		GPIO_InitStruct.Pin = USART6_TX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART6_AF;
 		HAL_GPIO_Init(USART6_TX_PORT,&GPIO_InitStruct);
 		
 		GPIO_InitStruct.Pin = USART6_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-		GPIO_InitStruct.Pull = GPIO_PULLUP;
-		GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = USART6_AF;
 		HAL_GPIO_Init(USART6_RX_PORT,&GPIO_InitStruct);
 		
 		/* Peripheral interrupt init*/
-		HAL_NVIC_SetPriority(USART3_8_IRQn,1,0);
-		HAL_NVIC_EnableIRQ(USART3_8_IRQn);
+		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
+		//TOBECHECKED
 #endif
 	}
 }
@@ -412,6 +409,8 @@ BOS_Status UpdateBaudrate(uint8_t port,uint32_t baudrate){
 	
 	return result;
 }
+
+/*-----------------------------------------------------------*/
 
 /* --- Get the UART for a given port. 
  */

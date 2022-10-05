@@ -6,7 +6,6 @@
  Description   : Peripheral RTC setup source file.
 
  */
-
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
@@ -39,13 +38,14 @@ BOS_Status RTC_Init(void){
 	 */
 	RtcHandle.Instance = RTC;
 	RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
-	RtcHandle.Init.AsynchPrediv =124;
-	RtcHandle.Init.SynchPrediv =1999;
+	RtcHandle.Init.AsynchPrediv = 124;
+	RtcHandle.Init.SynchPrediv = 1999;
 	RtcHandle.Init.OutPut = RTC_OUTPUT_DISABLE;
+	RtcHandle.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
 	RtcHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
 	RtcHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-	
-	if(HAL_RTC_Init(&RtcHandle) != HAL_OK)
+	RtcHandle.Init.OutPutPullUp = RTC_OUTPUT_PULLUP_NONE;
+	if (HAL_RTC_Init(&RtcHandle) != HAL_OK)
 		return BOS_ERROR;
 	
 	/* Check if Data stored in BackUp register1: No Need to reconfigure RTC */
@@ -56,7 +56,7 @@ BOS_Status RTC_Init(void){
 	}
 	else{
 		/* Check if the Power On Reset flag is set */
-		if(__HAL_RCC_GET_FLAG(RCC_FLAG_PORRST) != RESET){
+		if(__HAL_RCC_GET_FLAG(RCC_FLAG_PWRRST) != RESET){
 			bootStatus =POWER_ON_BOOT;
 		}
 		/* Check if Pin Reset flag is set */

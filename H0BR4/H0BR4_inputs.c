@@ -397,7 +397,7 @@ BOS_Status AddPortButton(uint8_t buttonType, uint8_t port) {
 	GPIO_InitStruct.Pin = TX_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_LOW;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init((GPIO_TypeDef*) TX_Port, &GPIO_InitStruct);
 	/* Input (RXD) */
 	GPIO_InitStruct.Pin = RX_Pin;
@@ -495,14 +495,15 @@ BOS_Status RemovePortButton(uint8_t port) {
 #ifdef _Usart6	
 		MX_USART6_UART_Init();
 #endif
-	} else if (huart->Instance == USART7) {
+	/*} else if (huart->Instance == USART7) {
 #ifdef _Usart7	
 		MX_USART7_UART_Init();
 #endif
 	} else if (huart->Instance == USART8) {
 #ifdef _Usart8	
 		MX_USART8_UART_Init();
-#endif
+#endif*/
+		//TOBECHECKED
 	} else
 		result = BOS_ERROR;
 
@@ -663,7 +664,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *adcHandle) {
 
 	GPIO_InitTypeDef GPIO_InitStruct = { 0 };
 		/* ADC1 clock enable */
-		__HAL_RCC_ADC1_CLK_ENABLE();
+		__HAL_RCC_ADC_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 		/**ADC GPIO Configuration
 		 PA2     ------> ADC_IN2
@@ -727,7 +728,9 @@ void ReadADCChannel(uint8_t Port, char *side, float *ADC_Value) {
 
 		sConfig.Channel = Channel;
 		sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-		sConfig.SamplingTime = ADC_SAMPLETIME_28CYCLES_5;
+		//sConfig.SamplingTime = ADC_SAMPLETIME_28CYCLES_5;
+		sConfig.SamplingTime = ADC_SAMPLETIME_79CYCLES_5;
+		//TOBECHECKED
 		if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
 			Error_Handler();
 		}
@@ -740,7 +743,9 @@ void ReadADCChannel(uint8_t Port, char *side, float *ADC_Value) {
 		/* --- Disable chosen channel.*/
 		sConfig.Channel = Channel;
 		sConfig.Rank = ADC_RANK_NONE;
-		sConfig.SamplingTime = ADC_SAMPLETIME_28CYCLES_5;
+		//sConfig.SamplingTime = ADC_SAMPLETIME_28CYCLES_5;
+		sConfig.SamplingTime = ADC_SAMPLETIME_79CYCLES_5;
+				//TOBECHECKED
 		if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
 			Error_Handler();
 		}
@@ -786,7 +791,9 @@ void ReadTempAndVref(float *temp, float *Vref) {
 
 	sConfig.Channel = ADC_CHANNEL_VREFINT;
 	sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
-	sConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
+	//sConfig.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
+	sConfig.SamplingTime = ADC_SAMPLETIME_79CYCLES_5;
+	//TOBECHECKED
 	if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
 		Error_Handler();
 	}
@@ -827,7 +834,7 @@ float GetReadPrecentage(uint8_t port, float *precentageValue) {
 				HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4);
 				GPIO_InitStruct.Pin = GPIO_PIN_4;
 				GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-				GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+				GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 				HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 				portStatus[port - 1] = CUSTOM;
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
@@ -835,7 +842,7 @@ float GetReadPrecentage(uint8_t port, float *precentageValue) {
 				HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2);
 				GPIO_InitStruct.Pin = GPIO_PIN_2;
 				GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-				GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+				GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 				HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 				portStatus[port - 1] = CUSTOM;
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);

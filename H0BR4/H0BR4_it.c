@@ -10,18 +10,19 @@
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 
-uint8_t* error_restart_message = "Restarting...\r\n";
-
 uint8_t temp_length[NumOfPorts] = {0};
 uint8_t temp_index[NumOfPorts] = {0};
+uint8_t* error_restart_message = "Restarting...\r\n";
+
+
 /* External variables --------------------------------------------------------*/
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
-//extern uint8_t UARTTxBuf[3][MSG_TX_BUF_SIZE];
 extern uint8_t UARTRxBufIndex[NumOfPorts];
 
 /* External function prototypes ----------------------------------------------*/
 
 extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
+
 
 /******************************************************************************/
 /*            Cortex-M0 Processor Interruption and Exception Handlers         */
@@ -78,7 +79,7 @@ void USART1_IRQHandler(void){
 /**
  * @brief This function handles USART2 global interrupt / USART2 wake-up interrupt through EXTI line 26.
  */
-void USART2_IRQHandler(void){
+void USART2_LPUART2_IRQHandler(void){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
 #if defined (_Usart2)	
@@ -96,7 +97,8 @@ void USART2_IRQHandler(void){
 /**
  * @brief This function handles USART3 to USART8 global interrupts / USART3 wake-up interrupt through EXTI line 28.
  */
-void USART3_8_IRQHandler(void){
+
+void USART3_4_5_6_LPUART1_IRQHandler(void){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
 #if defined (_Usart3)
@@ -196,7 +198,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 	/* Loop here */
 	//for(;;) {};
 	/* Set the UART state ready to be able to start the process again */
-	huart->State =HAL_UART_STATE_READY;
+	huart->gState =HAL_UART_STATE_READY;
 	
 	/* Resume streaming DMA for this UART port */
 	uint8_t port =GetPort(huart);
@@ -283,19 +285,20 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 		}
 	}
 
-		HAL_UART_Receive_DMA(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
+//		HAL_UART_Receive_DMA(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
+	HAL_UART_Receive_IT(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
 }
 
 /*-----------------------------------------------------------*/
 
+/*-----------------------------------------------------------*/
+
+/* Run time stack overflow checking is performed if
+ configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
+ function is called if a stack overflow is detected. */
 void vApplicationStackOverflowHook( xTaskHandle pxTask,signed char *pcTaskName){
-
-	( void ) pcTaskName;
-	( void ) pxTask;
-
-	/* Run time stack overflow checking is performed if
-	configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
-	function is called if a stack overflow is detected. */
+	(void )pcTaskName;
+	(void )pxTask;
 	uint8_t* error_message = "Stack Overflow\r\n";
 	writePxMutex(PcPort, (char*) error_message, 16, 0xff, 0xff);
 	writePxMutex(PcPort, (char*) error_restart_message, 15, 0xff, 0xff);
@@ -305,17 +308,17 @@ void vApplicationStackOverflowHook( xTaskHandle pxTask,signed char *pcTaskName){
 }
 /*-----------------------------------------------------------*/
 
+/* vApplicationMallocFailedHook() will only be called if
+ configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
+ function that will get called if a call to pvPortMalloc() fails.
+ pvPortMalloc() is called internally by the kernel whenever a task, queue,
+ timer or semaphore is created.  It is also called by various parts of the
+ demo application.  If heap_1.c or heap_2.c are used, then the size of the
+ heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+ FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+ to query the size of free heap space that remains (although it does not
+ provide information on how the remaining heap might be fragmented). */
 void vApplicationMallocFailedHook(void){
-	/* vApplicationMallocFailedHook() will only be called if
-	configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
-	function that will get called if a call to pvPortMalloc() fails.
-	pvPortMalloc() is called internally by the kernel whenever a task, queue,
-	timer or semaphore is created.  It is also called by various parts of the
-	demo application.  If heap_1.c or heap_2.c are used, then the size of the
-	heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
-	FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-	to query the size of free heap space that remains (although it does not
-	provide information on how the remaining heap might be fragmented). */
 	uint8_t* error_message = "Heap size exceeded\r\n";
 	writePxMutex(PcPort, (char*) error_message, 20, 0xff, 0xff);
 	writePxMutex(PcPort, (char*) error_restart_message, 15, 0xff, 0xff);

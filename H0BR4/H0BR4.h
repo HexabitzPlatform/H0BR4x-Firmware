@@ -21,6 +21,7 @@
 #include "BOS.h"
 #include "H0BR4_MemoryMap.h"
 #include "H0BR4_uart.h"
+#include "H0BR4_i2c.h"
 #include "H0BR4_gpio.h"
 #include "H0BR4_dma.h"
 #include "H0BR4_inputs.h"

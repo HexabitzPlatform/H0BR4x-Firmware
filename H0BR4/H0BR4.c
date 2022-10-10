@@ -82,10 +82,8 @@ void SystemClock_Config(void){
 	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
 	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
 	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-	  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
+	  HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK;
+
 	  /** Initializes the CPU, AHB and APB buses clocks
 	  */
 	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -94,19 +92,14 @@ void SystemClock_Config(void){
 	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-	  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
+	 HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK;
+
 	  /** Initializes the peripherals clocks
 	  */
 	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2;
 	  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
 	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-	  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
+	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK;
 
 	  HAL_NVIC_SetPriority(SysTick_IRQn,0,0);
 	

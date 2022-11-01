@@ -100,7 +100,7 @@ uint16_t EE_Init(void){
 					}
 				}
 				/* Mark PageB as valid */
-				//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,PAGEB1_BASE_ADDRESS,VALID_PAGE);
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,PAGEB1_BASE_ADDRESS,VALID_PAGE);
 				//TOBECHECKED
 				/* If program operation was failed, a Flash error code is returned */
 				/* Wait for last operation to be completed */
@@ -151,7 +151,7 @@ uint16_t EE_Init(void){
 					}
 				}
 				/* Mark PageA as valid */
-				//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,PAGEA1_BASE_ADDRESS,VALID_PAGE);
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,PAGEA1_BASE_ADDRESS,VALID_PAGE);
 				//TOBECHECKED
 				/* If program operation was failed, a Flash error code is returned */
 				/* Wait for last operation to be completed */
@@ -471,7 +471,7 @@ uint16_t EE_Format(void){
 	}
 	
 	/* Set PageA as valid page: Write VALID_PAGE at Page0 base address */
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,PAGEA1_BASE_ADDRESS,VALID_PAGE);
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,PAGEA1_BASE_ADDRESS,VALID_PAGE);
 	//TOBECHECKED
 	/* Wait for last operation to be completed */
 	FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -608,7 +608,7 @@ static uint16_t EE_VerifyPageFullWriteVariable(uint16_t VirtAddress,uint16_t Dat
 		/* Verify if Address and Address+2 contents are 0xFFFFFFFF */
 		if((*(__IO uint32_t* )Address) == 0xFFFFFFFF){
 			/* Set variable data */
-			//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,Address,Data);
+			HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,Address,Data);
 			//TOBECHECKED
 			/* Wait for last operation to be completed */
 			FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -622,7 +622,7 @@ static uint16_t EE_VerifyPageFullWriteVariable(uint16_t VirtAddress,uint16_t Dat
 			}
 			
 			/* Set variable virtual address */
-			//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,Address + 2,VirtAddress);
+			HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,Address + 2,VirtAddress);
 			//TOBECHECKED
 			/* Wait for last operation to be completed */
 			FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -693,7 +693,7 @@ static uint16_t EE_PageTransfer(uint16_t VirtAddress,uint16_t Data){
 	}
 	
 	/* Set the new Page status to RECEIVE_DATA status */
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,NewPageAddress,RECEIVE_DATA);
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,NewPageAddress,RECEIVE_DATA);
 	//TOBECHECKED
 	/* Wait for last operation to be completed */
 	FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -755,7 +755,7 @@ static uint16_t EE_PageTransfer(uint16_t VirtAddress,uint16_t Data){
 	}
 	
 	/* Set new Page status to VALID_PAGE status */
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,NewPageAddress,VALID_PAGE);
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,NewPageAddress,VALID_PAGE);
 	//TOBECHECKED
 	/* Wait for last operation to be completed */
 	FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);
@@ -790,7 +790,7 @@ uint16_t Flash_WriteVariable(uint32_t Address,uint16_t Data){
 	HAL_FLASH_Unlock();
 	
 	/* Set variable data */
-	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,Address,Data);
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,Address,Data);
 	//TOBECHECKED
 	/* Wait for last operation to be completed */
 	FlashStatus =FLASH_WaitForLastOperation((uint32_t )HAL_FLASH_TIMEOUT_VALUE);

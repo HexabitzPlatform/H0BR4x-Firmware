@@ -15,15 +15,15 @@
 #include "LSM6DS3.h"
 #include "LSM303AGR_ACC.h"
 #include "LSM303AGR_MAG.h"
+
+
 //initialize i2c
  void MX_I2C_Init(void);
  void MX_I2C2_Init(void);
 
 
 I2C_HandleTypeDef hi2c2;
-static const uint8_t colorProximityAdd = (0x39)<<1;
-uint8_t receive[2];
-uint8_t send[2];
+
 
 
 
@@ -36,13 +36,13 @@ uint8_t send[2];
  void MX_I2C_Init(void)
 {
   /* GPIO Ports Clock Enable */
- // __GPIOC_CLK_ENABLE();
- // __GPIOA_CLK_ENABLE();
- // __GPIOD_CLK_ENABLE();
- // __GPIOB_CLK_ENABLE();
- // __GPIOF_CLK_ENABLE();   // for HSE and Boot0
-	  __HAL_RCC_GPIOF_CLK_ENABLE();
-	 	  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __GPIOC_CLK_ENABLE();
+  __GPIOA_CLK_ENABLE();
+  __GPIOD_CLK_ENABLE();
+  __GPIOB_CLK_ENABLE();
+  __GPIOF_CLK_ENABLE();   // for HSE and Boot0
+	 // __HAL_RCC_GPIOF_CLK_ENABLE();
+	 	//  __HAL_RCC_GPIOA_CLK_ENABLE();
   MX_I2C2_Init();
 
 }

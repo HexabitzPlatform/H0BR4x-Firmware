@@ -16,6 +16,18 @@
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
 #include "H0BR4_inputs.h"
+#include "LSM6DS3.h"
+#include "LSM303AGR_ACC.h"
+#include "LSM303AGR_MAG.h"
+
+#include <math.h>
+
+
+
+#define LSM303AGR_MAG_SENSITIVITY_FOR_FS_50G  1.5  /**< Sensitivity value for 16 gauss full scale [mgauss/LSB] */
+
+#define MIN_MEMS_PERIOD_MS				200
+#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
 /* Define UART variables */
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -29,12 +41,28 @@ extern FLASH_ProcessTypeDef pFlash;
 extern uint8_t numOfRecordedSnippets;
 extern I2C_HandleTypeDef hi2c2;
 /* Module exported parameters ------------------------------------------------*/
+
+float xGyro __attribute__((section(".mySection")));
+float yGyro __attribute__((section(".mySection")));
+float zGyro __attribute__((section(".mySection")));
+float xAcc __attribute__((section(".mySection")));
+float yAcc __attribute__((section(".mySection")));
+float zAcc __attribute__((section(".mySection")));
+int xMag __attribute__((section(".mySection")));
+int yMag __attribute__((section(".mySection")));
+int zMag __attribute__((section(".mySection")));
+float temperature __attribute__((section(".mySection")));
+
+
 module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr = NULL, .paramFormat =FMT_FLOAT, .paramName =""}};
 
 /* Private variables ---------------------------------------------------------*/
 
 
 /* Private function prototypes -----------------------------------------------*/
+static Module_Status LSM6DS3Init(void);
+static Module_Status LSM303MagInit(void);
+static Module_Status LSM6DS3SampleGyroMDPS(int *gyroX,int *gyroY,int *gyroZ);
 void ExecuteMonitor(void);
 
 /* Create CLI commands --------------------------------------------------------*/
@@ -82,7 +110,7 @@ void SystemClock_Config(void){
 	  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
 	  RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
 	  RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
-	  HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK;
+      HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
 	  /** Initializes the CPU, AHB and APB buses clocks
 	  */
@@ -92,15 +120,18 @@ void SystemClock_Config(void){
 	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-	 HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK;
+	  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
 
 	  /** Initializes the peripherals clocks
 	  */
 	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2;
 	  PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
 	  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK;
+	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+	  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C2;
+	  PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
 
+	  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 	  HAL_NVIC_SetPriority(SysTick_IRQn,0,0);
 	
 }
@@ -300,12 +331,25 @@ void Module_Peripheral_Init(void){
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
 
-
-	MX_I2C2_Init();
-
+	MEMS_GPIO_Init();
+	MX_I2C_Init();
+	LSM6DS3Init();
+    LSM303MagInit();
 	/* Create module special task (if needed) */
 }
-
+void initialValue(void)
+{
+	xGyro=0;
+	yGyro=0;
+	zGyro=0;
+	xAcc=0;
+	yAcc=0;
+	zAcc=0;
+	xMag=0;
+	yMag=0;
+	zMag=0;
+	temperature=0;
+}
 /*-----------------------------------------------------------*/
 /* --- H0BR4 message processing task.
  */
@@ -343,11 +387,158 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 }
 
 /*-----------------------------------------------------------*/
+static Module_Status LSM6D3Enable(void){
+	// Check WHO_AM_I Register
+	uint8_t who_am_i =0;
+	if(LSM6DS3_ACC_GYRO_R_WHO_AM_I(&hi2c2,&who_am_i) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
 
+	if(who_am_i != LSM6DS3_ACC_GYRO_WHO_AM_I)
+		return H0BR4_ERR_LSM6DS3;
+
+	// Enable register address automatically incremented during a multiple byte access with a serial interface
+	if(LSM6DS3_ACC_GYRO_W_IF_Addr_Incr(&hi2c2,LSM6DS3_ACC_GYRO_IF_INC_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	// Bypass Mode
+	if(LSM6DS3_ACC_GYRO_W_FIFO_MODE(&hi2c2,LSM6DS3_ACC_GYRO_FIFO_MODE_BYPASS) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	return H0BR4_OK;
+}
+
+static Module_Status LSM6D3SetupGyro(void){
+	// Gyroscope ODR Init
+	if(LSM6DS3_ACC_GYRO_W_ODR_G(&hi2c2,LSM6DS3_ACC_GYRO_ODR_G_13Hz) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	// Gyroscope FS Init
+	if(LSM6DS3_ACC_GYRO_W_FS_G(&hi2c2,LSM6DS3_ACC_GYRO_FS_G_2000dps) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	// Gyroscope Axes Status Init
+	if(LSM6DS3_ACC_GYRO_W_XEN_G(&hi2c2,LSM6DS3_ACC_GYRO_XEN_G_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	if(LSM6DS3_ACC_GYRO_W_YEN_G(&hi2c2,LSM6DS3_ACC_GYRO_YEN_G_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	if(LSM6DS3_ACC_GYRO_W_ZEN_G(&hi2c2,LSM6DS3_ACC_GYRO_ZEN_G_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	return H0BR4_OK;
+}
+
+static Module_Status LSM6D3SetupAcc(void){
+	// Accelerometer ODR Init
+	if(LSM6DS3_ACC_GYRO_W_ODR_XL(&hi2c2,LSM6DS3_ACC_GYRO_ODR_XL_104Hz) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	// Bandwidth Selection
+	// Selection of bandwidth and ODR should be in accordance of Nyquist Sampling theorem!
+	if(LSM6DS3_ACC_GYRO_W_BW_XL(&hi2c2,LSM6DS3_ACC_GYRO_BW_XL_50Hz) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	// Accelerometer FS Init
+	if(LSM6DS3_ACC_GYRO_W_FS_XL(&hi2c2,LSM6DS3_ACC_GYRO_FS_XL_16g) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	// Accelerometer Axes Status Init
+	if(LSM6DS3_ACC_GYRO_W_XEN_XL(&hi2c2,LSM6DS3_ACC_GYRO_XEN_XL_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	if(LSM6DS3_ACC_GYRO_W_YEN_XL(&hi2c2,LSM6DS3_ACC_GYRO_YEN_XL_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	if(LSM6DS3_ACC_GYRO_W_ZEN_XL(&hi2c2,LSM6DS3_ACC_GYRO_ZEN_XL_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	// Enable Bandwidth Scaling
+	if(LSM6DS3_ACC_GYRO_W_BW_Fixed_By_ODR(&hi2c2,LSM6DS3_ACC_GYRO_BW_SCAL_ODR_ENABLED) != MEMS_ERROR)
+		return H0BR4_ERR_LSM6DS3;
+
+	return H0BR4_OK;
+}
+
+static Module_Status LSM6DS3SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ){
+	uint8_t temp[6];
+	if(LSM6DS3_ACC_GYRO_GetRawGyroData(&hi2c2,temp) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	*gyroX =concatBytes(temp[1],temp[0]);
+	*gyroY =concatBytes(temp[3],temp[2]);
+	*gyroZ =concatBytes(temp[5],temp[4]);
+
+	return H0BR4_OK;
+}
+
+static Module_Status LSM6DS3SampleGyroMDPS(int *gyroX,int *gyroY,int *gyroZ){
+	int buff[3];
+	if(LSM6DS3_ACC_Get_AngularRate(&hi2c2,buff,0) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	*gyroX =buff[0];
+	*gyroY =buff[1];
+	*gyroZ =buff[2];
+
+	return H0BR4_OK;
+}
 /* --- Register this module CLI Commands
  */
 void RegisterModuleCLICommands(void){
 
+}
+
+static Module_Status LSM6DS3Init(void){
+	// Common Init
+	Module_Status status =H0BR4_OK;
+	if((status =LSM6D3Enable()) != H0BR4_OK)
+		return status;
+
+	if((status =LSM6D3SetupGyro()) != H0BR4_OK)
+		return status;
+
+	if((status =LSM6D3SetupAcc()) != H0BR4_OK)
+		return status;
+
+	// TODO: Configure Interrupt Lines
+
+	return status;
+}
+
+static Module_Status LSM303MagEnable(void){
+	if(LSM303AGR_MAG_W_MD(&hi2c2,LSM303AGR_MAG_MD_CONTINUOS_MODE) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	return H0BR4_OK;
+}
+
+static Module_Status LSM303MagInit(void){
+	// Check the Sensor
+	uint8_t who_am_i =0x00;
+	if(LSM303AGR_MAG_R_WHO_AM_I(&hi2c2,&who_am_i) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	if(who_am_i != LSM303AGR_MAG_WHO_AM_I)
+		return H0BR4_ERR_LSM303;
+
+	// Operating Mode: Power Down
+	if(LSM303AGR_MAG_W_MD(&hi2c2,LSM303AGR_MAG_MD_IDLE1_MODE) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	// Enable Block Data Update
+	if(LSM303AGR_MAG_W_BDU(&hi2c2,LSM303AGR_MAG_BDU_ENABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	// TODO: Change the default ODR
+	if(LSM303AGR_MAG_W_ODR(&hi2c2,LSM303AGR_MAG_ODR_10Hz) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	// Self Test Disabled
+	if(LSM303AGR_MAG_W_ST(&hi2c2,LSM303AGR_MAG_ST_DISABLED) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	return LSM303MagEnable();
 }
 
 /*-----------------------------------------------------------*/
@@ -376,7 +567,44 @@ void RegisterModuleCLICommands(void){
 
 /*-----------------------------------------------------------*/
 
+static Module_Status LSM6DS3SampleAccMG(int *accX,int *accY,int *accZ){
+	int buff[3];
+	if(LSM6DS3_ACC_Get_Acceleration(&hi2c2,buff,0) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
 
+	*accX =buff[0];
+	*accY =buff[1];
+	*accZ =buff[2];
+
+	return H0BR4_OK;
+}
+
+static Module_Status LSM6DS3SampleTempCelsius(float *temp){
+	uint8_t buff[2];
+	if(LSM6DS3_ACC_GYRO_ReadReg(&hi2c2,LSM6DS3_ACC_GYRO_OUT_TEMP_L,buff,2) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM6DS3;
+
+	int16_t rawTemp =concatBytes(buff[0],buff[1]);
+	*temp =(((float )rawTemp) / 16) + 25;
+
+	return H0BR4_OK;
+}
+static Module_Status LSM303SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
+	int16_t *pData;
+	uint8_t data[6];
+
+	memset(data,0,sizeof(data));
+
+	if(LSM303AGR_MAG_Get_Raw_Magnetic(&hi2c2,data) != MEMS_SUCCESS)
+		return H0BR4_ERR_LSM303;
+
+	pData =(int16_t* )data;
+	*magX =pData[0];
+	*magY =pData[1];
+	*magZ =pData[2];
+
+	return H0BR4_OK;
+}
 
 /*-----------------------------------------------------------*/
 
@@ -384,8 +612,47 @@ void RegisterModuleCLICommands(void){
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
  */
+Module_Status SampleGyroMDPS(int *gyroX,int *gyroY,int *gyroZ){
+	return LSM6DS3SampleGyroMDPS(gyroX,gyroY,gyroZ);
+}
 
+Module_Status SampleAccG(float *x,float *y,float *z){
+	Module_Status status =H0BR4_OK;
+	int xInMG =0, yInMG =0, zInMG =0;
 
+	if((status =LSM6DS3SampleAccMG(&xInMG,&yInMG,&zInMG)) != H0BR4_OK)
+		return status;
+
+	*x =((float )xInMG) / 1000;
+	*y =((float )yInMG) / 1000;
+	*z =((float )zInMG) / 1000;
+
+	return status;
+}
+Module_Status SampleAccMG(int *accX,int *accY,int *accZ){
+	return LSM6DS3SampleAccMG(accX,accY,accZ);
+}
+Module_Status SampleGyroDPS(float *x,float *y,float *z){
+	Module_Status status =H0BR4_OK;
+	int xInMDPS =0, yInMDPS =0, zInMDPS =0;
+
+	if((status =LSM6DS3SampleGyroMDPS(&xInMDPS,&yInMDPS,&zInMDPS)) != H0BR4_OK)
+		return status;
+
+	*x =((float )xInMDPS) / 1000;
+	*y =((float )yInMDPS) / 1000;
+	*z =((float )zInMDPS) / 1000;
+
+	return status;
+}
+
+Module_Status SampleTempCelsius(float *temp){
+	return LSM6DS3SampleTempCelsius(temp);
+}
+
+Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
+	return LSM303SampleMagRaw(magX,magY,magZ);
+}
 /*-----------------------------------------------------------*/
 
 

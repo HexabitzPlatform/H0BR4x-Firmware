@@ -94,10 +94,40 @@ LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
 
+//------------------------------------------------------------------------------
+// Modified Reset Handler for bootloader reboot (sourcer32@gmail.com)
+	LDR        R0, =0x20023FF0  	// Address for RAM signature (STM32G0Bx)
+	LDR        R1, =0xDEADBEEF
+	LDR        R2, [R0, #0] 		// Read current
+	STR        R0, [R0, #0] 		// Invalidate
+	CMP        R2, R1
+	BEQ        Reboot_Loader
+
+// Normal startup path
+
+/* Call the clock system intitialization function.*/
+  bl  SystemInit
 /* Call static constructors */
   bl __libc_init_array
 /* Call the application s entry point.*/
   bl main
+
+// Vector into System Loader  4002 1040
+Reboot_Loader:
+    LDR     R0, =0x40021040 	// RCC_APBENR2 (+0x40)
+	LDR     R1, =0x00000001 	// ENABLE SYSCFG CLOCK
+	STR     R1, [R0, #0]
+	LDR     R0, =0x40010000 	// SYSCFG_CFGR1 (+0x00)
+	LDR     R1, =0x00000001 	// MAP ROM AT ZERO
+	STR     R1, [R0, #0]
+
+
+    LDR     R0, =0x1FFF0000	// ROM BASE (STM32G0Bx)
+	LDR     R1, [R0, #0]    	// SP @ +0
+	MOV     SP, R1
+	LDR     R0, [R0, #4]    	// PC @ +4
+	BX      R0
+
 
 LoopForever:
   b LoopForever

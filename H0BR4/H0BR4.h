@@ -102,20 +102,20 @@
 
 /* Module-specific Definitions */
 #define IMU_INT1_PORT									GPIOB
-#define IMU_INT1_PIN									GPIO_PIN_0
+#define IMU_INT1_PIN									GPIO_PIN_6
 #define IMU_INT1_GPIO_CLK()						__GPIOB_CLK_ENABLE();
 #define IMU_INT2_PORT									GPIOB
-#define IMU_INT2_PIN									GPIO_PIN_13
+#define IMU_INT2_PIN									GPIO_PIN_5
 #define IMU_INT2_GPIO_CLK()						__GPIOB_CLK_ENABLE();
-#define MAG_INT_PORT									GPIOB
-#define MAG_INT_PIN										GPIO_PIN_11
-#define MAG_INT_GPIO_CLK()						__GPIOB_CLK_ENABLE();
-#define XL_INT1_PORT									GPIOB
-#define XL_INT1_PIN										GPIO_PIN_2
-#define XL_INT1_GPIO_CLK()						__GPIOB_CLK_ENABLE();
-#define XL_INT2_PORT									GPIOB
-#define XL_INT2_PIN										GPIO_PIN_1
-#define XL_INT2_GPIO_CLK()						__GPIOB_CLK_ENABLE();
+#define MAG_INT_PORT									GPIOA
+#define MAG_INT_PIN										GPIO_PIN_15
+#define MAG_INT_GPIO_CLK()						__GPIOA_CLK_ENABLE();
+#define XL_INT1_PORT									GPIOD
+#define XL_INT1_PIN										GPIO_PIN_1
+#define XL_INT1_GPIO_CLK()						__GPIOD_CLK_ENABLE();
+#define XL_INT2_PORT									GPIOD
+#define XL_INT2_PIN										GPIO_PIN_0
+#define XL_INT2_GPIO_CLK()						__GPIOD_CLK_ENABLE();
 
 #define _MEMS_I2C2_SDA_PORT       		GPIOB
 #define _MEMS_I2C2_SDA_PIN            GPIO_PIN_4

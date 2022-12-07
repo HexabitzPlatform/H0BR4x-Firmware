@@ -164,6 +164,16 @@
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_gpio.h</locationURI>
 		</link>
 		<link>
+			<name>H0BR4/H0BR4_i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_i2c.c</locationURI>
+		</link>
+		<link>
+			<name>H0BR4/H0BR4_i2c.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_i2c.h</locationURI>
+		</link>
+		<link>
 			<name>H0BR4/H0BR4_inputs.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/H0BR4/H0BR4_inputs.c</locationURI>
@@ -219,6 +229,16 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Thirdparty/LSM303AGR</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM6DS3</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Thirdparty/Middleware</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -254,6 +274,26 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/CMSIS/STM32G0xx</locationURI>
 		</link>
 		<link>
+			<name>Thirdparty/LSM303AGR/inc</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM303AGR/src</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM6DS3/inc</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM6DS3/src</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Thirdparty/Middleware/STM32G0xx</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/Middleware/STM32G0xx</locationURI>
@@ -267,6 +307,36 @@
 			<name>Thirdparty/STM32G0xx_HAL_Driver/Src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM303AGR/inc/LSM303AGR_ACC.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/inc/LSM303AGR_ACC.h</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM303AGR/inc/LSM303AGR_MAG.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/inc/LSM303AGR_MAG.h</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM303AGR/src/LSM303AGR_ACC.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/src/LSM303AGR_ACC.c</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM303AGR/src/LSM303AGR_MAG.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/src/LSM303AGR_MAG.c</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM6DS3/inc/LSM6DS3.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM6DS3/inc/LSM6DS3.h</locationURI>
+		</link>
+		<link>
+			<name>Thirdparty/LSM6DS3/src/LSM6DS3.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM6DS3/src/LSM6DS3.c</locationURI>
 		</link>
 		<link>
 			<name>Thirdparty/STM32G0xx_HAL_Driver/Inc/Legacy</name>

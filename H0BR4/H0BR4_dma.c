@@ -73,6 +73,7 @@ void DMA_Init(void){
 //	// No more channels. Dynamically reconfigure from messaging RX DMAs.
 //	/* Initialize frontend DMAs x 3 - Update for each module */
 //	//DMA_FRONTEND_CH_Init(&frontendDMA[0], DMA2_Channel5);
+	__HAL_RCC_DMA1_CLK_ENABLE();
 }
 
 /*-----------------------------------------------------------*/

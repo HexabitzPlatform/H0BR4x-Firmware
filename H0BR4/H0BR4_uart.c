@@ -131,7 +131,7 @@ void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 2 */
 
-#if _P6pol_reversed
+#if _P3pol_reversed
 		huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 		huart3.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
 	  HAL_UART_Init(&huart3);
@@ -248,7 +248,7 @@ void MX_USART6_UART_Init(void)
   /* USER CODE END USART6_Init 2 */
 
 
-#if _P3pol_reversed	
+#if _P6pol_reversed
 		huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 		huart6.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
 	  HAL_UART_Init(&huart6);
@@ -302,8 +302,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	    hdma_usart1_rx.Init.Priority = DMA_PRIORITY_LOW;
 	    HAL_DMA_Init(&hdma_usart1_rx);
 
-
+//		HAL_NVIC_SetPriority(USART1_IRQn,1,0);
+//		HAL_NVIC_EnableIRQ(USART1_IRQn);
 	    __HAL_LINKDMA(huart,hdmarx,hdma_usart1_rx);
+
+	    /* Peripheral interrupt init*/
+
 
 	  /* USER CODE BEGIN USART1_MspInit 1 */
 
@@ -346,8 +350,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		      hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
 		      HAL_DMA_Init(&hdma_usart2_rx);
 
+//				HAL_NVIC_SetPriority(USART2_LPUART2_IRQn,1,0);
+//				HAL_NVIC_EnableIRQ(USART2_LPUART2_IRQn);
 
 		      __HAL_LINKDMA(huart,hdmarx,hdma_usart2_rx);
+
+				/* Peripheral interrupt init*/
+
 
 		    /* USER CODE BEGIN USART2_MspInit 1 */
 
@@ -377,14 +386,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	      PA5     ------> USART3_TX
 	      PB11     ------> USART3_RX
 	      */
-	      GPIO_InitStruct.Pin = USART3_TX_PIN;
-	      GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	      GPIO_InitStruct.Pull = GPIO_NOPULL;
-	      GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	      GPIO_InitStruct.Alternate = GPIO_AF4_USART3;
-	      HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-	      GPIO_InitStruct.Pin = USART3_RX_PIN;
+	      GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11;
 	      GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	      GPIO_InitStruct.Pull = GPIO_NOPULL;
 	      GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -405,8 +407,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 	     HAL_DMA_Init(&hdma_usart3_rx);
 
+			/* Peripheral interrupt init*/
+	     HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn, 0, 0);
+	     HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 
 	      __HAL_LINKDMA(huart,hdmarx,hdma_usart3_rx);
+
+
+
 
 	    /* USER CODE BEGIN USART3_MspInit 1 */
 
@@ -448,8 +456,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	      hdma_usart4_rx.Init.Priority = DMA_PRIORITY_LOW;
 	      HAL_DMA_Init(&hdma_usart4_rx);
 
+			/* Peripheral interrupt init*/
+//			HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+//			HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 
 	      __HAL_LINKDMA(huart,hdmarx,hdma_usart4_rx);
+
+
 
 	    /* USER CODE BEGIN USART4_MspInit 1 */
 
@@ -466,20 +479,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	     /* USART5 clock enable */
 	     __HAL_RCC_USART5_CLK_ENABLE();
 
-	     __HAL_RCC_GPIOB_CLK_ENABLE();
+	     //__HAL_RCC_GPIOB_CLK_ENABLE();
 	     __HAL_RCC_GPIOD_CLK_ENABLE();
 	     /**USART5 GPIO Configuration
 	     PB0     ------> USART5_TX
 	     PD2     ------> USART5_RX
 	     */
-	     GPIO_InitStruct.Pin = USART5_TX_PIN;
-	     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	     GPIO_InitStruct.Pull = GPIO_NOPULL;
-	     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	     GPIO_InitStruct.Alternate = GPIO_AF8_USART5;
-	     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-	     GPIO_InitStruct.Pin = USART5_RX_PIN;
+	     GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
 	     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	     GPIO_InitStruct.Pull = GPIO_NOPULL;
 	     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -502,6 +508,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 	     __HAL_LINKDMA(huart,hdmarx,hdma_usart5_rx);
 
+	 	/* Peripheral interrupt init*/
+	     HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+	     HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
+
+
 	   /* USER CODE BEGIN USART5_MspInit 1 */
 
 	   /* USER CODE END USART5_MspInit 1 */
@@ -523,14 +534,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	    PA4     ------> USART6_TX
 	    PB9     ------> USART6_RX
 	    */
-	    GPIO_InitStruct.Pin = USART6_TX_PIN;
-	    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-	    GPIO_InitStruct.Pull = GPIO_NOPULL;
-	    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	    GPIO_InitStruct.Alternate = GPIO_AF3_USART6;
-	    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-	    GPIO_InitStruct.Pin = USART6_RX_PIN;
+	    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
 	    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	    GPIO_InitStruct.Pull = GPIO_NOPULL;
 	    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -551,8 +555,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 	    HAL_DMA_Init(&hdma_usart6_rx);
 
-
+		/* Peripheral interrupt init*/
+//		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+//		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 	    __HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
+
+
 
 	  /* USER CODE BEGIN USART6_MspInit 1 */
 
@@ -620,12 +628,14 @@ HAL_StatusTypeDef readPxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mu
 HAL_StatusTypeDef writePxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout){
 	HAL_StatusTypeDef result =HAL_ERROR;
 	
-	if(GetUart(port) != NULL){
-		/* Wait for the mutex to be available. */
-		if(osSemaphoreWait(PxTxSemaphoreHandle[port],mutexTimeout) == osOK){
-			result =HAL_UART_Transmit_IT(GetUart(port),(uint8_t* )buffer,n);
-		}
-	}
+//	if(GetUart(port) != NULL){
+//		/* Wait for the mutex to be available. */
+//		if(osSemaphoreWait(PxTxSemaphoreHandle[port],mutexTimeout) == osOK){
+//			result =HAL_UART_Transmit_IT(GetUart(port),(uint8_t* )buffer,n);
+//		}
+//	}
+
+	result=	HAL_UART_Transmit_IT(GetUart(port),(uint8_t* )buffer,n);
 	
 	return result;
 }

@@ -457,8 +457,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	      HAL_DMA_Init(&hdma_usart4_rx);
 
 			/* Peripheral interrupt init*/
-//			HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
-//			HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
+			HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
+			HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 
 	      __HAL_LINKDMA(huart,hdmarx,hdma_usart4_rx);
 
@@ -635,8 +635,8 @@ HAL_StatusTypeDef writePxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t m
 //		}
 //	}
 
-	result=	HAL_UART_Transmit_IT(GetUart(port),(uint8_t* )buffer,n);
-	
+//  result=	HAL_UART_Transmit_IT(GetUart(port),(uint8_t* )buffer,n);
+  HAL_UART_Transmit(GetUart(port),(uint8_t* )buffer,n,0XFF);
 	return result;
 }
 

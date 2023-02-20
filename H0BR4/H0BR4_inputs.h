@@ -13,8 +13,8 @@
 //#define BOS_INPUTS_H
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "stm32f0xx_hal_adc.h"
-#include "stm32f0xx_hal_adc_ex.h"
+#include "stm32g0xx_hal_adc.h"
+#include "stm32g0xx_hal_adc_ex.h"
 #include "string.h"
 /* Private and global variables ----------------------------------------------*/
 

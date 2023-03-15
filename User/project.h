@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
 
  File Name     : project.h
@@ -15,6 +15,7 @@
 
 /* Include a predefined topology here */
 //#include "topology.h"
+
 /* Emulated EEPROM Virtual addresses for user parameters */
 
 #endif /* PROJECT_H */

@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
 
  File Name     : BOS_eeprom.h
@@ -39,7 +39,7 @@
 #define ERASED                ((uint16_t)0xFFFF)     /* Page is empty */
 #define RECEIVE_DATA          ((uint16_t)0xEEEE)     /* Page is marked to receive data */
 #define VALID_PAGE            ((uint16_t)0x0000)     /* Page containing valid data */
-
+#define VALID_PAGE_WRITE      ((uint64_t)0xFFFFFFFFFFFF0000)
 /* Valid pages in read and write defines */
 #define READ_FROM_VALID_PAGE  ((uint8_t)0x00)
 #define WRITE_IN_VALID_PAGE   ((uint8_t)0x01)

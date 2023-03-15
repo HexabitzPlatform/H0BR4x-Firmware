@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2021 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
 
  File Name     : BOS_inputs.h
@@ -13,8 +13,8 @@
 //#define BOS_INPUTS_H
 /* Includes ------------------------------------------------------------------*/
 #include "BOS.h"
-#include "stm32f0xx_hal_adc.h"
-#include "stm32f0xx_hal_adc_ex.h"
+#include "stm32g0xx_hal_adc.h"
+#include "stm32g0xx_hal_adc_ex.h"
 #include "string.h"
 /* Private and global variables ----------------------------------------------*/
 

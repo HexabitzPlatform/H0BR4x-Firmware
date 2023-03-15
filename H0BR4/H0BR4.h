@@ -1,10 +1,16 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
  
- File Name     : H0BR4.c
+ File Name     : H0BR4.h
  Description   : Header file for module H0BR4.
- IMU (ST LSM6DS3TR) + Digital Compass (ST LSM303AGRTR)
+ 	 	 	 	 (Description_of_module)
+
+(Description of Special module peripheral configuration):
+>>
+>>
+>>
+
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -16,16 +22,18 @@
 #include "H0BR4_MemoryMap.h"
 #include "H0BR4_uart.h"
 #include "H0BR4_i2c.h"
-#include "H0BR4_gpio.h"	
+#include "H0BR4_gpio.h"
+#include "H0BR4_dma.h"
 #include "H0BR4_inputs.h"
 #include "H0BR4_eeprom.h"
-#include "H0BR4_dma.h"
 /* Exported definitions -------------------------------------------------------*/
 
 #define	modulePN		_H0BR4
 
+
 /* Port-related definitions */
-#define	NumOfPorts		6
+#define	NumOfPorts			6
+
 #define P_PROG 				P2						/* ST factory bootloader UART */
 
 /* Define available ports */
@@ -44,76 +52,84 @@
 #define _Usart5 1
 #define _Usart6	1
 
+
 /* Port-UART mapping */
-#define P1uart &huart4	
+
+#define P1uart &huart4
 #define P2uart &huart2
 #define P3uart &huart6
-#define P4uart &huart3
-#define P5uart &huart1
-#define P6uart &huart5
+#define P4uart &huart1
+#define P5uart &huart5
+#define P6uart &huart3
+
 
 /* Port Definitions */
 #define	USART1_TX_PIN		GPIO_PIN_9
 #define	USART1_RX_PIN		GPIO_PIN_10
-#define	USART1_TX_PORT	GPIOA
-#define	USART1_RX_PORT	GPIOA
-#define	USART1_AF				GPIO_AF1_USART1
+#define	USART1_TX_PORT		GPIOA
+#define	USART1_RX_PORT		GPIOA
+#define	USART1_AF			GPIO_AF1_USART1
 
 #define	USART2_TX_PIN		GPIO_PIN_2
 #define	USART2_RX_PIN		GPIO_PIN_3
-#define	USART2_TX_PORT	GPIOA
-#define	USART2_RX_PORT	GPIOA
-#define	USART2_AF				GPIO_AF1_USART2
+#define	USART2_TX_PORT		GPIOA
+#define	USART2_RX_PORT		GPIOA
+#define	USART2_AF			GPIO_AF1_USART2
 
-#define	USART3_TX_PIN		GPIO_PIN_10
-#define	USART3_RX_PIN		GPIO_PIN_11
-#define	USART3_TX_PORT	GPIOB
-#define	USART3_RX_PORT	GPIOB
-#define	USART3_AF				GPIO_AF4_USART3
+#define	USART3_TX_PIN		GPIO_PIN_8
+#define	USART3_RX_PIN		GPIO_PIN_9
+#define	USART3_TX_PORT		GPIOB
+#define	USART3_RX_PORT		GPIOB
+#define	USART3_AF			GPIO_AF4_USART3
 
 #define	USART4_TX_PIN		GPIO_PIN_0
 #define	USART4_RX_PIN		GPIO_PIN_1
-#define	USART4_TX_PORT	GPIOA
-#define	USART4_RX_PORT	GPIOA
-#define	USART4_AF				GPIO_AF4_USART4
+#define	USART4_TX_PORT		GPIOA
+#define	USART4_RX_PORT		GPIOA
+#define	USART4_AF			GPIO_AF4_USART4
 
 #define	USART5_TX_PIN		GPIO_PIN_3
-#define	USART5_RX_PIN		GPIO_PIN_4
-#define	USART5_TX_PORT	GPIOB
-#define	USART5_RX_PORT	GPIOB
-#define	USART5_AF				GPIO_AF4_USART5
+#define	USART5_RX_PIN		GPIO_PIN_2
+#define	USART5_TX_PORT		GPIOD
+#define	USART5_RX_PORT		GPIOD
+#define	USART5_AF			GPIO_AF3_USART5
 
 #define	USART6_TX_PIN		GPIO_PIN_4
 #define	USART6_RX_PIN		GPIO_PIN_5
-#define	USART6_TX_PORT	GPIOA
-#define	USART6_RX_PORT	GPIOA
-#define	USART6_AF				GPIO_AF5_USART6
+#define	USART6_TX_PORT		GPIOA
+#define	USART6_RX_PORT		GPIOA
+#define	USART6_AF			GPIO_AF8_USART6
 
 /* Module-specific Definitions */
 #define IMU_INT1_PORT									GPIOB
-#define IMU_INT1_PIN									GPIO_PIN_12
+#define IMU_INT1_PIN									GPIO_PIN_0
 #define IMU_INT1_GPIO_CLK()						__GPIOB_CLK_ENABLE();
-#define IMU_INT2_PORT									GPIOA
-#define IMU_INT2_PIN									GPIO_PIN_6
-#define IMU_INT2_GPIO_CLK()						__GPIOA_CLK_ENABLE();
-#define MAG_INT_PORT									GPIOA
-#define MAG_INT_PIN										GPIO_PIN_7
+#define IMU_INT2_PORT									GPIOB
+#define IMU_INT2_PIN									GPIO_PIN_13
+#define IMU_INT2_GPIO_CLK()						__GPIOB_CLK_ENABLE();
+#define MAG_INT_PORT									GPIOB
+#define MAG_INT_PIN										GPIO_PIN_11
 #define MAG_INT_GPIO_CLK()						__GPIOA_CLK_ENABLE();
 #define XL_INT1_PORT									GPIOB
-#define XL_INT1_PIN										GPIO_PIN_1
-#define XL_INT1_GPIO_CLK()						__GPIOB_CLK_ENABLE();
+#define XL_INT1_PIN										GPIO_PIN_2
+#define XL_INT1_GPIO_CLK()						__GPIOD_CLK_ENABLE();
 #define XL_INT2_PORT									GPIOB
-#define XL_INT2_PIN										GPIO_PIN_0
-#define XL_INT2_GPIO_CLK()						__GPIOB_CLK_ENABLE();
+#define XL_INT2_PIN										GPIO_PIN_1
+#define XL_INT2_GPIO_CLK()						__GPIOD_CLK_ENABLE();
 
-#define _MEMS_I2C2_SDA_PORT       		GPIOB
-#define _MEMS_I2C2_SDA_PIN            GPIO_PIN_14
+#define _MEMS_I2C2_SDA_PORT       		GPIOA
+#define _MEMS_I2C2_SDA_PIN            GPIO_PIN_6
 #define _MEMS_I2C2_SDA_GPIO_CLK()     __GPIOB_CLK_ENABLE();
-#define _MEMS_I2C2_SCL_PORT           GPIOB
-#define _MEMS_I2C2_SCL_PIN            GPIO_PIN_13
+#define _MEMS_I2C2_SCL_PORT           GPIOA
+#define _MEMS_I2C2_SCL_PIN            GPIO_PIN_7
 #define _MEMS_I2C2_SCL_GPIO_CLK()     __GPIOB_CLK_ENABLE();
 
 #define NUM_MODULE_PARAMS		13
+
+/* Module EEPROM Variables */
+
+// Module Addressing Space 500 - 599
+#define _EE_MODULE							500		
 
 /* Module_Status Type Definition */
 typedef enum {
@@ -121,8 +137,8 @@ typedef enum {
 } Module_Status;
 
 /* Indicator LED */
-#define _IND_LED_PORT		GPIOA
-#define _IND_LED_PIN		GPIO_PIN_11
+#define _IND_LED_PORT			GPIOB
+#define _IND_LED_PIN			GPIO_PIN_12
 
 /* Export UART variables */
 extern UART_HandleTypeDef huart1;
@@ -139,12 +155,13 @@ extern void MX_USART3_UART_Init(void);
 extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
+extern void SystemClock_Config(void);
+extern void ExecuteMonitor(void);
 
 /* -----------------------------------------------------------------------
- |																APIs	 																 	|
- ----------------------------------------------------------------------- 
+ |								  APIs							          |  																 	|
+/* -----------------------------------------------------------------------
  */
-
 Module_Status SampleGyroMDPS(int *gyroX,int *gyroY,int *gyroZ);
 Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
 
@@ -191,11 +208,15 @@ Module_Status StreamTempCToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamTempCToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 void stopStreamMems(void);
+
+void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
+
 /* -----------------------------------------------------------------------
- |															Commands																 	|
- ----------------------------------------------------------------------- 
+ |								Commands							      |															 	|
+/* -----------------------------------------------------------------------
  */
+
 
 #endif /* H0BR4_H */
 

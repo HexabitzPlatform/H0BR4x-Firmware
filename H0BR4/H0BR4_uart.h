@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_uart.h
@@ -14,17 +14,16 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f0xx_hal.h"
+#include "stm32g0xx_hal.h"
+#include "BOS.h"
 
 /* External variables -----------------------------------------------*/
-extern FlagStatus UartRxReady;
-extern FlagStatus UartTxReady;
-
 #ifndef __N
 extern uint16_t arrayPortsDir[MaxNumOfModules]; /* Array ports directions */
 #else
-	extern uint16_t arrayPortsDir[__N];
-#endif 	 
+extern uint16_t arrayPortsDir[__N ];
+#endif 
+
 // Blocking (polling-based) read
 #define readPx(port, buffer, n, timeout) while(HAL_UART_Receive(GetUart(port), (uint8_t *)buffer, n, timeout) != HAL_OK) {}
 

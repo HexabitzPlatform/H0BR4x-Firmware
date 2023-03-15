@@ -1,22 +1,22 @@
 /*
- BitzOS (BOS) V0.2.7 - Copyright (C) 2017-2022 Hexabitz
+ BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
  All rights reserved
-
+ 
  File Name     : H0BR4_dma.h
  Description   : Header file contains Peripheral DMA setup.
 
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef H0BR4_DMA_H
-#define H0BR4_DMA_H
+#ifndef H0BR4_dma_H
+#define H0BR4_dma_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f0xx_hal.h"
+#include "stm32g0xx_hal.h"
 
 /* Check which DMA interrupt occured */
 #define HAL_DMA_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  ((((__HANDLE__)->ISR & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
@@ -45,10 +45,11 @@ extern void StopMsgDMA(uint8_t port);
 extern void StopStreamDMA(uint8_t port);
 extern void SwitchMsgDMAToStream(uint8_t port);
 extern void SwitchStreamDMAToMsg(uint8_t port);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* H0BR4_DMA_H */
+#endif /* H0BR4_dma_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

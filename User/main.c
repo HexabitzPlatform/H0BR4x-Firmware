@@ -10,7 +10,7 @@
 uint8_t testBuffer[10] = {0};
 
 /* Private variables ---------------------------------------------------------*/
-
+int8_t s=0;
 /* Private function prototypes -----------------------------------------------*/
 
 /* Main function ------------------------------------------------------------*/
@@ -30,11 +30,12 @@ int main(void){
 /* User Task */
 void UserTask(void *argument){
 
-HAL_UART_Receive_DMA(&huart1, testBuffer, 10);
+//HAL_UART_Receive_DMA(&huart1, testBuffer, 10);
 
 	// put your code here, to run repeatedly.
 	while(1){
-
+s++;
+Delay_ms(200);
 
 	}
 }

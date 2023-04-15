@@ -380,6 +380,47 @@ void Module_Peripheral_Init(void){
 	MX_I2C_Init();
 	LSM6DS3Init();
     LSM303MagInit();
+
+    if( GetUart(P1)==P1uart)
+         {
+      		index_dma[0]=&(DMA1_Channel4->CNDTR);
+//      		index_input[0]=MSG_RX_BUF_SIZE-(*index_dma[0]);
+
+         }
+         if( GetUart(P2)==P2uart)
+           {
+        		index_dma[1]=&(DMA1_Channel2->CNDTR);
+//        		index_input[1]=MSG_RX_BUF_SIZE-(*index_dma[1]);
+
+           }
+         if( GetUart(P3)==P3uart)
+           {
+        		index_dma[2]=&(DMA1_Channel6->CNDTR);
+//        		index_input[2]=MSG_RX_BUF_SIZE-(*index_dma[2]);
+
+           }
+         if( GetUart(P4)==P4uart)
+           {
+        		index_dma[3]=&(DMA1_Channel1->CNDTR);
+//        		index_input[3]=MSG_RX_BUF_SIZE-(*index_dma[3]);
+
+           }
+         if( GetUart(P5)==P5uart)
+           {
+        		index_dma[4]=&(DMA1_Channel5->CNDTR);
+//        		index_input[4]=MSG_RX_BUF_SIZE-(*index_dma[4]);
+
+           }
+         if( GetUart(P6)==P6uart)
+           {
+        		index_dma[5]=&(DMA1_Channel3->CNDTR);
+//        		index_input[5]=MSG_RX_BUF_SIZE-(*index_dma[5]);
+
+           }
+
+
+
+
 	/* Create module special task (if needed) */
 }
 void initialValue(void)

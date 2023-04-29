@@ -34,6 +34,18 @@ void UserTask(void *argument){
 	// put your code here, to run repeatedly.
 	while(1){
 
+			SendMessageToModule(1, CODE_PING, 0);
+//			//Delay_ms(500);
+//			SendMessageToModule(3, CODE_PING, 0);
+//			//Delay_ms(500);
+//			SendMessageToModule(4, CODE_PING, 0);
+//			//Delay_ms(500);
+//			SendMessageToModule(5, CODE_PING, 0);
+//			//Delay_ms(500);
+//			SendMessageToModule(6, CODE_PING, 0);
+//			//Delay_ms(500);
+//			SendMessageToModule(7, CODE_PING, 0);
+//			//Delay_ms(500);
 
 	}
 }

@@ -382,7 +382,7 @@ void Module_Peripheral_Init(void){
     LSM303MagInit();
 
     //Circulating DMA Channels ON All Module
-	 for(int i=1;i<=6;i++)
+	 for(int i=1;i<=NumOfPorts;i++)
 		{
 		  if(GetUart(i)==&huart1)
 		           { index_dma[i-1]=&(DMA1_Channel1->CNDTR); }

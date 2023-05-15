@@ -710,7 +710,7 @@ void ADCSelectChannel(uint8_t ADC_port, char *side) {
 	if (ADC_port == 2 || ADC_port == 3) {
 		flag_ADC_Select=1;
 		HAL_UART_DeInit(GetUart(ADC_port));
-		portStatus[ADC_port - 1] = CUSTOM;
+		portStatus[ADC_port] = CUSTOM;
 		Channel = Get_channel(GetUart(ADC_port), side);
 		Rank_t = Get_Rank(ADC_port, side);
 		if (ADC_flag == 0)

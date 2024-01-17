@@ -18,8 +18,6 @@ int main(void){
 
 	Module_Init();		//Initialize Module &  BitzOS
 
-
-
 	//Don't place your code here.
 	for(;;){}
 }
@@ -29,18 +27,8 @@ int main(void){
 /* User Task */
 void UserTask(void *argument){
 
-
-
 	// put your code here, to run repeatedly.
 	while(1){
-
-		messageParams[0] = 20;
-		SendMessageToModule(1, CODE_H01R0_ON, 1);
-			Delay_ms(500);
-			messageParams[0] = 100;
-			SendMessageToModule(1, CODE_H01R0_ON, 1);
-
-
 
 	}
 }

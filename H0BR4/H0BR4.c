@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.2.9 - Copyright (C) 2017-2023 Hexabitz
+ BitzOS (BOS) V0.3.0 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0BR4.c
@@ -380,6 +380,24 @@ void Module_Peripheral_Init(void){
 	MX_I2C_Init();
 	LSM6DS3Init();
     LSM303MagInit();
+
+    //Circulating DMA Channels ON All Module
+	 for(int i=1;i<=NumOfPorts;i++)
+		{
+		  if(GetUart(i)==&huart1)
+		           { index_dma[i-1]=&(DMA1_Channel1->CNDTR); }
+		  else if(GetUart(i)==&huart2)
+				   { index_dma[i-1]=&(DMA1_Channel2->CNDTR); }
+		  else if(GetUart(i)==&huart3)
+				   { index_dma[i-1]=&(DMA1_Channel3->CNDTR); }
+		  else if(GetUart(i)==&huart4)
+				   { index_dma[i-1]=&(DMA1_Channel4->CNDTR); }
+		  else if(GetUart(i)==&huart5)
+				   { index_dma[i-1]=&(DMA1_Channel5->CNDTR); }
+		  else if(GetUart(i)==&huart6)
+				   { index_dma[i-1]=&(DMA1_Channel6->CNDTR); }
+		}
+
 	/* Create module special task (if needed) */
 }
 void initialValue(void)
@@ -491,13 +509,13 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 	else if(huart->Instance == USART2)
 		return P2;
 	else if(huart->Instance == USART3)
-		return P3;
+		return P6;
 	else if(huart->Instance == USART1)
 		return P4;
 	else if(huart->Instance == USART5)
 		return P5;
 	else if(huart->Instance == USART6)
-		return P6;
+		return P3;
 	
 	return 0;
 }
@@ -902,37 +920,37 @@ Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module){
 	 if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_GYRO, sizeof(buffer)) != BOS_OK)
 	 status = H0BR4_ERR_IO;*/
 
-	if(module == myID){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+	if(module == myID||module == 0){
+		temp[0]  =*((__IO uint8_t* )(&buffer[0]) + 3);
+		temp[1]  =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[2]  =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[3]  =*((__IO uint8_t* )(&buffer[0]) + 0);
 
-		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		temp[4]  =*((__IO uint8_t* )(&buffer[1]) + 3);
+		temp[5]  =*((__IO uint8_t* )(&buffer[1]) + 2);
+		temp[6]  =*((__IO uint8_t* )(&buffer[1]) + 1);
+		temp[7]  =*((__IO uint8_t* )(&buffer[1]) + 0);
 
-		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		temp[8]  =*((__IO uint8_t* )(&buffer[2]) + 3);
+		temp[9]  =*((__IO uint8_t* )(&buffer[2]) + 2);
 		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
 		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
 
 		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[0]  =port;
+		messageParams[1]  =*((__IO uint8_t* )(&buffer[0]) + 3);
+		messageParams[2]  =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[3]  =*((__IO uint8_t* )(&buffer[0]) + 1);
+		messageParams[4]  =*((__IO uint8_t* )(&buffer[0]) + 0);
 
-		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[5]  =*((__IO uint8_t* )(&buffer[1]) + 3);
+		messageParams[6]  =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[7]  =*((__IO uint8_t* )(&buffer[1]) + 1);
+		messageParams[8]  =*((__IO uint8_t* )(&buffer[1]) + 0);
 
-		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 3);
+		messageParams[9]  =*((__IO uint8_t* )(&buffer[2]) + 3);
 		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
 		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 1);
 		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 0);
@@ -993,7 +1011,7 @@ Module_Status SampleAccGToPort(uint8_t port,uint8_t module){
 	 if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_ACC, sizeof(buffer)) != BOS_OK)
 	 status = H0BR4_ERR_IO;*/
 
-	if(module == myID){
+	if(module == myID||module == 0){
 		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
@@ -1084,7 +1102,7 @@ Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module){
 	 if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_MAG, sizeof(buffer)) != BOS_OK)
 	 status = H0BR4_ERR_TIMEOUT;*/
 
-	if(module == myID){
+	if(module == myID||module == 0){
 		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
 		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
 		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
@@ -1168,7 +1186,7 @@ Module_Status SampleTempCToPort(uint8_t port,uint8_t module){
 	 if (SendMessageFromPort(port, myID, module, CODE_H0BR4_RESULT_TEMP, sizeof(temp)) != BOS_OK)
 	 status = H0BR4_ERR_TERMINATED;*/
 
-	if(module == myID){
+	if(module == myID||module == 0){
 		tempD[0] =*((__IO uint8_t* )(&temp) + 3);
 		tempD[1] =*((__IO uint8_t* )(&temp) + 2);
 		tempD[2] =*((__IO uint8_t* )(&temp) + 1);

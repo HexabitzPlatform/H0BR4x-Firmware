@@ -167,7 +167,6 @@ Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
 
 Module_Status SampleGyroDPS(float *x,float *y,float *z);
 Module_Status SampleGyroDPSToBuf(float *buffer);
-Module_Status SampleGyroDPSToString(char *cstring,size_t maxLen);
 Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module);
 
 Module_Status SampleAccMG(int *accX,int *accY,int *accZ);
@@ -175,21 +174,19 @@ Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ);
 
 Module_Status SampleAccG(float *x,float *y,float *z);
 Module_Status SampleAccGToBuf(float *buffer);
-Module_Status SampleAccGToString(char *cstring,size_t maxLen);
 Module_Status SampleAccGToPort(uint8_t port,uint8_t module);
 
 Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ);
 Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ);
 
 Module_Status SampleMagMGaussToBuf(float *buffer);
-Module_Status SampleMagMGaussToString(char *cstring,size_t maxLen);
 Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module);
 
 Module_Status SampleTempCelsius(float *temp);
 Module_Status SampleTempFahrenheit(float *temp);
 
 Module_Status SampleTempCToPort(uint8_t port,uint8_t module);
-Module_Status SampleTempCToString(char *cstring,size_t maxLen);
+
 
 Module_Status StreamGyroDPSToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
 Module_Status StreamGyroDPSToCLI(uint32_t period,uint32_t timeout);

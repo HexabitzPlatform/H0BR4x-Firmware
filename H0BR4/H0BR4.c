@@ -78,6 +78,11 @@ Module_Status SampleAccGToString(char *cstring,size_t maxLen);
 Module_Status SampleMagMGaussToString(char *cstring,size_t maxLen);
 Module_Status SampleTempCToString(char *cstring,size_t maxLen);
 
+Module_Status SampleAccGToPort(uint8_t port,uint8_t module);
+Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module);
+Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module);
+Module_Status SampleTempCToPort(uint8_t port,uint8_t module);
+
 static Module_Status LSM6DS3Init(void);
 static Module_Status LSM303MagInit(void);
 

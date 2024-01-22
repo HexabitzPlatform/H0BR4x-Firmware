@@ -83,6 +83,12 @@ Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module);
 Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module);
 Module_Status SampleTempCToPort(uint8_t port,uint8_t module);
 
+Module_Status StreamMagMGaussToCLI(uint32_t period,uint32_t timeout);
+Module_Status StreamTempCToCLI(uint32_t period,uint32_t timeout);
+Module_Status StreamAccGToCLI(uint32_t period,uint32_t timeout);
+Module_Status StreamGyroDPSToCLI(uint32_t period,uint32_t timeout);
+
+
 static Module_Status LSM6DS3Init(void);
 static Module_Status LSM303MagInit(void);
 

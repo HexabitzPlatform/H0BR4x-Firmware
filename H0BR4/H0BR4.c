@@ -73,6 +73,16 @@ typedef Module_Status (*SampleMemsToBuffer)(float *buffer);
 static bool stopStream = false;
 
 /* Private function prototypes -----------------------------------------------*/
+Module_Status SampleGyroDPSToString(char *cstring,size_t maxLen);
+Module_Status SampleAccGToString(char *cstring,size_t maxLen);
+Module_Status SampleMagMGaussToString(char *cstring,size_t maxLen);
+Module_Status SampleTempCToString(char *cstring,size_t maxLen);
+
+Module_Status SampleAccGToPort(uint8_t port,uint8_t module);
+Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module);
+Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module);
+Module_Status SampleTempCToPort(uint8_t port,uint8_t module);
+
 static Module_Status LSM6DS3Init(void);
 static Module_Status LSM303MagInit(void);
 
@@ -98,7 +108,7 @@ void ExecuteMonitor(void);
 static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString);
 static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString);
 static portBASE_TYPE StopStreamCommand(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString);
-
+Module_Status SampleGyroDPSToString(char *cstring,size_t maxLen);
 const CLI_Command_Definition_t SampleCommandDefinition ={(const int8_t* )"sample", (const int8_t* )"sample:\r\n Syntax: sample [gyro]/[acc]/[mag]/[temp]\r\n \
 \tGet filtered and calibrated Gyro, Acc, Mag or Temp values in \
 dps, g, mguass or celsius units respectively.\r\n\r\n", SampleSensorCommand, 1};

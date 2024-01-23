@@ -1242,7 +1242,7 @@ Module_Status StreamGyroDPSToCLI(uint32_t period,uint32_t timeout){
 }
 
 Module_Status StreamGyroDPSToBuffer(float *buffer,uint32_t period,uint32_t timeout){
-	return StreamMemsToBuf(buffer,sizeof(*buffer) * 3,period,timeout,SampleGyroDPSToBuf);
+	return StreamMemsToBuf(buffer,MEMS_BUFFER_ELEMENT,period,timeout,SampleGyroDPSToBuf);
 }
 
 Module_Status StreamAccGToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout){
@@ -1254,7 +1254,7 @@ Module_Status StreamAccGToCLI(uint32_t period,uint32_t timeout){
 }
 
 Module_Status StreamAccGToBuffer(float *buffer,uint32_t period,uint32_t timeout){
-	return StreamMemsToBuf(buffer,sizeof(*buffer) * 3,period,timeout,SampleAccGToBuf);
+	return StreamMemsToBuf(buffer,MEMS_BUFFER_ELEMENT,period,timeout,SampleAccGToBuf);
 }
 
 Module_Status StreamMagMGaussToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout){
@@ -1266,7 +1266,7 @@ Module_Status StreamMagMGaussToCLI(uint32_t period,uint32_t timeout){
 }
 
 Module_Status StreamMagMGaussToBuffer(float *buffer,uint32_t period,uint32_t timeout){
-	return StreamMemsToBuf(buffer,sizeof(*buffer) * 3,period,timeout,SampleMagMGaussToBuf);
+	return StreamMemsToBuf(buffer,MEMS_BUFFER_ELEMENT,period,timeout,SampleMagMGaussToBuf);
 }
 
 Module_Status StreamTempCToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout){
@@ -1278,7 +1278,7 @@ Module_Status StreamTempCToCLI(uint32_t period,uint32_t timeout){
 }
 
 Module_Status StreamTempCToBuffer(float *buffer,uint32_t period,uint32_t timeout){
-	return StreamMemsToBuf(buffer,sizeof(*buffer),period,timeout,SampleTempCelsius);
+	return StreamMemsToBuf(buffer,TEMP_BUFFER_ELEMENT,period,timeout,SampleTempCelsius);
 }
 
 void stopStreamMems(void){

@@ -126,6 +126,9 @@
 
 #define NUM_MODULE_PARAMS		13
 
+#define TEMP_BUFFER_ELEMENT 1
+#define MEMS_BUFFER_ELEMENT 3
+
 /* Module EEPROM Variables */
 
 // Module Addressing Space 500 - 599

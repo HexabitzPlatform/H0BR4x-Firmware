@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.0 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.1 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
  
  File Name     : H0BR4.h
@@ -126,6 +126,9 @@
 
 #define NUM_MODULE_PARAMS		13
 
+#define TEMP_BUFFER_ELEMENT 1
+#define MEMS_BUFFER_ELEMENT 3
+
 /* Module EEPROM Variables */
 
 // Module Addressing Space 500 - 599
@@ -188,19 +191,15 @@ Module_Status SampleTempFahrenheit(float *temp);
 
 
 Module_Status StreamGyroDPSToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
-Module_Status StreamGyroDPSToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamGyroDPSToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 Module_Status StreamAccGToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
-Module_Status StreamAccGToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamAccGToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 Module_Status StreamMagMGaussToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
-Module_Status StreamMagMGaussToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamMagMGaussToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 Module_Status StreamTempCToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
-Module_Status StreamTempCToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamTempCToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 void stopStreamMems(void);

@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.3 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.4 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
  File Name     : H0BR4.c
@@ -937,40 +937,44 @@ Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module){
 	 status = H0BR4_ERR_IO;*/
 
 	if(module == myID||module == 0){
-		temp[0]  =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1]  =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2]  =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3]  =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[0]  =*((__IO uint8_t* )(&buffer[0]) + 0);
+		temp[1]  =*((__IO uint8_t* )(&buffer[0]) + 1);
+		temp[2]  =*((__IO uint8_t* )(&buffer[0]) + 2);
+		temp[3]  =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		temp[4]  =*((__IO uint8_t* )(&buffer[1]) + 3);
-		temp[5]  =*((__IO uint8_t* )(&buffer[1]) + 2);
-		temp[6]  =*((__IO uint8_t* )(&buffer[1]) + 1);
-		temp[7]  =*((__IO uint8_t* )(&buffer[1]) + 0);
+		temp[4]  =*((__IO uint8_t* )(&buffer[1]) + 0);
+		temp[5]  =*((__IO uint8_t* )(&buffer[1]) + 1);
+		temp[6]  =*((__IO uint8_t* )(&buffer[1]) + 2);
+		temp[7]  =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		temp[8]  =*((__IO uint8_t* )(&buffer[2]) + 3);
-		temp[9]  =*((__IO uint8_t* )(&buffer[2]) + 2);
-		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
+		temp[8]  =*((__IO uint8_t* )(&buffer[2]) + 0);
+		temp[9]  =*((__IO uint8_t* )(&buffer[2]) + 1);
+		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 3);
 
 		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
 	}
 	else{
-		messageParams[0]  =port;
-		messageParams[1]  =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2]  =*((__IO uint8_t* )(&buffer[0]) + 2);
+		if (H0BR4_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+		messageParams[0]  =FMT_FLOAT;
+		messageParams[2]  =*((__IO uint8_t* )(&buffer[0]) + 0);
 		messageParams[3]  =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4]  =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[4]  =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[5]  =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		messageParams[5]  =*((__IO uint8_t* )(&buffer[1]) + 3);
-		messageParams[6]  =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[6]  =*((__IO uint8_t* )(&buffer[1]) + 0);
 		messageParams[7]  =*((__IO uint8_t* )(&buffer[1]) + 1);
-		messageParams[8]  =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[8]  =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[9]  =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		messageParams[9]  =*((__IO uint8_t* )(&buffer[2]) + 3);
-		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 0);
 		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 0);
-		SendMessageToModule(module,CODE_PORT_FORWARD,(sizeof(float) * 3) + 1);
+		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[13] =*((__IO uint8_t* )(&buffer[2]) + 3);
+		SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 2);
 	}
 
 	return status;
@@ -1028,42 +1032,46 @@ Module_Status SampleAccGToPort(uint8_t port,uint8_t module){
 	 status = H0BR4_ERR_IO;*/
 
 	if(module == myID||module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+			temp[0]  =*((__IO uint8_t* )(&buffer[0]) + 0);
+			temp[1]  =*((__IO uint8_t* )(&buffer[0]) + 1);
+			temp[2]  =*((__IO uint8_t* )(&buffer[0]) + 2);
+			temp[3]  =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 0);
+			temp[4]  =*((__IO uint8_t* )(&buffer[1]) + 0);
+			temp[5]  =*((__IO uint8_t* )(&buffer[1]) + 1);
+			temp[6]  =*((__IO uint8_t* )(&buffer[1]) + 2);
+			temp[7]  =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 2);
-		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
+			temp[8]  =*((__IO uint8_t* )(&buffer[2]) + 0);
+			temp[9]  =*((__IO uint8_t* )(&buffer[2]) + 1);
+			temp[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+			temp[11] =*((__IO uint8_t* )(&buffer[2]) + 3);
 
-		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
-		//memset(temp,0,12*sizeof(uint8_t));
-	}
+			writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
+		}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		if(H0BR4_OK == status)
+			messageParams[1] =BOS_OK;
+		else
+			messageParams[1] =BOS_ERROR;
+		messageParams[0] =FMT_FLOAT;
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 0);
 		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[5] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 0);
 		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[9] =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 0);
 		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 0);
-		SendMessageToModule(module,CODE_PORT_FORWARD,(sizeof(float) * 3) + 1);
-	}
+		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[13] =*((__IO uint8_t* )(&buffer[2]) + 3);
+		SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 2);
+}
+
 	return status;
 }
 
@@ -1119,42 +1127,46 @@ Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module){
 	 status = H0BR4_ERR_TIMEOUT;*/
 
 	if(module == myID||module == 0){
-		temp[0] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		temp[1] =*((__IO uint8_t* )(&buffer[0]) + 2);
-		temp[2] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		temp[3] =*((__IO uint8_t* )(&buffer[0]) + 0);
+			temp[0]  =*((__IO uint8_t* )(&buffer[0]) + 0);
+			temp[1]  =*((__IO uint8_t* )(&buffer[0]) + 1);
+			temp[2]  =*((__IO uint8_t* )(&buffer[0]) + 2);
+			temp[3]  =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		temp[4] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		temp[5] =*((__IO uint8_t* )(&buffer[1]) + 2);
-		temp[6] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		temp[7] =*((__IO uint8_t* )(&buffer[1]) + 0);
+			temp[4]  =*((__IO uint8_t* )(&buffer[1]) + 0);
+			temp[5]  =*((__IO uint8_t* )(&buffer[1]) + 1);
+			temp[6]  =*((__IO uint8_t* )(&buffer[1]) + 2);
+			temp[7]  =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		temp[8] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		temp[9] =*((__IO uint8_t* )(&buffer[2]) + 2);
-		temp[10] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		temp[11] =*((__IO uint8_t* )(&buffer[2]) + 0);
+			temp[8]  =*((__IO uint8_t* )(&buffer[2]) + 0);
+			temp[9]  =*((__IO uint8_t* )(&buffer[2]) + 1);
+			temp[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+			temp[11] =*((__IO uint8_t* )(&buffer[2]) + 3);
 
-		writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
-		//memset(temp,0,12*sizeof(uint8_t));
-	}
+			writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
+		}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&buffer[0]) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		if(H0BR4_OK == status)
+			messageParams[1] =BOS_OK;
+		else
+			messageParams[1] =BOS_ERROR;
+		messageParams[0] =FMT_FLOAT;
+		messageParams[2] =*((__IO uint8_t* )(&buffer[0]) + 0);
 		messageParams[3] =*((__IO uint8_t* )(&buffer[0]) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 0);
+		messageParams[4] =*((__IO uint8_t* )(&buffer[0]) + 2);
+		messageParams[5] =*((__IO uint8_t* )(&buffer[0]) + 3);
 
-		messageParams[5] =*((__IO uint8_t* )(&buffer[1]) + 3);
-		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[6] =*((__IO uint8_t* )(&buffer[1]) + 0);
 		messageParams[7] =*((__IO uint8_t* )(&buffer[1]) + 1);
-		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 0);
+		messageParams[8] =*((__IO uint8_t* )(&buffer[1]) + 2);
+		messageParams[9] =*((__IO uint8_t* )(&buffer[1]) + 3);
 
-		messageParams[9] =*((__IO uint8_t* )(&buffer[2]) + 3);
-		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[10] =*((__IO uint8_t* )(&buffer[2]) + 0);
 		messageParams[11] =*((__IO uint8_t* )(&buffer[2]) + 1);
-		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 0);
-		SendMessageToModule(module,CODE_PORT_FORWARD,(sizeof(float) * 3) + 1);
-	}
+		messageParams[12] =*((__IO uint8_t* )(&buffer[2]) + 2);
+		messageParams[13] =*((__IO uint8_t* )(&buffer[2]) + 3);
+		SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 2);
+}
+
 	return status;
 }
 
@@ -1203,21 +1215,25 @@ Module_Status SampleTempCToPort(uint8_t port,uint8_t module){
 	 status = H0BR4_ERR_TERMINATED;*/
 
 	if(module == myID||module == 0){
-		tempD[0] =*((__IO uint8_t* )(&temp) + 3);
-		tempD[1] =*((__IO uint8_t* )(&temp) + 2);
-		tempD[2] =*((__IO uint8_t* )(&temp) + 1);
-		tempD[3] =*((__IO uint8_t* )(&temp) + 0);
+		tempD[0] =*((__IO uint8_t* )(&temp) + 0);
+		tempD[1] =*((__IO uint8_t* )(&temp) + 1);
+		tempD[2] =*((__IO uint8_t* )(&temp) + 2);
+		tempD[3] =*((__IO uint8_t* )(&temp) + 3);
 		writePxMutex(port,(char* )&tempD[0],4 * sizeof(uint8_t),10,10);
 		//writePxITMutex(port, (char *)&tempD[0], 4*sizeof(uint8_t), 10);
 		//memset(tempD,0,4*sizeof(uint8_t));
 	}
 	else{
-		messageParams[0] =port;
-		messageParams[1] =*((__IO uint8_t* )(&temp) + 3);
-		messageParams[2] =*((__IO uint8_t* )(&temp) + 2);
+		if (H0BR4_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+		messageParams[0] =FMT_FLOAT;
+		messageParams[2] =*((__IO uint8_t* )(&temp) + 0);
 		messageParams[3] =*((__IO uint8_t* )(&temp) + 1);
-		messageParams[4] =*((__IO uint8_t* )(&temp) + 0);
-		SendMessageToModule(module,CODE_PORT_FORWARD,sizeof(float) + 1);
+		messageParams[4] =*((__IO uint8_t* )(&temp) + 2);
+		messageParams[5] =*((__IO uint8_t* )(&temp) + 3);
+		SendMessageToModule(module,CODE_READ_RESPONSE,sizeof(float) + 2);
 	}
 	return status;
 }

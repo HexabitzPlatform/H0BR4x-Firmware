@@ -78,10 +78,10 @@ Module_Status SampleAccGToString(char *cstring,size_t maxLen);
 Module_Status SampleMagMGaussToString(char *cstring,size_t maxLen);
 Module_Status SampleTempCToString(char *cstring,size_t maxLen);
 
-Module_Status SampleAccGToPort(uint8_t port,uint8_t module);
-Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module);
-Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module);
-Module_Status SampleTempCToPort(uint8_t port,uint8_t module);
+Module_Status SampleAccGToPort(uint8_t module,uint8_t port);
+Module_Status SampleGyroDPSToPort(uint8_t module,uint8_t port);
+Module_Status SampleMagMGaussToPort(uint8_t module,uint8_t port);
+Module_Status SampleTempCToPort(uint8_t module,uint8_t port);
 
 Module_Status StreamMagMGaussToCLI(uint32_t period,uint32_t timeout);
 Module_Status StreamTempCToCLI(uint32_t period,uint32_t timeout);
@@ -924,7 +924,7 @@ Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ){
 	return LSM6DS3SampleGyroRaw(gyroX,gyroY,gyroZ);
 }
 
-Module_Status SampleGyroDPSToPort(uint8_t port,uint8_t module){
+Module_Status SampleGyroDPSToPort(uint8_t module,uint8_t port){
 	float buffer[3]; // Three Samples X, Y, Z
 	static uint8_t temp[12];
 	Module_Status status =H0BR4_OK;
@@ -1019,7 +1019,7 @@ Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ){
 	return LSM6DS3SampleAccRaw(accX,accY,accZ);
 }
 
-Module_Status SampleAccGToPort(uint8_t port,uint8_t module){
+Module_Status SampleAccGToPort(uint8_t module,uint8_t port){
 	float buffer[3]; // Three Samples X, Y, Z
 	static uint8_t temp[12];
 	Module_Status status =H0BR4_OK;
@@ -1114,7 +1114,7 @@ Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
 	return LSM303SampleMagRaw(magX,magY,magZ);
 }
 
-Module_Status SampleMagMGaussToPort(uint8_t port,uint8_t module){
+Module_Status SampleMagMGaussToPort(uint8_t module,uint8_t port){
 	float buffer[3]; // Three Samples X, Y, Z
 	static uint8_t temp[12];
 	Module_Status status =H0BR4_OK;
@@ -1202,7 +1202,7 @@ Module_Status SampleTempFahrenheit(float *temp){
 	return LSM6DS3SampleTempFahrenheit(temp);
 }
 
-Module_Status SampleTempCToPort(uint8_t port,uint8_t module){
+Module_Status SampleTempCToPort(uint8_t module,uint8_t port){
 	float temp;
 	static uint8_t tempD[4];
 	Module_Status status =H0BR4_OK;
@@ -1249,7 +1249,7 @@ Module_Status SampleTempCToString(char *cstring,size_t maxLen){
 	return status;
 }
 
-Module_Status StreamGyroDPSToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout){
+Module_Status StreamGyroDPSToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout){
 	return StreamMemsToPort(port,module,period,timeout,SampleGyroDPSToPort);
 }
 
@@ -1261,7 +1261,7 @@ Module_Status StreamGyroDPSToBuffer(float *buffer,uint32_t period,uint32_t timeo
 	return StreamMemsToBuf(buffer,MEMS_BUFFER_ELEMENT,period,timeout,SampleGyroDPSToBuf);
 }
 
-Module_Status StreamAccGToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout){
+Module_Status StreamAccGToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout){
 	return StreamMemsToPort(port,module,period,timeout,SampleAccGToPort);
 }
 
@@ -1273,7 +1273,7 @@ Module_Status StreamAccGToBuffer(float *buffer,uint32_t period,uint32_t timeout)
 	return StreamMemsToBuf(buffer,MEMS_BUFFER_ELEMENT,period,timeout,SampleAccGToBuf);
 }
 
-Module_Status StreamMagMGaussToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout){
+Module_Status StreamMagMGaussToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout){
 	return StreamMemsToPort(port,module,period,timeout,SampleMagMGaussToPort);
 }
 
@@ -1285,7 +1285,7 @@ Module_Status StreamMagMGaussToBuffer(float *buffer,uint32_t period,uint32_t tim
 	return StreamMemsToBuf(buffer,MEMS_BUFFER_ELEMENT,period,timeout,SampleMagMGaussToBuf);
 }
 
-Module_Status StreamTempCToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout){
+Module_Status StreamTempCToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout){
 	return StreamMemsToPort(port,module,period,timeout,SampleTempCToPort);
 }
 

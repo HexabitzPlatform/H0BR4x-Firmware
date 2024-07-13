@@ -190,16 +190,16 @@ Module_Status SampleTempFahrenheit(float *temp);
 
 
 
-Module_Status StreamGyroDPSToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
+Module_Status StreamGyroDPSToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout);
 Module_Status StreamGyroDPSToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
-Module_Status StreamAccGToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
+Module_Status StreamAccGToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout);
 Module_Status StreamAccGToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
-Module_Status StreamMagMGaussToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
+Module_Status StreamMagMGaussToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout);
 Module_Status StreamMagMGaussToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
-Module_Status StreamTempCToPort(uint8_t port,uint8_t module,uint32_t period,uint32_t timeout);
+Module_Status StreamTempCToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout);
 Module_Status StreamTempCToBuffer(float *buffer,uint32_t period,uint32_t timeout);
 
 void stopStreamMems(void);

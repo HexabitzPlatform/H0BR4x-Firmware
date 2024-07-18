@@ -664,7 +664,7 @@ static Module_Status LSM6DS3SampleTempCelsius(float *temp){
 		return H0BR4_ERR_LSM6DS3;
 
 	int16_t rawTemp =concatBytes(buff[0],buff[1]);
-	*temp =(((float )rawTemp) / 16) + 25;
+	*temp =(((float )rawTemp) / 256) + 25;
 
 	return H0BR4_OK;
 }

@@ -12,7 +12,7 @@
 #include "BOS.h"
 #include <string.h>
 #include <stdio.h>
-#include "LSM6DS3.h"
+#include "LSM6DS3TR_C_APIS.h"
 #include "LSM303AGR_ACC.h"
 #include "LSM303AGR_MAG.h"
 
@@ -46,8 +46,6 @@ I2C_HandleTypeDef hi2c2;
   MX_I2C2_Init();
 
 }
-
-
 
  void MX_I2C2_Init(void)
 {
@@ -85,47 +83,3 @@ I2C_HandleTypeDef hi2c2;
   /* USER CODE END I2C2_Init 2 */
 
 }
-
- uint8_t LSM6DS3_I2C_Write(void *handle,uint8_t WriteAddr,uint8_t *pBuffer,uint16_t nBytesToWrite){
- 	if(HAL_I2C_Mem_Write(handle,LSM6DS3_ACC_GYRO_I2C_ADDRESS_HIGH,WriteAddr,sizeof(WriteAddr),pBuffer,nBytesToWrite,100) != HAL_OK){
- 		return 1;
- 	}
- 	return 0;
- }
-
- uint8_t LSM6DS3_I2C_Read(void *handle,uint8_t ReadAddr,uint8_t *pBuffer,uint16_t nBytesToRead){
- 	if(HAL_I2C_Mem_Read(handle,LSM6DS3_ACC_GYRO_I2C_ADDRESS_HIGH,ReadAddr,sizeof(ReadAddr),pBuffer,nBytesToRead,100) != HAL_OK){
- 		return 1;
- 	}
- 	return 0;
- }
-
- uint8_t LSM303AGR_ACC_I2C_Write(void *handle,uint8_t WriteAddr,uint8_t *pBuffer,uint16_t nBytesToWrite){
- 	if(HAL_I2C_Mem_Write(handle,LSM303AGR_ACC_I2C_ADDRESS,WriteAddr,sizeof(WriteAddr),pBuffer,nBytesToWrite,100) != HAL_OK){
- 		return 1;
- 	}
- 	return 0;
- }
-
- uint8_t LSM303AGR_ACC_I2C_Read(void *handle,uint8_t ReadAddr,uint8_t *pBuffer,uint16_t nBytesToRead){
- 	if(HAL_I2C_Mem_Read(handle,LSM303AGR_ACC_I2C_ADDRESS,ReadAddr,sizeof(ReadAddr),pBuffer,nBytesToRead,100) != HAL_OK){
- 		return 1;
- 	}
- 	return 0;
- }
-
- uint8_t LSM303AGR_MAG_I2C_Write(void *handle,uint8_t WriteAddr,uint8_t *pBuffer,uint16_t nBytesToWrite){
- 	if(HAL_I2C_Mem_Write(handle,LSM303AGR_MAG_I2C_ADDRESS,WriteAddr,sizeof(WriteAddr),pBuffer,nBytesToWrite,100) != HAL_OK){
- 		return 1;
- 	}
- 	return 0;
- }
-
- uint8_t LSM303AGR_MAG_I2C_Read(void *handle,uint8_t ReadAddr,uint8_t *pBuffer,uint16_t nBytesToRead){
- 	if(HAL_I2C_Mem_Read(handle,LSM303AGR_MAG_I2C_ADDRESS,ReadAddr,sizeof(ReadAddr),pBuffer,nBytesToRead,100) != HAL_OK){
- 		return 1;
- 	}
- 	return 0;
- }
-/*-----------------------------------------------------------*/
-

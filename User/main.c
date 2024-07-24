@@ -9,7 +9,9 @@
 #include "BOS.h"
 
 /* Private variables ---------------------------------------------------------*/
-
+float x11, y11 , z11;
+float x22, y22 , z22;
+float temp1 , temp2;
 /* Private function prototypes -----------------------------------------------*/
 
 /* Main function ------------------------------------------------------------*/
@@ -30,6 +32,12 @@ void UserTask(void *argument){
 	// put your code here, to run repeatedly.
 	while(1){
 
+		SampleGyroDPS(&x11 , &y11, &z11);
+
+		SampleAccG(&x22, &y22, &z22);
+
+		SampleTempCelsius(&temp1);
+		SampleTempFahrenheit(&temp2);
 
 	}
 }

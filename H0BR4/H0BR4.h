@@ -165,30 +165,20 @@ extern void ExecuteMonitor(void);
  |								  APIs							          |  																 	|
 /* -----------------------------------------------------------------------
  */
-Module_Status SampleGyroMDPS(int *gyroX,int *gyroY,int *gyroZ);
-Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
-
 Module_Status SampleGyroDPS(float *x,float *y,float *z);
+Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
 Module_Status SampleGyroDPSToBuf(float *buffer);
 
-
-Module_Status SampleAccMG(int *accX,int *accY,int *accZ);
-Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ);
-
 Module_Status SampleAccG(float *x,float *y,float *z);
+Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ);
 Module_Status SampleAccGToBuf(float *buffer);
-
 
 Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ);
 Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ);
-
 Module_Status SampleMagMGaussToBuf(float *buffer);
-
 
 Module_Status SampleTempCelsius(float *temp);
 Module_Status SampleTempFahrenheit(float *temp);
-
-
 
 Module_Status StreamGyroDPSToPort(uint8_t module,uint8_t port,uint32_t period,uint32_t timeout);
 Module_Status StreamGyroDPSToBuffer(float *buffer,uint32_t period,uint32_t timeout);

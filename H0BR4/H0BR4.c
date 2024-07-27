@@ -35,6 +35,7 @@ UART_HandleTypeDef huart6;
 extern FLASH_ProcessTypeDef pFlash;
 extern uint8_t numOfRecordedSnippets;
 extern I2C_HandleTypeDef hi2c2;
+TaskHandle_t IMU_TaskTaskHandle = NULL;
 /* Module exported parameters ------------------------------------------------*/
 float H0BR4_gyroX =0.0f;
 float H0BR4_gyroY =0.0f;
@@ -59,6 +60,7 @@ typedef Module_Status (*SampleMemsToBuffer)(float *buffer);
 static bool stopStream = false;
 
 /* Private function prototypes -----------------------------------------------*/
+void IMU_Task(void *argument);
 
 void FLASH_Page_Eras(uint32_t Addr );
 void ExecuteMonitor(void);
@@ -352,7 +354,10 @@ void Module_Peripheral_Init(void){
 				   { index_dma[i-1]=&(DMA1_Channel6->CNDTR); }
 		}
 
-	/* Create module special task (if needed) */
+
+	 /* Create a IMU_Task task */
+	 	xTaskCreate(IMU_Task,(const char* ) "IMU_Task",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&IMU_TaskTaskHandle);
+
 }
 
 /*-----------------------------------------------------------*/
@@ -475,25 +480,33 @@ static Module_Status PollingSleepCLISafe(uint32_t period){
 /*-----------------------------------------------------------*/
 
 
-/* Module special task function (if needed) */
-//void Module_Special_Task(void *argument){
+void IMU_Task(void *argument) {
+
+	/* Infinite loop */
+	for (;;) {
+		/*  */
+
+//		switch (tofMode) {
+//		case STREAM_TO_PORT:
 //
-//	/* Infinite loop */
-//	uint8_t cases; // Test variable.
-//	for(;;){
-//		/*  */
-//		switch(cases){
+//		case SAMPLE_TO_PORT:
+//
+//			break;
+//		case STREAM_TO_Terminal:
 //
 //
-//			default:
-//				osDelay(10);
-//				break;
+//			break;
+//
+//			break;
+//		default:
+//			osDelay(10);
+//			break;
 //		}
-//
-//		taskYIELD();
-//	}
-//
-//}
+
+		taskYIELD();
+	}
+
+}
 
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|

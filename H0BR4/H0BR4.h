@@ -152,6 +152,8 @@ extern void ExecuteMonitor(void);
 
 Module_Status SampleAccG(float *accX,float *accY,float *accZ);
 Module_Status SampleGyroDPS(float *gyroX,float *gyroY,float *gyroZ);
+Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ);
+
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 

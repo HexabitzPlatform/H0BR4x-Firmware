@@ -486,14 +486,9 @@ void IMU_Task(void *argument) {
  */
 Module_Status SampleAccG(float *accX,float *accY,float *accZ){
 	Module_Status status =H0BR4_OK;
-	float xG =0.0f, yG =0.0f, zG =0.0f;
 
-	if((status =LSM6DS3TR_C_SampleAccG(&xG,&yG,&zG)) != LSM6DS3TR_C_OK)
-		return status;
-
-	*accX =xG;
-	*accY =yG;
-	*accZ =zG;
+	if((status =LSM6DS3TR_C_SampleAccG(accX,accY,accZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
 
 	return status;
 }
@@ -501,18 +496,22 @@ Module_Status SampleAccG(float *accX,float *accY,float *accZ){
 
 Module_Status SampleGyroDPS(float *gyroX,float *gyroY,float *gyroZ){
 	Module_Status status =H0BR4_OK;
-	float xDPS =0.0f, yDPS =0.0f, zDPS =0.0f;
 
-	if((status =LSM6DS3TR_C_SampleGyroDPS(&xDPS,&yDPS,&zDPS)) != LSM6DS3TR_C_OK)
-		return status;
-
-	*gyroX =xDPS;
-	*gyroY =yDPS;
-	*gyroZ =zDPS;
+	if((status =LSM6DS3TR_C_SampleGyroDPS(gyroX,gyroY,gyroZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
 
 	return status;
 }
+/*-----------------------------------------------------------*/
+Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ){
+	Module_Status status =H0BR4_OK;
 
+	if((LSM303SampleMagMGauss(magX,magY,magZ)) != LSM303AGR_OK)
+		return status =H0BR4_ERROR;
+
+	return status;
+
+}
 
 /* -----------------------------------------------------------------------
  |								Commands							      |

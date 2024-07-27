@@ -484,19 +484,35 @@ void IMU_Task(void *argument) {
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
  */
-Module_Status SampleAccG(float *x,float *y,float *z){
+Module_Status SampleAccG(float *accX,float *accY,float *accZ){
 	Module_Status status =H0BR4_OK;
 	float xG =0.0f, yG =0.0f, zG =0.0f;
 
 	if((status =LSM6DS3TR_C_SampleAccG(&xG,&yG,&zG)) != LSM6DS3TR_C_OK)
 		return status;
 
-	*x =xG;
-	*y =yG;
-	*z =zG;
+	*accX =xG;
+	*accY =yG;
+	*accZ =zG;
 
 	return status;
 }
+/*-----------------------------------------------------------*/
+
+Module_Status SampleGyroDPS(float *gyroX,float *gyroY,float *gyroZ){
+	Module_Status status =H0BR4_OK;
+	float xDPS =0.0f, yDPS =0.0f, zDPS =0.0f;
+
+	if((status =LSM6DS3TR_C_SampleGyroDPS(&xDPS,&yDPS,&zDPS)) != LSM6DS3TR_C_OK)
+		return status;
+
+	*gyroX =xDPS;
+	*gyroY =yDPS;
+	*gyroZ =zDPS;
+
+	return status;
+}
+
 
 /* -----------------------------------------------------------------------
  |								Commands							      |

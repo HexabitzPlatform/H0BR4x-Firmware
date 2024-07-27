@@ -451,34 +451,6 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 
 /*-----------------------------------------------------------*/
 
-static Module_Status PollingSleepCLISafe(uint32_t period){
-	const unsigned DELTA_SLEEP_MS =100; // milliseconds
-	long numDeltaDelay =period / DELTA_SLEEP_MS;
-	unsigned lastDelayMS =period % DELTA_SLEEP_MS;
-
-	while(numDeltaDelay-- > 0){
-		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
-
-		// Look for ENTER key to stop the stream
-		for(uint8_t chr =0; chr < MSG_RX_BUF_SIZE; chr++){
-			if(UARTRxBuf[PcPort - 1][chr] == '\r'){
-				UARTRxBuf[PcPort - 1][chr] =0;
-				return H0BR4_ERR_TERMINATED;
-			}
-		}
-
-		if(stopStream)
-			return H0BR4_ERR_TERMINATED;
-	}
-
-	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
-	return H0BR4_OK;
-}
-
-
-
-/*-----------------------------------------------------------*/
-
 
 void IMU_Task(void *argument) {
 
@@ -512,7 +484,19 @@ void IMU_Task(void *argument) {
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
  */
+Module_Status SampleAccG(float *x,float *y,float *z){
+	Module_Status status =H0BR4_OK;
+	float xG =0.0f, yG =0.0f, zG =0.0f;
 
+	if((status =LSM6DS3TR_C_SampleAccG(&xG,&yG,&zG)) != LSM6DS3TR_C_OK)
+		return status;
+
+	*x =xG;
+	*y =yG;
+	*z =zG;
+
+	return status;
+}
 
 /* -----------------------------------------------------------------------
  |								Commands							      |

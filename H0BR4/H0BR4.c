@@ -534,7 +534,16 @@ Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ){
 	return status;
 
 }
+/*-----------------------------------------------------------*/
+Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
+	Module_Status status =H0BR4_OK;
 
+	if((status =LSM303SampleMagRaw(magX,magY,magZ)) != LSM303AGR_OK)
+		return status =H0BR4_ERROR;
+
+	return status;
+
+}
 /* -----------------------------------------------------------------------
  |								Commands							      |
    -----------------------------------------------------------------------

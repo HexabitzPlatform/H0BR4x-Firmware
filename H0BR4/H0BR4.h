@@ -108,6 +108,8 @@
 #define _MEMS_I2C2_SCL_PIN                GPIO_PIN_7
 #define _MEMS_I2C2_SCL_GPIO_CLK()         __GPIOB_CLK_ENABLE();
 
+#define MIN_MEMS_PERIOD_MS				100
+#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
 #define MIN_PERIOD_MS				100
 #define NUM_MODULE_PARAMS		13
 

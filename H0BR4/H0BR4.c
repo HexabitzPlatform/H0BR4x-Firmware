@@ -58,12 +58,13 @@ typedef Module_Status (*SampleMemsToString)(char*,size_t);
 typedef Module_Status (*SampleMemsToBuffer)(float *buffer);
 /* Private variables ---------------------------------------------------------*/
 static bool stopStream = false;
-
+uint8_t flag ;
 /* Private function prototypes -----------------------------------------------*/
 void IMU_Task(void *argument);
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
 Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
-
+Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Numofsamples, uint32_t timeout);
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples);
 void FLASH_Page_Eras(uint32_t Addr );
 void ExecuteMonitor(void);
 
@@ -482,6 +483,120 @@ void IMU_Task(void *argument) {
 
 }
 /*-----------------------------------------------------------*/
+Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Numofsamples, uint32_t timeout)
+ {
+	Module_Status status = H0BR4_OK;
+	int8_t *pcOutputString = NULL;
+	uint32_t period = timeout / Numofsamples;
+	char cstring[100];
+	float x =0, y =0, z =0;
+	int xm =0, ym =0, zm =0;
+	long numTimes = timeout / period;
+	if (period < MIN_MEMS_PERIOD_MS)
+		return H0BR4_ERR_WrongParams;
+
+	// TODO: Check if CLI is enable or not
+	switch (function) {
+	case Acc:
+
+		if (period > timeout)
+			timeout = period;
+
+		stopStream = false;
+
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			if((status =SampleAccG(&x,&y,&z)) != H0BR4_OK)
+				return status;
+
+			snprintf(cstring,50,"Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+				break;
+		}
+		break;
+	case Gyro:
+
+		if (period > timeout)
+			timeout = period;
+
+		stopStream = false;
+
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			if((status =SampleGyroDPS(&x,&y,&z)) != H0BR4_OK)
+				return status;
+
+			snprintf(cstring,50,"Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+				break;
+		}
+		break;
+	case Mag:
+
+		if (period > timeout)
+			timeout = period;
+
+		stopStream = false;
+
+		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+			if((status =SampleMagMGauss(&xm,&ym,&zm)) != H0BR4_OK)
+				return status;
+
+			snprintf(cstring,50,"Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n",xm,ym,zm);
+
+			writePxMutex(Port, (char*) cstring, strlen((char*) cstring),
+			cmd500ms, HAL_MAX_DELAY);
+			if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+				break;
+		}
+		break;
+
+	default:
+		status = H0BR4_ERR_WrongParams;
+		break;
+	}
+
+
+	return status;
+}
+
+/*-----------------------------------------------------------*/
+static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples)
+{
+	const unsigned DELTA_SLEEP_MS = 100; // milliseconds
+	long numDeltaDelay =  period / DELTA_SLEEP_MS;
+	unsigned lastDelayMS = period % DELTA_SLEEP_MS;
+
+	while (numDeltaDelay-- > 0) {
+		vTaskDelay(pdMS_TO_TICKS(DELTA_SLEEP_MS));
+
+		// Look for ENTER key to stop the stream
+		for (uint8_t chr=1 ; chr<MSG_RX_BUF_SIZE ; chr++)
+		{
+			if (UARTRxBuf[PcPort-1][chr] == '\r') {
+				UARTRxBuf[PcPort-1][chr] = 0;
+				flag=1;
+				return H0BR4_ERR_TERMINATED;
+			}
+		}
+
+		if (stopStream)
+			return H0BR4_ERR_TERMINATED;
+	}
+
+	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
+	return H0BR4_OK;
+}
+
+
+/*-----------------------------------------------------------*/
 Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
  {
 	Module_Status status = H0BR4_OK;
@@ -671,6 +786,9 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 	memset(&temp[0], 0, sizeof(temp));
 	return status;
 }
+
+/*-----------------------------------------------------------*/
+
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------

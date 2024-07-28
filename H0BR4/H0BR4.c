@@ -62,6 +62,7 @@ static bool stopStream = false;
 /* Private function prototypes -----------------------------------------------*/
 void IMU_Task(void *argument);
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
+Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 
 void FLASH_Page_Eras(uint32_t Addr );
 void ExecuteMonitor(void);
@@ -480,7 +481,28 @@ void IMU_Task(void *argument) {
 	}
 
 }
+/*-----------------------------------------------------------*/
+Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
+ {
+	Module_Status status = H0BR4_OK;
+	uint32_t samples = 0;
+	uint32_t period = 0;
+	period = timeout / Numofsamples;
 
+	if (timeout < MIN_PERIOD_MS || period < MIN_PERIOD_MS)
+		return H0BR4_ERR_WrongParams;
+
+	while (samples < Numofsamples) {
+		status = Exporttoport(module, port, function);
+		vTaskDelay(pdMS_TO_TICKS(period));
+		samples++;
+	}
+
+
+	return status;
+}
+
+/*-----------------------------------------------------------*/
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
  {
 

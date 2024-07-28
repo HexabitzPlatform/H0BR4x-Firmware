@@ -61,6 +61,7 @@ static bool stopStream = false;
 
 /* Private function prototypes -----------------------------------------------*/
 void IMU_Task(void *argument);
+Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
 
 void FLASH_Page_Eras(uint32_t Addr );
 void ExecuteMonitor(void);
@@ -480,6 +481,174 @@ void IMU_Task(void *argument) {
 
 }
 
+Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
+ {
+
+	static uint8_t temp[12];
+	Module_Status status =H0BR4_OK;
+    float accX,accY,accZ ;
+    float gyroX,gyroY,gyroZ;
+    int magX,magY,magZ;
+
+	switch (function) {
+	case Acc:
+
+
+		if((status =SampleAccG(&accX, &accY, &accZ)) != H0BR4_OK)
+			return status =H0BR4_ERROR;
+
+		if(module == myID || module == 0){
+			temp[0] = (uint8_t) ((*(uint32_t*) &accX) >> 0);
+			temp[1] = (uint8_t) ((*(uint32_t*) &accX) >> 8);
+			temp[2] = (uint8_t) ((*(uint32_t*) &accX) >> 16);
+			temp[3] = (uint8_t) ((*(uint32_t*) &accX) >> 24);
+
+			temp[4] = (uint8_t) ((*(uint32_t*) &accY) >> 0);
+			temp[5] = (uint8_t) ((*(uint32_t*) &accY) >> 8);
+			temp[6] = (uint8_t) ((*(uint32_t*) &accY) >> 16);
+			temp[7] = (uint8_t) ((*(uint32_t*) &accY) >> 24);
+
+			temp[8] = (uint8_t) ((*(uint32_t*) &accZ) >> 0);
+			temp[9] = (uint8_t) ((*(uint32_t*) &accZ) >> 8);
+			temp[10] = (uint8_t) ((*(uint32_t*) &accZ) >> 16);
+			temp[11] = (uint8_t) ((*(uint32_t*) &accZ) >> 24);
+
+			writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
+
+		} else {
+			if (H0BR4_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+			messageParams[0] = FMT_FLOAT;
+			messageParams[2] = 3;
+			messageParams[3] = (uint8_t) ((*(uint32_t*) &accX) >> 0);
+			messageParams[4] = (uint8_t) ((*(uint32_t*) &accX) >> 8);
+			messageParams[5] = (uint8_t) ((*(uint32_t*) &accX) >> 16);
+			messageParams[6] = (uint8_t) ((*(uint32_t*) &accX) >> 24);
+
+			messageParams[7] = (uint8_t) ((*(uint32_t*) &accY) >> 0);
+			messageParams[8] = (uint8_t) ((*(uint32_t*) &accY) >> 8);
+			messageParams[9] = (uint8_t) ((*(uint32_t*) &accY) >> 16);
+			messageParams[10] = (uint8_t) ((*(uint32_t*) &accY) >> 24);
+
+			messageParams[11] = (uint8_t) ((*(uint32_t*) &accZ) >> 0);
+			messageParams[12] = (uint8_t) ((*(uint32_t*) &accZ) >> 8);
+			messageParams[13] = (uint8_t) ((*(uint32_t*) &accZ) >> 16);
+			messageParams[14] = (uint8_t) ((*(uint32_t*) &accZ) >> 24);
+
+			SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
+		}
+
+		break;
+
+	case Gyro:
+
+
+		if((status =SampleGyroDPS(&gyroX, &gyroY, &gyroZ)) != H0BR4_OK)
+			return status =H0BR4_ERROR;
+
+		if(module == myID || module == 0){
+			temp[0] = (uint8_t) ((*(uint32_t*) &gyroX) >> 0);
+			temp[1] = (uint8_t) ((*(uint32_t*) &gyroX) >> 8);
+			temp[2] = (uint8_t) ((*(uint32_t*) &gyroX) >> 16);
+			temp[3] = (uint8_t) ((*(uint32_t*) &gyroX) >> 24);
+
+			temp[4] = (uint8_t) ((*(uint32_t*) &gyroY) >> 0);
+			temp[5] = (uint8_t) ((*(uint32_t*) &gyroY) >> 8);
+			temp[6] = (uint8_t) ((*(uint32_t*) &gyroY) >> 16);
+			temp[7] = (uint8_t) ((*(uint32_t*) &gyroY) >> 24);
+
+			temp[8] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 0);
+			temp[9] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 8);
+			temp[10] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 16);
+			temp[11] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 24);
+
+			writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
+
+		} else {
+			if (H0BR4_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+			messageParams[0] = FMT_FLOAT;
+			messageParams[2] = 3;
+			messageParams[3] = (uint8_t) ((*(uint32_t*) &gyroX) >> 0);
+			messageParams[4] = (uint8_t) ((*(uint32_t*) &gyroX) >> 8);
+			messageParams[5] = (uint8_t) ((*(uint32_t*) &gyroX) >> 16);
+			messageParams[6] = (uint8_t) ((*(uint32_t*) &gyroX) >> 24);
+
+			messageParams[7] = (uint8_t) ((*(uint32_t*) &gyroY) >> 0);
+			messageParams[8] = (uint8_t) ((*(uint32_t*) &gyroY) >> 8);
+			messageParams[9] = (uint8_t) ((*(uint32_t*) &gyroY) >> 16);
+			messageParams[10] = (uint8_t) ((*(uint32_t*) &gyroY) >> 24);
+
+			messageParams[11] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 0);
+			messageParams[12] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 8);
+			messageParams[13] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 16);
+			messageParams[14] = (uint8_t) ((*(uint32_t*) &gyroZ) >> 24);
+
+			SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
+		}
+
+		break;
+	case Mag:
+
+
+		if((status =SampleMagMGauss(&magX, &magY, &magZ)) != H0BR4_OK)
+			return status =H0BR4_ERROR;
+
+		if(module == myID || module == 0){
+			temp[0] = (uint8_t) ((*(uint32_t*) &magX) >> 0);
+			temp[1] = (uint8_t) ((*(uint32_t*) &magX) >> 8);
+			temp[2] = (uint8_t) ((*(uint32_t*) &magX) >> 16);
+			temp[3] = (uint8_t) ((*(uint32_t*) &magX) >> 24);
+
+			temp[4] = (uint8_t) ((*(uint32_t*) &magY) >> 0);
+			temp[5] = (uint8_t) ((*(uint32_t*) &magY) >> 8);
+			temp[6] = (uint8_t) ((*(uint32_t*) &magY) >> 16);
+			temp[7] = (uint8_t) ((*(uint32_t*) &magY) >> 24);
+
+			temp[8] = (uint8_t) ((*(uint32_t*) &magZ) >> 0);
+			temp[9] = (uint8_t) ((*(uint32_t*) &magZ) >> 8);
+			temp[10] = (uint8_t) ((*(uint32_t*) &magZ) >> 16);
+			temp[11] = (uint8_t) ((*(uint32_t*) &magZ) >> 24);
+
+			writePxITMutex(port,(char* )&temp[0],12 * sizeof(uint8_t),10);
+
+		} else {
+			if (H0BR4_OK == status)
+				messageParams[1] = BOS_OK;
+			else
+				messageParams[1] = BOS_ERROR;
+			messageParams[0] = FMT_INT32;
+			messageParams[2] = 3;
+			messageParams[3] = (uint8_t) ((*(uint32_t*) &magX) >> 0);
+			messageParams[4] = (uint8_t) ((*(uint32_t*) &magX) >> 8);
+			messageParams[5] = (uint8_t) ((*(uint32_t*) &magX) >> 16);
+			messageParams[6] = (uint8_t) ((*(uint32_t*) &magX) >> 24);
+
+			messageParams[7] = (uint8_t) ((*(uint32_t*) &magY) >> 0);
+			messageParams[8] = (uint8_t) ((*(uint32_t*) &magY) >> 8);
+			messageParams[9] = (uint8_t) ((*(uint32_t*) &magY) >> 16);
+			messageParams[10] = (uint8_t) ((*(uint32_t*) &magY) >> 24);
+
+			messageParams[11] = (uint8_t) ((*(uint32_t*) &magZ) >> 0);
+			messageParams[12] = (uint8_t) ((*(uint32_t*) &magZ) >> 8);
+			messageParams[13] = (uint8_t) ((*(uint32_t*) &magZ) >> 16);
+			messageParams[14] = (uint8_t) ((*(uint32_t*) &magZ) >> 24);
+
+			SendMessageToModule(module,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
+		}
+
+		break;
+	default:
+		status = H0BR4_ERR_WrongParams;
+		break;
+	}
+	memset(&temp[0], 0, sizeof(temp));
+	return status;
+}
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------

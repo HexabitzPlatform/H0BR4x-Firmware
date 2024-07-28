@@ -123,6 +123,13 @@ typedef enum {
 	H0BR4_OK =0, H0BR4_ERR_UnknownMessage, H0BR4_ERR_GYRO, H0BR4_ERR_ACC, H0BR4_ERR_MAG, H0BR4_ERR_LSM6DS3, H0BR4_ERR_LSM303, H0BR4_ERR_BUSY, H0BR4_ERR_TIMEOUT, H0BR4_ERR_IO, H0BR4_ERR_TERMINATED, H0BR4_ERR_WrongParams, H0BR4_ERROR =25
 } Module_Status;
 
+typedef enum {
+	Acc=0,
+	Gyro,
+	Mag,
+
+}All_Data;
+
 /* Indicator LED */
 #define _IND_LED_PORT			GPIOB
 #define _IND_LED_PIN			GPIO_PIN_12

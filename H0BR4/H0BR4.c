@@ -484,6 +484,8 @@ void IMU_Task(void *argument) {
  |								  APIs							          | 																 	|
 /* -----------------------------------------------------------------------
  */
+
+
 Module_Status SampleAccG(float *accX,float *accY,float *accZ){
 	Module_Status status =H0BR4_OK;
 
@@ -510,6 +512,17 @@ Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ){
 		return status =H0BR4_ERROR;
 
 	return status;
+
+}
+
+Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ){
+	Module_Status status =H0BR4_OK;
+
+	if((status =LSM6DS3TR_C_SampleGyroRaw(gyroX,gyroY,gyroZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+
+	return status;
+
 
 }
 

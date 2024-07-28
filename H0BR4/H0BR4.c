@@ -514,7 +514,7 @@ Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ){
 	return status;
 
 }
-
+/*-----------------------------------------------------------*/
 Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ){
 	Module_Status status =H0BR4_OK;
 
@@ -523,6 +523,15 @@ Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ){
 
 	return status;
 
+}
+/*-----------------------------------------------------------*/
+Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ){
+	Module_Status status =H0BR4_OK;
+
+	if((status =LSM6DS3TR_C_SampleAccRaw(accX,accY,accZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+
+	return status;
 
 }
 

@@ -59,6 +59,7 @@ typedef Module_Status (*SampleMemsToBuffer)(float *buffer);
 /* Private variables ---------------------------------------------------------*/
 static bool stopStream = false;
 uint8_t flag ;
+uint8_t tofMode ;
 /* Private function prototypes -----------------------------------------------*/
 void IMU_Task(void *argument);
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
@@ -461,22 +462,22 @@ void IMU_Task(void *argument) {
 	for (;;) {
 		/*  */
 
-//		switch (tofMode) {
-//		case STREAM_TO_PORT:
-//
-//		case SAMPLE_TO_PORT:
-//
-//			break;
-//		case STREAM_TO_Terminal:
-//
-//
-//			break;
-//
-//			break;
-//		default:
-//			osDelay(10);
-//			break;
-//		}
+		switch (tofMode) {
+		case STREAM_TO_PORT:
+
+		case SAMPLE_TO_PORT:
+
+			break;
+		case STREAM_TO_Terminal:
+
+
+			break;
+
+			break;
+		default:
+			osDelay(10);
+			break;
+		}
 
 		taskYIELD();
 	}
@@ -853,6 +854,22 @@ Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
 	return status;
 
 }
+/*-----------------------------------------------------------*/
+Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
+{
+	Module_Status status =H0BR4_OK;
+
+	if(port == 0 && module == myID)
+		return status =H0BR4_ERR_WrongParams;
+
+	Exporttoport(module,port,function);
+
+	return status;
+}
+
+
+
+
 /* -----------------------------------------------------------------------
  |								Commands							      |
    -----------------------------------------------------------------------

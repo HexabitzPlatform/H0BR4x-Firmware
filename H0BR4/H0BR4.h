@@ -113,8 +113,12 @@
 #define MIN_PERIOD_MS				100
 #define NUM_MODULE_PARAMS		13
 
-#define TEMP_BUFFER_ELEMENT 1
-#define MEMS_BUFFER_ELEMENT 3
+#define SAMPLE_TO_PORT          1
+#define STREAM_TO_PORT          2
+#define STREAM_TO_Terminal      3
+#define DEFAULT                 4
+
+
 
 /* Module EEPROM Variables */
 
@@ -167,6 +171,9 @@ Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ);
 Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
 Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ);
 Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ);
+
+Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
+
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);

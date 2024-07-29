@@ -58,8 +58,11 @@ typedef Module_Status (*SampleMemsToString)(char*,size_t);
 typedef Module_Status (*SampleMemsToBuffer)(float *buffer);
 /* Private variables ---------------------------------------------------------*/
 static bool stopStream = false;
-uint8_t flag ;
-uint8_t tofMode ;
+uint8_t flag;
+uint8_t tofMode;
+uint8_t port2, module2, mode2, mode1, port1, module1;
+uint32_t Numofsamples1, timeout1, Numofsamples2, timeout2;
+
 /* Private function prototypes -----------------------------------------------*/
 void IMU_Task(void *argument);
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
@@ -464,10 +467,8 @@ void IMU_Task(void *argument) {
 
 		switch (tofMode) {
 		case STREAM_TO_PORT:
+			Exportstreamtoport(module1, port1, mode1, Numofsamples1, timeout1);
 
-		case SAMPLE_TO_PORT:
-
-			break;
 		case STREAM_TO_Terminal:
 
 
@@ -613,7 +614,7 @@ Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,
 		vTaskDelay(pdMS_TO_TICKS(period));
 		samples++;
 	}
-
+	tofMode = DEFAULT;
 
 	return status;
 }
@@ -855,8 +856,7 @@ Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
 
 }
 /*-----------------------------------------------------------*/
-Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
-{
+Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function){
 	Module_Status status =H0BR4_OK;
 
 	if(port == 0 && module == myID)
@@ -865,6 +865,23 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function)
 	Exporttoport(module,port,function);
 
 	return status;
+}
+/*-----------------------------------------------------------*/
+Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
+{
+	Module_Status status = H0BR4_OK;
+
+	if(port == 0 && module == myID)
+		return status =H0BR4_ERR_WrongParams;
+
+	tofMode=STREAM_TO_PORT;
+	port1 = port ;
+	module1 =module;
+	Numofsamples1=Numofsamples;
+	timeout1=timeout;
+	mode1= function;
+	return status;
+
 }
 
 

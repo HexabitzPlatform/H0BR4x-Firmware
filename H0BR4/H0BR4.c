@@ -73,6 +73,14 @@ void FLASH_Page_Eras(uint32_t Addr );
 void ExecuteMonitor(void);
 
 /* Create CLI commands --------------------------------------------------------*/
+static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+/* CLI command structure : sample */
+const CLI_Command_Definition_t SampleCommandDefinition = {
+	(const int8_t *) "sample",
+	(const int8_t *) "sample:\r\n Syntax: sample [Gyro]/[Acc]/[Mag]/[Temp].\r\n\r\n",
+	SampleSensorCommand,
+	1
+};
 
 /*-----------------------------------------------------------*/
 
@@ -405,6 +413,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 /* --- Register this module CLI Commands
  */
 void RegisterModuleCLICommands(void){
+	FreeRTOS_CLIRegisterCommand( &SampleCommandDefinition );
 
 }
 
@@ -948,5 +957,99 @@ Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamp
  |								Commands							      |
    -----------------------------------------------------------------------
  */
+static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString)
+{
+	const char *const AccCmdName = "acc";
+	const char *const GyroCmdName = "gyro";
+	const char *const MagCmdName = "mag";
+	const char *const TempCmdName = "temp";
+
+
+	const char *pSensName = NULL;
+	portBASE_TYPE sensNameLen = 0;
+
+	// Make sure we return something
+	*pcWriteBuffer = '\0';
+
+	pSensName = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, &sensNameLen);
+
+	if (pSensName == NULL) {
+		snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		return pdFALSE;
+	}
+
+	do {
+		if (!strncmp(pSensName, AccCmdName, strlen(AccCmdName))) {
+			Exportstreamtoterminal(PcPort,Acc,1,500);
+
+		} else if (!strncmp(pSensName, GyroCmdName, strlen(GyroCmdName))) {
+			Exportstreamtoterminal(PcPort,Gyro,1,500);
+
+
+		} else if (!strncmp(pSensName, MagCmdName, strlen(MagCmdName))) {
+			Exportstreamtoterminal(PcPort,Mag,1,500);
+
+
+		} else if (!strncmp(pSensName, TempCmdName, strlen(TempCmdName))) {
+			Exportstreamtoterminal(PcPort,Temp,1,500);
+
+		}
+		else {
+			snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Invalid Arguments\r\n");
+		}
+
+		return pdFALSE;
+	} while (0);
+
+	snprintf((char *)pcWriteBuffer, xWriteBufferLen, "Error reading Sensor\r\n");
+	return pdFALSE;
+}
+/*-----------------------------------------------------------*/
+// Port Mode => false and CLI Mode => true
+static bool StreamCommandParser(const int8_t *pcCommandString, const char **ppSensName, portBASE_TYPE *pSensNameLen,
+														bool *pPortOrCLI, uint32_t *pPeriod, uint32_t *pTimeout, uint8_t *pPort, uint8_t *pModule)
+{
+	const char *pPeriodMSStr = NULL;
+	const char *pTimeoutMSStr = NULL;
+
+	portBASE_TYPE periodStrLen = 0;
+	portBASE_TYPE timeoutStrLen = 0;
+
+	const char *pPortStr = NULL;
+	const char *pModStr = NULL;
+
+	portBASE_TYPE portStrLen = 0;
+	portBASE_TYPE modStrLen = 0;
+
+	*ppSensName = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 1, pSensNameLen);
+	pPeriodMSStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 2, &periodStrLen);
+	pTimeoutMSStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 3, &timeoutStrLen);
+
+	// At least 3 Parameters are required!
+	if ((*ppSensName == NULL) || (pPeriodMSStr == NULL) || (pTimeoutMSStr == NULL))
+		return false;
+
+	// TODO: Check if Period and Timeout are integers or not!
+	*pPeriod = atoi(pPeriodMSStr);
+	*pTimeout = atoi(pTimeoutMSStr);
+	*pPortOrCLI = true;
+
+	pPortStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 4, &portStrLen);
+	pModStr = (const char *)FreeRTOS_CLIGetParameter(pcCommandString, 5, &modStrLen);
+
+	if ((pModStr == NULL) && (pPortStr == NULL))
+		return true;
+	if ((pModStr == NULL) || (pPortStr == NULL))	// If user has provided 4 Arguments.
+		return false;
+
+	*pPort = atoi(pPortStr);
+	*pModule = atoi(pModStr);
+	*pPortOrCLI = false;
+
+	return true;
+}
+/*-----------------------------------------------------------*/
+
+/*-----------------------------------------------------------*/
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

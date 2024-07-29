@@ -462,22 +462,19 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 void IMU_Task(void *argument) {
 
 	/* Infinite loop */
-	for (;;) {
+	for(;;){
 		/*  */
 
-		switch (tofMode) {
-		case STREAM_TO_PORT:
-			Exportstreamtoport(module1, port1, mode1, Numofsamples1, timeout1);
+		switch(tofMode){
+			case STREAM_TO_PORT:
+				Exportstreamtoport(module1,port1,mode1,Numofsamples1,timeout1);
 
-		case STREAM_TO_Terminal:
-
-
-			break;
-
-			break;
-		default:
-			osDelay(10);
-			break;
+			case STREAM_TO_Terminal:
+				Exportstreamtoterminal(port2,mode2,Numofsamples2,timeout2);
+				break;
+			default:
+				osDelay(10);
+				break;
 		}
 
 		taskYIELD();
@@ -493,7 +490,6 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 	char cstring[100];
 	float x =0, y =0, z =0;
 	int xm =0, ym =0, zm =0;
-	long numTimes = timeout / period;
 	if (period < MIN_MEMS_PERIOD_MS)
 		return H0BR4_ERR_WrongParams;
 
@@ -506,7 +502,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 
 		stopStream = false;
 
-		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		while ((Numofsamples-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
 			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
 			if((status =SampleAccG(&x,&y,&z)) != H0BR4_OK)
 				return status;
@@ -526,7 +522,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 
 		stopStream = false;
 
-		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		while ((Numofsamples-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
 			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
 			if((status =SampleGyroDPS(&x,&y,&z)) != H0BR4_OK)
 				return status;
@@ -546,7 +542,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 
 		stopStream = false;
 
-		while ((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
+		while ((Numofsamples-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)) {
 			pcOutputString = FreeRTOS_CLIGetOutputBuffer();
 			if((status =SampleMagMGauss(&xm,&ym,&zm)) != H0BR4_OK)
 				return status;
@@ -565,7 +561,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 		break;
 	}
 
-
+	tofMode = DEFAULT;
 	return status;
 }
 
@@ -867,21 +863,36 @@ Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function){
 	return status;
 }
 /*-----------------------------------------------------------*/
-Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout)
-{
-	Module_Status status = H0BR4_OK;
+Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout){
+	Module_Status status =H0BR4_OK;
 
 	if(port == 0 && module == myID)
 		return status =H0BR4_ERR_WrongParams;
 
-	tofMode=STREAM_TO_PORT;
-	port1 = port ;
+	tofMode =STREAM_TO_PORT;
+	port1 =port;
 	module1 =module;
-	Numofsamples1=Numofsamples;
-	timeout1=timeout;
-	mode1= function;
+	Numofsamples1 =Numofsamples;
+	timeout1 =timeout;
+	mode1 =function;
 	return status;
 
+}
+
+/*-----------------------------------------------------------*/
+
+Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout){
+	Module_Status status =H0BR4_OK;
+
+	if(0 == port)
+		return status =H0BR4_ERR_WrongParams;
+
+	tofMode =STREAM_TO_Terminal;
+	port2 =port;
+	Numofsamples2 =Numofsamples;
+	timeout2 =timeout;
+	mode2 =function;
+	return status;
 }
 
 

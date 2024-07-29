@@ -174,6 +174,7 @@ Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ);
 
 Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
 Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
+Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);

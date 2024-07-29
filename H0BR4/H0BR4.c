@@ -833,6 +833,16 @@ Module_Status SampleTempCelsius(float *temp){
 
 }
 /*-----------------------------------------------------------*/
+Module_Status SampleTempFahrenheit(float *temp){
+	Module_Status status =H0BR4_OK;
+
+	if((LSM6DS3TR_C_SampleTempFahrenheit(temp)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+
+	return status;
+
+}
+/*-----------------------------------------------------------*/
 Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ){
 	Module_Status status =H0BR4_OK;
 

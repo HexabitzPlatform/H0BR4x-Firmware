@@ -376,7 +376,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 	switch(code){
 		case CODE_H0BR4_SAMPLE_GYRO: {
-
+			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],Gyro);
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_ACC: {
@@ -392,32 +392,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 			break;
 		}
 
-		case CODE_H0BR4_STREAM_GYRO: {
-			break;
 
-			break;
-		}
-
-		case CODE_H0BR4_STREAM_ACC: {
-			break;
-
-			break;
-		}
-		case CODE_H0BR4_STREAM_MAG: {
-			break;
-
-			break;
-		}
-		case CODE_H0BR4_STREAM_TEMP: {
-				break;
-
-			break;
-		}
-		case CODE_H0BR4_STREAM_STOP: {
-
-
-			break;
-		}
 
 		default:
 			result =H0BR4_ERR_UnknownMessage;

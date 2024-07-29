@@ -380,7 +380,7 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_ACC: {
-
+			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1+shift] ,Acc);
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_MAG: {

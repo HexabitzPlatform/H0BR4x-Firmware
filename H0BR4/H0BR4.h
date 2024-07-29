@@ -134,6 +134,7 @@ typedef enum {
 	Acc=0,
 	Gyro,
 	Mag,
+	Temp,
 
 }All_Data;
 
@@ -167,6 +168,7 @@ extern void ExecuteMonitor(void);
 Module_Status SampleAccG(float *accX,float *accY,float *accZ);
 Module_Status SampleGyroDPS(float *gyroX,float *gyroY,float *gyroZ);
 Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ);
+Module_Status SampleTempCelsius(float *temp);
 
 Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
 Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ);

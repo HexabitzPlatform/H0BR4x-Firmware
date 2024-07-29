@@ -556,6 +556,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 		}
 		break;
 
+
 	default:
 		status = H0BR4_ERR_WrongParams;
 		break;
@@ -816,6 +817,16 @@ Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ){
 	Module_Status status =H0BR4_OK;
 
 	if((LSM303SampleMagMGauss(magX,magY,magZ)) != LSM303AGR_OK)
+		return status =H0BR4_ERROR;
+
+	return status;
+
+}
+/*-----------------------------------------------------------*/
+Module_Status SampleTempCelsius(float *temp){
+	Module_Status status =H0BR4_OK;
+
+	if((LSM6DS3TR_C_SampleTempCelsius(temp)) != LSM6DS3TR_C_OK)
 		return status =H0BR4_ERROR;
 
 	return status;

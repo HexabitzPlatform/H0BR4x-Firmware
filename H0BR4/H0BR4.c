@@ -48,33 +48,40 @@ int H0BR4_magY =0.0f;
 int H0BR4_magZ =0.0f;
 float H0BR4_temp =0.0f;
 /*-------------------------------------------------------------------------------*/
-
-
-
 module_param_t modParam[NUM_MODULE_PARAMS] ={{.paramPtr =&H0BR4_gyroX, .paramFormat =FMT_FLOAT, .paramName ="gyroX"}, {.paramPtr =&H0BR4_gyroY, .paramFormat =FMT_FLOAT, .paramName ="gyroY"}, {.paramPtr =&H0BR4_gyroZ, .paramFormat =FMT_FLOAT, .paramName ="gyroZ"}, {.paramPtr =&H0BR4_accX, .paramFormat =FMT_FLOAT, .paramName ="accX"}, {.paramPtr =&H0BR4_accY, .paramFormat =FMT_FLOAT, .paramName ="accY"}, {.paramPtr =&H0BR4_accZ, .paramFormat =FMT_FLOAT, .paramName ="accZ"}, {.paramPtr =&H0BR4_magX, .paramFormat =FMT_INT32, .paramName ="magX"}, {.paramPtr =&H0BR4_magY, .paramFormat =FMT_INT32, .paramName ="magY"}, {.paramPtr =&H0BR4_magZ, .paramFormat =FMT_INT32, .paramName ="magZ"}, {.paramPtr =&H0BR4_temp, .paramFormat =FMT_FLOAT, .paramName ="temp"}, };
 
 typedef void (*SampleToString)(char *, size_t);
 typedef void (*SampleToPort)(uint8_t, uint8_t);
-typedef void (*SampleToBuffer)(float *buffer);
+typedef void (*SampleMemsToBuffer)(float *buffer);
+
 /* Private variables ---------------------------------------------------------*/
 static bool stopStream = false;
 uint8_t flag;
 uint8_t tofMode;
 uint8_t port2, module2, mode2, mode1, port1, module1;
 uint32_t Numofsamples1, timeout1, Numofsamples2, timeout2;
-
+uint16_t cont =0;
 /* Private function prototypes -----------------------------------------------*/
 void IMU_Task(void *argument);
+
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
-Module_Status Exportstreamtoport (uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
-Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Numofsamples, uint32_t timeout);
-static Module_Status PollingSleepCLISafe(uint32_t period, long Numofsamples);
-static Module_Status StreamToCLI(uint32_t Numofsamples, uint32_t timeout, SampleToString function);
+Module_Status Exportstreamtoport(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
+Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
+static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples);
+static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function);
+
 void SampleGyroDPSToString(char *cstring,size_t maxLen);
 void SampleAccGToString(char *cstring,size_t maxLen);
 void SampleMagMGaussToString(char *cstring,size_t maxLen);
 void SampleTempCToString(char *cstring,size_t maxLen);
-void FLASH_Page_Eras(uint32_t Addr );
+
+static Module_Status StreamMemsToBuf( float *buffer, uint32_t Numofsamples, uint32_t timeout, SampleMemsToBuffer function);
+void SampleTempBuff(float *buffer);
+void SampleMagBuf(float *buffer);
+void SampleAccBuf(float *buffer);
+void SampleGyroBuf(float *buffer);
+
+void FLASH_Page_Eras(uint32_t Addr);
 void ExecuteMonitor(void);
 
 /* Create CLI commands --------------------------------------------------------*/
@@ -478,8 +485,82 @@ void IMU_Task(void *argument) {
 
 }
 
+static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function)
+{
+	Module_Status status =H0BR4_OK;
+	uint32_t period =timeout / Numofsamples;
+	if(period < MIN_MEMS_PERIOD_MS)
+		return H0BR4_ERR_WrongParams;
+
+	// TODO: Check if CLI is enable or not
+
+	if(period > timeout)
+		timeout =period;
+
+	long numTimes =timeout / period;
+	stopStream = false;
+
+	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+		if(function == SampleTempBuff){
+			float sample;
+			function(&sample);
+			buffer[cont] =sample;
+			cont++;
+
+		}
+		else{
+			float Axis[3];
+			function(Axis);
+			buffer[cont] =Axis[0];
+			buffer[cont + 1] =Axis[1];
+			buffer[cont + 2] =Axis[2];
+			cont +=3;
+		}
+
+		vTaskDelay(pdMS_TO_TICKS(period));
+		if(stopStream){
+			status =H0BR4_ERR_TERMINATED;
+			break;
+		}
+	}
+	return status;
+}
 /*-----------------------------------------------------------*/
 
+void SampleAccBuf(float *buffer)
+{
+	float Acc[3];
+	SampleAccG(Acc,Acc+1,Acc+2);
+	buffer[0]=Acc[0];
+	buffer[1]=Acc[1];
+	buffer[2]=Acc[2];
+}
+/*-----------------------------------------------------------*/
+void SampleGyroBuf(float *buffer)
+{
+	float Gyro[3];
+	SampleGyroDPS(Gyro,Gyro+1,Gyro+2);
+	buffer[0]=Gyro[0];
+	buffer[1]=Gyro[1];
+	buffer[2]=Gyro[2];
+}
+/*-----------------------------------------------------------*/
+void SampleMagBuf(float *buffer)
+{
+	int Mag[3];
+	SampleMagMGauss(Mag,Mag+1,Mag+2);
+	buffer[0]=Mag[0];
+	buffer[1]=Mag[1];
+	buffer[2]=Mag[2];
+}
+/*-----------------------------------------------------------*/
+void SampleTempBuff(float *buffer)
+{
+	float Temp;
+	SampleTempCelsius(&Temp);
+	*buffer = Temp;
+}
+/*-----------------------------------------------------------*/
 static Module_Status StreamToCLI(uint32_t Numofsamples, uint32_t timeout, SampleToString function)
 {
 	Module_Status status =H0BR4_OK;
@@ -1053,7 +1134,29 @@ Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamp
 	return status;
 }
 
+/*-----------------------------------------------------------*/
 
+Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout)
+{
+	switch (function) {
+		case Acc:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleAccBuf);
+			break;
+		case Gyro:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleGyroBuf);
+			break;
+		case Mag:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleMagBuf);
+			break;
+		case Temp:
+			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleTempBuff);
+			break;
+
+		default:
+			break;
+	}
+
+}
 
 
 /* -----------------------------------------------------------------------

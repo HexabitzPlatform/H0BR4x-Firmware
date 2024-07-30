@@ -30,12 +30,10 @@
 
 #define	modulePN		_H0BR4
 
-
 /* Port-related definitions */
 #define	NumOfPorts			6
 
 #define P_PROG 				P2						/* ST factory bootloader UART */
-
 /* Define available ports */
 #define _P1 
 #define _P2 
@@ -110,20 +108,16 @@
 
 #define MIN_MEMS_PERIOD_MS		100
 #define MAX_MEMS_TIMEOUT_MS		0xFFFFFFFF
-#define MIN_PERIOD_MS			100
 #define NUM_MODULE_PARAMS		13
 
-/* */
+#define MIN_PERIOD_MS			100
+/* Macros For IMU special Task */
 #define SAMPLE_TO_PORT          1
 #define STREAM_TO_PORT          2
 #define STREAM_TO_Terminal      3
 #define DEFAULT                 4
-
-
-
 /* Module EEPROM Variables */
 
-// Module Addressing Space 500 - 599
 #define _EE_MODULE							500		
 
 /* Module_Status Type Definition */
@@ -131,6 +125,7 @@ typedef enum {
 	H0BR4_OK =0, H0BR4_ERR_UnknownMessage, H0BR4_ERR_TERMINATED, H0BR4_ERR_WrongParams, H0BR4_ERROR =25
 } Module_Status;
 
+/* Choose the functionality of stream and sample APIs */
 typedef enum {
 	ACC =0, GYRO, MAG, TEMP,
 } All_Data;
@@ -166,11 +161,12 @@ Module_Status SampleAccG(float *accX,float *accY,float *accZ);
 Module_Status SampleGyroDPS(float *gyroX,float *gyroY,float *gyroZ);
 Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ);
 Module_Status SampleTempCelsius(float *temp);
+Module_Status SampleTempFahrenheit(float *temp);
 
 Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
 Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ);
 Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ);
-Module_Status SampleTempFahrenheit(float *temp);
+
 
 Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
 Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);

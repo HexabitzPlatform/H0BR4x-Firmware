@@ -106,8 +106,8 @@ const CLI_Command_Definition_t StreamCommandDefinition = {
 /*-----------------------------------------------------------*/
 
 /* -----------------------------------------------------------------------
- |												 Private Functions	 														|
- ----------------------------------------------------------------------- 
+ |						    	 Private Functions	    				  |
+ -------------------------------------------------------------------------
  */
 
 /**
@@ -405,19 +405,19 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 
 	switch(code){
 		case CODE_H0BR4_SAMPLE_GYRO: {
-			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],Gyro);
+			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],GYRO);
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_ACC: {
-			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],Acc);
+			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],ACC);
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_MAG: {
-			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],Mag);
+			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],MAG);
 			break;
 		}
 		case CODE_H0BR4_SAMPLE_TEMP: {
-			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],Temp);
+			Exporttoport(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],TEMP);
 			break;
 		}
 
@@ -662,7 +662,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 
 	// TODO: Check if CLI is enable or not
 	switch (function) {
-	case Acc:
+	case ACC:
 
 		if (period > timeout)
 			timeout = period;
@@ -682,7 +682,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 				break;
 		}
 		break;
-	case Gyro:
+	case GYRO:
 
 		if (period > timeout)
 			timeout = period;
@@ -702,7 +702,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 				break;
 		}
 		break;
-	case Mag:
+	case MAG:
 
 		if (period > timeout)
 			timeout = period;
@@ -723,7 +723,7 @@ Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Num
 		}
 		break;
 
-	case Temp:
+	case TEMP:
 
 		if (period > timeout)
 			timeout = period;
@@ -815,7 +815,7 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 	int magX, magY, magZ;
 	float TempCelsius;
 	switch(function){
-		case Acc:
+		case ACC:
 
 			if((status =SampleAccG(&accX,&accY,&accZ)) != H0BR4_OK)
 				return status =H0BR4_ERROR;
@@ -866,7 +866,7 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 
 			break;
 
-		case Gyro:
+		case GYRO:
 
 			if((status =SampleGyroDPS(&gyroX,&gyroY,&gyroZ)) != H0BR4_OK)
 				return status =H0BR4_ERROR;
@@ -916,7 +916,7 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 			}
 
 			break;
-		case Mag:
+		case MAG:
 
 			if((status =SampleMagMGauss(&magX,&magY,&magZ)) != H0BR4_OK)
 				return status =H0BR4_ERROR;
@@ -945,6 +945,7 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 					messageParams[1] =BOS_OK;
 				else
 					messageParams[1] =BOS_ERROR;
+
 				messageParams[0] =FMT_INT32;
 				messageParams[2] =3;
 				messageParams[3] =(uint8_t )((*(uint32_t* )&magX) >> 0);
@@ -966,7 +967,7 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 			}
 
 			break;
-		case Temp:
+		case TEMP:
 
 			if((status =SampleTempCelsius(&TempCelsius)) != H0BR4_OK)
 				return status =H0BR4_ERROR;
@@ -985,6 +986,7 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function)
 					messageParams[1] =BOS_OK;
 				else
 					messageParams[1] =BOS_ERROR;
+
 				messageParams[0] =FMT_FLOAT;
 				messageParams[2] =1;
 				messageParams[3] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 0);
@@ -1139,16 +1141,16 @@ Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamp
 Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout)
 {
 	switch (function) {
-		case Acc:
+		case ACC:
 			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleAccBuf);
 			break;
-		case Gyro:
+		case GYRO:
 			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleGyroBuf);
 			break;
-		case Mag:
+		case MAG:
 			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleMagBuf);
 			break;
-		case Temp:
+		case TEMP:
 			return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleTempBuff);
 			break;
 
@@ -1186,18 +1188,18 @@ static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBuf
 
 	do {
 		if (!strncmp(pSensName, AccCmdName, strlen(AccCmdName))) {
-			Exportstreamtoterminal(PcPort,Acc,1,500);
+			Exportstreamtoterminal(PcPort,ACC,1,500);
 
 		} else if (!strncmp(pSensName, GyroCmdName, strlen(GyroCmdName))) {
-			Exportstreamtoterminal(PcPort,Gyro,1,500);
+			Exportstreamtoterminal(PcPort,GYRO,1,500);
 
 
 		} else if (!strncmp(pSensName, MagCmdName, strlen(MagCmdName))) {
-			Exportstreamtoterminal(PcPort,Mag,1,500);
+			Exportstreamtoterminal(PcPort,MAG,1,500);
 
 
 		} else if (!strncmp(pSensName, TempCmdName, strlen(TempCmdName))) {
-			Exportstreamtoterminal(PcPort,Temp,1,500);
+			Exportstreamtoterminal(PcPort,TEMP,1,500);
 
 		}
 		else {

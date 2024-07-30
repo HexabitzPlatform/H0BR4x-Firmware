@@ -108,11 +108,12 @@
 #define _MEMS_I2C2_SCL_PIN                GPIO_PIN_7
 #define _MEMS_I2C2_SCL_GPIO_CLK()         __GPIOB_CLK_ENABLE();
 
-#define MIN_MEMS_PERIOD_MS				100
-#define MAX_MEMS_TIMEOUT_MS				0xFFFFFFFF
-#define MIN_PERIOD_MS				100
+#define MIN_MEMS_PERIOD_MS		100
+#define MAX_MEMS_TIMEOUT_MS		0xFFFFFFFF
+#define MIN_PERIOD_MS			100
 #define NUM_MODULE_PARAMS		13
 
+/* */
 #define SAMPLE_TO_PORT          1
 #define STREAM_TO_PORT          2
 #define STREAM_TO_Terminal      3
@@ -131,12 +132,8 @@ typedef enum {
 } Module_Status;
 
 typedef enum {
-	Acc=0,
-	Gyro,
-	Mag,
-	Temp,
-
-}All_Data;
+	ACC =0, GYRO, MAG, TEMP,
+} All_Data;
 
 /* Indicator LED */
 #define _IND_LED_PORT			GPIOB

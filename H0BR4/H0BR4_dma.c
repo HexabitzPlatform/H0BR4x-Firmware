@@ -28,7 +28,6 @@ DMAMUX_Channel_TypeDef DMAMUXTx[6]={0};
 CRC_HandleTypeDef hcrc;
 
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
-//extern uint8_t UARTTxBuf[3][MSG_TX_BUF_SIZE];
 
 /* Private function prototypes -----------------------------------------------*/
 void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority);
@@ -49,27 +48,26 @@ void DMA_Init(void){
 	/* Initialize messaging RX DMAs x 6 - Update for non-standard MCUs */
 #ifdef _P1
 	DMA_MSG_RX_CH_Init(&msgRxDMA[0],DMA1_Channel4);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[0],DMA2_Channel1);
+
 #endif
 #ifdef _P2
 	DMA_MSG_RX_CH_Init(&msgRxDMA[1],DMA1_Channel2);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[1],DMA1_Channel4);
+
 #endif
 #ifdef _P3
 	DMA_MSG_RX_CH_Init(&msgRxDMA[2],DMA1_Channel3);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[2],DMA1_Channel6);
+
 #endif
 #ifdef _P4
 	DMA_MSG_RX_CH_Init(&msgRxDMA[3],DMA1_Channel1);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[3],DMA1_Channel2);
+
 #endif
 #ifdef _P5
 	DMA_MSG_RX_CH_Init(&msgRxDMA[4],DMA1_Channel5);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[4],DMA2_Channel3);
+
 #endif
 #ifdef _P6
 	DMA_MSG_RX_CH_Init(&msgRxDMA[5],DMA1_Channel6);
-//	DMA_MSG_TX_CH_Init(&msgTxDMA[5],DMA2_Channel5);
 #endif
 
 
@@ -190,16 +188,6 @@ void SetupMessagingRxDMAs(void){
  */
 void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	/* Remap and link to UART Rx */
-	//RemapAndLinkDMAtoUARTRx(huart,hDMA);
-	//TOBECHECKED
-
-	/* Setup DMA interrupts */
-//	SetupDMAInterrupts(hDMA,MSG_DMA_INT_PRIORITY);
-	//TOBECHECKED
-
-	/* Start DMA stream	*/
-	//HAL_UART_Receive_DMA(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
-//	HAL_UART_Receive_IT(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
 	HAL_UART_Receive_DMA(huart,(uint8_t* )&UARTRxBuf[GetPort(huart) - 1],MSG_RX_BUF_SIZE);
 }
 
@@ -255,8 +243,6 @@ void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,
 	/* Remap and link to UART RX */
 	RemapAndLinkDMAtoUARTRx(huartSrc,hDMA);
 
-	/* Setup DMA interrupts */
-	//SetupDMAInterrupts(hDMA,STREAM_DMA_INT_PRIORITY);
 	
 	/* Start DMA stream	*/
 	huartSrc->gState =HAL_UART_STATE_READY;
@@ -399,7 +385,7 @@ void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA){
 			break;
 	}
 }
-//TOBECHECKED
+
 /*-----------------------------------------------------------*/
 
 /* Remap and link the UART RX and DMA structs 
@@ -407,38 +393,32 @@ void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA){
 void RemapAndLinkDMAtoUARTRx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	// USART 1
 	if(huart->Instance == USART1 && hDMA->Instance == DMA1_Channel1){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH1_USART1_RX);
 		LL_DMAMUX_SetRequestID(&DMAMUXRx[0],LL_DMAMUX_CHANNEL_0, LL_DMAMUX_REQ_USART1_RX);
 	}
 
 		// USART 2
 
 	else if(huart->Instance == USART2 && hDMA->Instance == DMA1_Channel2){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH1_USART2_RX);
 		LL_DMAMUX_SetRequestID(&DMAMUXRx[1],LL_DMAMUX_CHANNEL_1, LL_DMAMUX_REQ_USART2_RX);
 	}
 
 	// USART 3
 	else if(huart->Instance == USART3 && hDMA->Instance == DMA1_Channel3){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH1_USART3_RX);
 		LL_DMAMUX_SetRequestID(&DMAMUXRx[2],LL_DMAMUX_CHANNEL_2, LL_DMAMUX_REQ_USART3_RX);
 	}
 
 	// USART 4
 	else if(huart->Instance == USART4 && hDMA->Instance == DMA1_Channel4){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH1_USART4_RX);
 		LL_DMAMUX_SetRequestID(&DMAMUXRx[3],LL_DMAMUX_CHANNEL_3, LL_DMAMUX_REQ_USART4_RX);
 	}
 
 	// USART 5
 	else if(huart->Instance == USART5 && hDMA->Instance == DMA1_Channel5){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH1_USART5_RX);
 		LL_DMAMUX_SetRequestID(&DMAMUXRx[4],LL_DMAMUX_CHANNEL_4, LL_DMAMUX_REQ_USART5_RX);
 	}
 
 	// USART 6
 	else if(huart->Instance == USART6 && hDMA->Instance == DMA1_Channel6){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH1_USART6_RX);
 		LL_DMAMUX_SetRequestID(&DMAMUXRx[5],LL_DMAMUX_CHANNEL_5, LL_DMAMUX_REQ_USART6_RX);
 	}
 
@@ -453,19 +433,16 @@ void RemapAndLinkDMAtoUARTRx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 void RemapAndLinkDMAtoUARTTx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	// USART 1
 	if(huart->Instance == USART1 && hDMA->Instance == DMA1_Channel2){
-	//	__HAL_DMA1_REMAP(HAL_DMA1_CH2_USART1_TX);
 		LL_DMAMUX_SetRequestID(&DMAMUXTx[0],LL_DMAMUX_CHANNEL_1, LL_DMAMUX_REQ_USART1_TX);
 	}
 
 	// USART 2
 	else if(huart->Instance == USART2 && hDMA->Instance == DMA1_Channel4){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH2_USART2_TX);
 		LL_DMAMUX_SetRequestID(&DMAMUXTx[1],LL_DMAMUX_CHANNEL_3, LL_DMAMUX_REQ_USART2_TX);
 	}
 
 	// USART 3
 	else if(huart->Instance == USART3 && hDMA->Instance == DMA1_Channel6){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH2_USART3_TX);
 		LL_DMAMUX_SetRequestID(&DMAMUXTx[2],LL_DMAMUX_CHANNEL_5, LL_DMAMUX_REQ_USART3_TX);
 	}
 
@@ -477,12 +454,10 @@ void RemapAndLinkDMAtoUARTTx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 
 	// USART 5
 	else if(huart->Instance == USART5 && hDMA->Instance == DMA2_Channel3){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH2_USART5_TX);
 		LL_DMAMUX_SetRequestID(&DMAMUXTx[4],LL_DMAMUX_CHANNEL_9, LL_DMAMUX_REQ_USART5_TX);
 	}
     // USART 6
 	else if(huart->Instance == USART6 && hDMA->Instance == DMA2_Channel5){
-		//__HAL_DMA1_REMAP(HAL_DMA1_CH2_USART6_TX);
 		LL_DMAMUX_SetRequestID(&DMAMUXTx[5],LL_DMAMUX_CHANNEL_11, LL_DMAMUX_REQ_USART6_TX);
 	}
 

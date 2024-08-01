@@ -479,6 +479,11 @@ void IMU_Task(void *argument){
 
 }
 
+/* --------------------------------------------------------------------
+ |					    	local functions				     	      |
+ ----------------------------------------------------------------------
+ */
+
 /*-----------------------------------------------------------*/
 static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function){
 	Module_Status status =H0BR4_OK;

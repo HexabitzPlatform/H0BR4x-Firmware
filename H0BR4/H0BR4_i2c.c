@@ -12,10 +12,6 @@
 #include "BOS.h"
 #include <string.h>
 #include <stdio.h>
-#include "LSM6DS3TR_C_APIS.h"
-#include "LSM303AGR_ACC.h"
-#include "LSM303AGR_MAG.h"
-
 
 //initialize i2c
  void MX_I2C_Init(void);
@@ -23,10 +19,6 @@
 
 
 I2C_HandleTypeDef hi2c2;
-
-
-
-
 /*----------------------------------------------------------------------------*/
 /* Configure I2C                                                             */
 /*----------------------------------------------------------------------------*/
@@ -41,8 +33,7 @@ I2C_HandleTypeDef hi2c2;
   __GPIOD_CLK_ENABLE();
   __GPIOB_CLK_ENABLE();
   __GPIOF_CLK_ENABLE();   // for HSE and Boot0
-	 // __HAL_RCC_GPIOF_CLK_ENABLE();
-	 	//  __HAL_RCC_GPIOA_CLK_ENABLE();
+
   MX_I2C2_Init();
 
 }

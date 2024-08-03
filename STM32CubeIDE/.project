@@ -234,9 +234,9 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Thirdparty/LSM6DS3</name>
+			<name>Thirdparty/LSM6DS3TR-C</name>
 			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM6DS3TR-C</locationURI>
 		</link>
 		<link>
 			<name>Thirdparty/Middleware</name>
@@ -284,16 +284,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Thirdparty/LSM6DS3/inc</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Thirdparty/LSM6DS3/src</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Thirdparty/Middleware/STM32G0xx</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/Middleware/STM32G0xx</locationURI>
@@ -314,6 +304,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/inc/LSM303AGR_ACC.h</locationURI>
 		</link>
 		<link>
+			<name>Thirdparty/LSM303AGR/inc/LSM303AGR_APIs.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/inc/LSM303AGR_APIs.h</locationURI>
+		</link>
+		<link>
 			<name>Thirdparty/LSM303AGR/inc/LSM303AGR_MAG.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/inc/LSM303AGR_MAG.h</locationURI>
@@ -324,19 +319,14 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/src/LSM303AGR_ACC.c</locationURI>
 		</link>
 		<link>
+			<name>Thirdparty/LSM303AGR/src/LSM303AGR_APIs.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/src/LSM303AGR_APIs.c</locationURI>
+		</link>
+		<link>
 			<name>Thirdparty/LSM303AGR/src/LSM303AGR_MAG.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM303AGR/src/LSM303AGR_MAG.c</locationURI>
-		</link>
-		<link>
-			<name>Thirdparty/LSM6DS3/inc/LSM6DS3.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM6DS3/inc/LSM6DS3.h</locationURI>
-		</link>
-		<link>
-			<name>Thirdparty/LSM6DS3/src/LSM6DS3.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/LSM6DS3/src/LSM6DS3.c</locationURI>
 		</link>
 		<link>
 			<name>Thirdparty/STM32G0xx_HAL_Driver/Inc/Legacy</name>

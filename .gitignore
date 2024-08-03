@@ -1,5 +1,8 @@
-MDK-ARM/Objects/
-MDK-ARM/Listings/
-*.Admin
+*.cyclo
 *.o
+*.d
 *.su
+*.Admin
+*.dbgconf
+*.asaad
+*.uvoptx

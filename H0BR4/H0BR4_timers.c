@@ -22,8 +22,30 @@
 /* Variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim16; /* micro-second delay counter */
 TIM_HandleTypeDef htim17; /* milli-second delay counter */
-/*  Micro-seconds timebase init function - TIM14 (16-bit)
- */
+IWDG_HandleTypeDef hiwdg;
+
+
+/* IWDG init function */
+void MX_IWDG_Init(void){
+
+	/* Reload Value = [(Time * 32 KHz) / (4 * 2^(pr) * 1000)] - 1
+	 * RL = [(50 mS * 32000) / (4 * 2^1 * 1000)]  - 1 = 200 - 1 =199
+	 * timeout time = 50 mS
+	 * Pre-scaler = 8
+	 * Reload Value = 199
+	 *  */
+
+	hiwdg.Instance = IWDG;
+	hiwdg.Init.Prescaler = IWDG_PRESCALER_8;
+	hiwdg.Init.Window = IWDG_WINDOW_DISABLE;
+	hiwdg.Init.Reload =199;
+
+	HAL_IWDG_Init(&hiwdg);
+
+}
+
+/*-----------------------------------------------------------*/
+
 void TIM_USEC_Init(void){
 //	/* Peripheral clock enable */
 
@@ -41,8 +63,6 @@ void TIM_USEC_Init(void){
 	HAL_TIM_Base_Start(&htim16);
 
 }
-
-/*-----------------------------------------------------------*/
 
 /*-----------------------------------------------------------*/
 

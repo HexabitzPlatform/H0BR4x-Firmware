@@ -29,6 +29,7 @@ UART_HandleTypeDef huart6;
 
 /* Exported variables */
 extern uint8_t numOfRecordedSnippets;
+extern stmdev_ctx_t dev_ctx;
 /* variables for Streams ----------------------------------------------------*/
 uint32_t numofsamples[2], Timeout[2];
 uint8_t Port[2], Module[2], mode[2];
@@ -359,6 +360,7 @@ void Module_Peripheral_Init(void){
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
 
+	GPIO_Init();
 	MEMS_GPIO_Init();
 	MX_I2C_Init();
 	LSM6DS3TR_C_Init();
@@ -991,7 +993,73 @@ Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function){
 	memset(&temp[0],0,sizeof(temp));
 	return status;
 }
+
+
 /*-----------------------------------------------------------*/
+/*
+ * @brief: Calculates the average of an array of readings.
+ * @param1: Pointer to an array of float readings.
+ * @param2: Number of readings in the array.
+ * @retval: The average value of the readings.
+ */
+float calculate_average(float *readings, int num_readings) {
+    float sum = 0; // Initialize sum to 0
+    for (int i = 0; i < num_readings; i++) {
+        sum += readings[i]; // Add each reading to the sum
+    }
+    return (float)(sum / num_readings); // Return the average value
+}
+
+/*-----------------------------------------------------------*/
+/*
+ * @brief: Calibrates the sensor by calculating offsets for X, Y, and Z axes.
+ * @param1: Number of readings to take for calibration.
+ * @param2: Pointer to store the X-axis offset.
+ * @param3: Pointer to store the Y-axis offset.
+ * @param4: Pointer to store the Z-axis offset.
+ * @note: This function assumes the Z-axis is aligned with gravity (1G).
+ *        It should be called to determine the optimal offset values.
+ * @note: This function writes the offset values to the registers. Once you get the desired output,
+ *        take the appropriate offset values for your sensor and write them to the registers using the set_offsets function.
+ *        Then, stop calling this function.
+ * @note: It is recommended to keep the number of samples between 50 and 200.
+ * @retval: None
+ */
+
+void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16_t *Z_offset) {
+    float accx, accy, accz;
+    float z_avg, y_avg, x_avg;
+    float x_readings[num_readings], y_readings[num_readings], z_readings[num_readings];
+    HAL_Delay(1000); // Initial delay before starting the calibration
+
+    // Collect data
+    for (int i = 0; i < num_readings; i++) {
+        HAL_Delay(10); // Delay between each reading
+        SampleAccG(&accx, &accy, &accz); // Sample accelerometer data
+        x_readings[i] = accx;
+        y_readings[i] = accy;
+        z_readings[i] = accz;
+    }
+
+    // Calculate average values
+    x_avg = calculate_average(x_readings, num_readings);
+    y_avg = calculate_average(y_readings, num_readings);
+    z_avg = calculate_average(z_readings, num_readings);
+
+    // Calculate offsets
+    int16_t x_offset = 0 - (x_avg * 1000);
+    int16_t y_offset = 0 - (y_avg * 1000);
+    int16_t z_offset = 1000 - (z_avg * 1000);
+
+    *X_offset = x_offset;
+    *Y_offset = y_offset;
+    *Z_offset = -z_offset;
+
+    // Apply offsets
+    set_offsets(&dev_ctx, x_offset, y_offset, -z_offset);
+}
+
+
 
 /* -----------------------------------------------------------------------
  |								  APIs							          | 																 	|

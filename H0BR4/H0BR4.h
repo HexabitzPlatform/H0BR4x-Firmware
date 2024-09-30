@@ -111,6 +111,10 @@
 #define NUM_MODULE_PARAMS		13
 
 #define MIN_PERIOD_MS			100
+
+#define SENSITIVITY 0x03 // Define the threshold for wake-up sensitivity
+#define MOVEMENT_DETECTED  1 // Macro for movement detected
+#define INITIAL_IDLE_STATE 2 // Macro for initial idle state
 /* Macros For IMU special Task */
 #define SAMPLE_TO_PORT          1
 #define STREAM_TO_PORT          2
@@ -156,6 +160,8 @@ extern void ExecuteMonitor(void);
  |								  APIs							          |  																 	|
 /* -----------------------------------------------------------------------
  */
+void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16_t *Z_offset) ;
+
 
 Module_Status SampleAccG(float *accX,float *accY,float *accZ);
 Module_Status SampleGyroDPS(float *gyroX,float *gyroY,float *gyroZ);

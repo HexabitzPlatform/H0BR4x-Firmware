@@ -35,8 +35,13 @@ uint32_t numofsamples[2], Timeout[2];
 uint8_t Port[2], Module[2], mode[2];
 uint8_t imuMode;
 uint16_t Index =0;
+/*variable for API "StreamSamplsToPort()"  */
+volatile uint32_t Numofsamples =0 , samples =0 ;
+volatile uint8_t module_t, port_t;
+All_Data fun;
 /* Private variables ---------------------------------------------------------*/
 TaskHandle_t IMU_TaskTaskHandle = NULL;
+TimerHandle_t xTimerStream = NULL; /* Software timer to calculate Rate and timeout for streaming data */
 static bool stopStream = false;
 uint8_t StopeCliStreamFlag;
 float H0BR4_gyroX =0.0f;
@@ -57,7 +62,7 @@ typedef void (*SampleMemsToBuffer)(float *buffer);
 
 /* Private function prototypes -----------------------------------------------*/
 void IMU_Task(void *argument);
-
+void StreamTimeCallback(TimerHandle_t xTimerStream);
 Module_Status Exporttoport(uint8_t module,uint8_t port,All_Data function);
 Module_Status Exportstreamtoport(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
 Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
@@ -390,7 +395,8 @@ void Module_Peripheral_Init(void){
 
 	/* Create a IMU_Task task */
 	xTaskCreate(IMU_Task,(const char* )"IMU_Task",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&IMU_TaskTaskHandle);
-
+	/* Create a timeout software timer StreamSamplsToPort() API */
+	xTimerStream =xTimerCreate("StreamTimer",pdMS_TO_TICKS(1000),pdTRUE,(void* )1,StreamTimeCallback);
 }
 
 /*-----------------------------------------------------------*/
@@ -695,7 +701,20 @@ void SampleGyroDPSToString(char *cstring, size_t maxLen) {
     SampleGyroDPS(&x, &y, &z); // Sample the gyroscope data
     snprintf(cstring, maxLen, "Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n", x, y, z); // Convert to string
 }
-
+/*
+ * @brief  Timer callback function for streaming data.
+ * @param  xTimerStream: The handle of the timer that triggered the callback.
+ * @retval None
+ */
+void StreamTimeCallback(TimerHandle_t xTimerStream) {
+	++samples;
+	if(samples <= Numofsamples || Numofsamples == 0){
+	SampletoPort(module_t,port_t,fun);
+	}
+	else{
+		xTimerStop(xTimerStream, 0);
+	}
+}
 /*-----------------------------------------------------------*/
 /**
  * @brief: Streams sensor data to the terminal.
@@ -1336,6 +1355,34 @@ Module_Status StreamToBuffer(float *buffer, All_Data function, uint32_t Numofsam
         default:
             break;
     }
+}
+/*-----------------------------------------------------------*/
+/**
+ * @brief  Streams data to the specified port and module.
+ * @param  module: The target module to which data will be streamed.
+ * @param  port: The port number on the module.
+ * @param  function:Type of data that will be streamed[ACC, GYRO, MAG or TEMP],.
+ * @param  timeout: The total duration (in milliseconds) for which streaming will occur.
+ * @param  period: The interval (in milliseconds) between successive data transmissions.
+ * @retval Module_Status.
+ */
+Module_Status StreamSamplsToPort(uint8_t module, uint8_t port, All_Data function, uint32_t timeout, uint32_t period) {
+	Module_Status status = H0BR4_OK;
+	module_t = module;
+	port_t = port;
+	fun = function;
+
+	/*Calculate number of sample */
+	Numofsamples = timeout / period;
+	/* Stop (Reset) the TimerStream if it's already running */
+	if (xTimerIsTimerActive(xTimerStream)){
+		xTimerStop(xTimerStream, 100);}
+	/*Start the stream timer*/
+	xTimerStart( xTimerStream, 100 );
+	/* Update timer timeout - This also restarts the timer */
+	xTimerChangePeriod(xTimerStream, period, 100);
+
+	return status;
 }
 
 /* -----------------------------------------------------------------------

@@ -28,7 +28,12 @@ int main(void){
 void UserTask(void *argument){
 
 	// put your code here, to run repeatedly.
-	while(1){}
+StreamSamplsToPort(0, P6, GYRO, 0, 10);
+	while(1){
+//		SampletoPort(0,P1,ACC);
+//		Delay_ms(200);
+//		StreamSamplsToPort(ACC, 10,100);
+	}
 }
 
 /*-----------------------------------------------------------*/

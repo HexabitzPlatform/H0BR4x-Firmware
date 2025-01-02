@@ -24,7 +24,7 @@ extern uint8_t WakeupFromStopFlag;
 
 extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
 
-
+uint8_t hell = 0;
 /******************************************************************************/
 /*            Cortex-M0 Processor Interruption and Exception Handlers         */
 /******************************************************************************/
@@ -53,12 +53,57 @@ void HardFault_Handler(void){
 }
 
 /******************************************************************************/
-/* STM32F0xx Peripheral Interrupt Handlers                                    */
+/* STM32G0xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f0xx.s).                    */
 /******************************************************************************/
 
+/* Use of HAL_UARTEx_ReceiveToIdle_DMA service, will generate calls to
+   user defined HAL_UARTEx_RxEventCallback callback for each occurrence of
+    following events :
+    - HT (Half Transfer) : Half of Rx buffer is filled)
+    - TC (Transfer Complete) : Rx buffer is full.
+      (In case of Circular DMA, reception could go on, and next reception data will be stored
+      in index 0 of reception buffer by DMA).
+    - Idle Event on Rx line : Triggered when RX line has been in idle state (normally high state)
+      for 1 frame time, after last received byte. */
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+
+    if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE)) {
+        // IDLE flag is set
+    	++hell;
+    }
+
+    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE)) {
+        // IDLE flag is set
+    	++hell;
+    }
+
+    if (__HAL_UART_GET_FLAG(&huart3, UART_FLAG_IDLE)) {
+        // IDLE flag is set
+    	++hell;
+    }
+
+    if (__HAL_UART_GET_FLAG(&huart4, UART_FLAG_IDLE)) {
+        // IDLE flag is set
+    	++hell;
+    }
+
+    if (__HAL_UART_GET_FLAG(&huart5, UART_FLAG_IDLE)) {
+        // IDLE flag is set
+    	++hell;
+    }
+
+    if (__HAL_UART_GET_FLAG(&huart6, UART_FLAG_IDLE)) {
+        // IDLE flag is set
+    	++hell;
+    }
+
+}
+
+/*-----------------------------------------------------------*/
 /**
  * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
  */
@@ -204,14 +249,16 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 	/* Resume streaming DMA for this UART port */
 	uint8_t port =GetPort(huart);
 	if(portStatus[port] == STREAM){
-		HAL_UART_Receive_DMA(huart,(uint8_t* )(&(dmaStreamDst[port - 1]->Instance->TDR)),huart->hdmarx->Instance->CNDTR);
+//		HAL_UART_Receive_DMA(huart,(uint8_t* )(&(dmaStreamDst[port - 1]->Instance->TDR)),huart->hdmarx->Instance->CNDTR);
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,(uint8_t* )(&(dmaStreamDst[port - 1]->Instance->TDR)),huart->hdmarx->Instance->CNDTR);
 		/* Or parse the circular buffer and restart messaging DMA for this port */
 	}
 	else{
 		index_input[port - 1] = 0;
 		index_process[port - 1] = 0;
 		memset((uint8_t* )&UARTRxBuf[port - 1], 0, MSG_RX_BUF_SIZE);
-		HAL_UART_Receive_DMA(huart,(uint8_t* )&UARTRxBuf[port - 1] ,MSG_RX_BUF_SIZE);
+//		HAL_UART_Receive_DMA(huart,(uint8_t* )&UARTRxBuf[port - 1] ,MSG_RX_BUF_SIZE);
+		HAL_UARTEx_ReceiveToIdle_DMA(huart,(uint8_t* )&UARTRxBuf[port - 1] ,MSG_RX_BUF_SIZE);
 		MsgDMAStopped[port - 1] = true;		// Set a flag here and let the backend task restart DMA after parsing the buffer	
 	}
 }
@@ -219,80 +266,36 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 /*-----------------------------------------------------------*/
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-//	uint8_t port_number = GetPort(huart);
-//	uint8_t port_index = port_number - 1;
-//	if(Rx_Data[port_index] == 0x0D && portStatus[port_number] == FREE)
-//	{
-//		for(int i=0;i<=NumOfPorts;i++) // Free previous CLI port
-//		{
-//			if(portStatus[i] == CLI)
-//			{
-//				portStatus[i] = FREE;
-//			}
-//		}
-//		portStatus[port_number] =CLI; // Continue the CLI session on this port
-//		PcPort = port_number;
-//		xTaskNotifyGive(xCommandConsoleTaskHandle);
+
+//    if (huart->Instance == USART1) {
+//    	HAL_Delay(100);
+////        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+////
+////        // Notify the backend task that full buffer is complete
+////        vTaskNotifyGiveFromISR(BackendTaskHandle, &xHigherPriorityTaskWoken);
+////        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+//    }
 //
-//		if(Activate_CLI_For_First_Time_Flag == 1) Read_In_CLI_Task_Flag = 1;
-//		Activate_CLI_For_First_Time_Flag = 1;
+//    else if (huart->Instance == USART2) {
+//        HAL_Delay(100);
+//    }
 //
-//	}
-//	else if(portStatus[port_number] == CLI)
-//	{
-//		Read_In_CLI_Task_Flag = 1;
-//	}
+//    else if (huart->Instance == USART3) {
+//    	HAL_Delay(100);
+//    }
 //
-//	else if(Rx_Data[port_index] == 'H' && portStatus[port_number] == FREE)
-//	{
-//		portStatus[port_number] =H_Status; // H  Character was received, waiting for Z character.
-//	}
+//    else if (huart->Instance == USART4) {
+//    	HAL_Delay(100);
+//    }
 //
-//	else if(Rx_Data[port_index] == 'Z' && portStatus[port_number] == H_Status)
-//	{
-//		portStatus[port_number] =Z_Status; // Z  Character was received, waiting for length byte.
-//	}
+//    else if (huart->Instance == USART5) {
+//    	HAL_Delay(100);
+//    }
 //
-//	else if(Rx_Data[port_index] != 'Z' && portStatus[port_number] == H_Status)
-//	{
-//		portStatus[port_number] =FREE; // Z  Character was not received, so there is no message to receive.
-//	}
-//
-//	else if(portStatus[port_number] == Z_Status)
-//	{
-//		portStatus[port_number] =MSG; // Receive length byte.
-//		MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][2] = Rx_Data[port_index];
-//		temp_index[port_index] = 3;
-//		temp_length[port_index] = Rx_Data[port_index] + 1;
-//	}
-//
-//	else if(portStatus[port_number] == MSG)
-//	{
-//		if(temp_length[port_index] > 1)
-//		{
-//			MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][temp_index[port_index]] = Rx_Data[port_index];
-//			temp_index[port_index]++;
-//			temp_length[port_index]--;
-//		}
-//		else
-//		{
-//			MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][temp_index[port_index]] = Rx_Data[port_index];
-//			temp_index[port_index]++;
-//			temp_length[port_index]--;
-//			MSG_Buffer_Index_End[port_index]++;
-//			if(MSG_Buffer_Index_End[port_index] == MSG_COUNT) MSG_Buffer_Index_End[port_index] = 0;
-//
-//
-//			Process_Message_Buffer[Process_Message_Buffer_Index_End] = port_number;
-//			Process_Message_Buffer_Index_End++;
-//			if(Process_Message_Buffer_Index_End == MSG_COUNT) Process_Message_Buffer_Index_End = 0;
-//			portStatus[port_number] =FREE; // End of receiving message.
-//		}
-//	}
-//
-//
-////		HAL_UART_Receive_DMA(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
-//	HAL_UART_Receive_IT(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
+//    else if (huart->Instance == USART6) {
+//    	HAL_Delay(100);
+//    }
+
 }
 
 /*-----------------------------------------------------------*/

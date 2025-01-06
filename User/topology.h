@@ -17,7 +17,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
 
-#define __N	9					// Number of array modules
+#define __N	10					// Number of array modules
 
 // Array modules
 #define _mod1	1<<3
@@ -29,6 +29,7 @@
 #define _mod7	7<<3
 #define _mod8	8<<3
 #define _mod9	9<<3
+#define _mod10	10<<3
 
 // Topology
 static uint16_t array[__N ][7] ={
@@ -38,9 +39,10 @@ static uint16_t array[__N ][7] ={
 	{_H2BR1, _mod5 | P1, 0, 0, _mod1 | P3, 0, 0},		   // Module 4
 	{_H01R0, _mod4 | P1, 0, 0, _mod6 | P3, 0, 0},   	   // Module 5
 	{_H3BR2, 0, 0, _mod5 | P4, 0, 0, 0},			       // Module 6
-	{_H08R7, 0, _mod8 | P1, 0, 0, _mod1 | P5, 0},	       // Module 7
-	{_H0AR9, _mod7 | P2, 0, 0, _mod9 | P6, 0, 0},		   // Module 8
-	{_H0BR4, 0, 0, 0, 0, 0, _mod8 | P4},			       // Module 9
+	{_H08R7, 0, _mod8 | P6, 0, 0, _mod1 | P5, 0},	       // Module 7
+	{_H0AR9, 0, _mod9 | P1, 0, _mod10 | P6, 0, _mod7 | P2}, // Module 8
+	{_H0AR9, _mod8 | P2, 0, 0, 0, 0, 0},			       // Module 9
+	{_H0BR4, 0, 0, 0, 0, 0, _mod8 | P4},			       // Module 10
 };
 
 // Configurations for duplex serial ports
@@ -116,22 +118,32 @@ static uint16_t array[__N ][7] ={
 
 #if ( _module == 8 )
 	#define	H0AR9			1
-    #define	_P1pol_reversed	1
-    #define	_P2pol_normal	1
+    #define	_P1pol_normal	1
+    #define	_P2pol_reversed	1
     #define	_P3pol_normal	1
     #define	_P4pol_reversed	1
+    #define	_P5pol_normal	1
+    #define	_P6pol_reversed	1
+#endif
+
+#if ( _module == 9 )
+	#define	H0AR9			1
+    #define	_P1pol_normal	1
+    #define	_P2pol_normal	1
+    #define	_P3pol_normal	1
+    #define	_P4pol_normal	1
     #define	_P5pol_normal	1
     #define	_P6pol_normal	1
 #endif
 
-#if ( _module == 9 )
+#if ( _module == 10 )
 	#define	H0BR4			1
 	#define	_P1pol_normal	1
 	#define	_P2pol_normal	1
 	#define	_P3pol_normal	1
 	#define	_P4pol_normal	1
 	#define	_P5pol_normal	1
-	#define	_P6pol_reversed	1
+	#define	_P6pol_normal	1
 #endif
 
 #ifdef __cplusplus

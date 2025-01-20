@@ -127,6 +127,18 @@ void USART1_IRQHandler(void){
 	HAL_UART_IRQHandler(&huart1);
 #endif
 	
+	/* Fix problem stuck CPU in UART IRQhandler because of error on UART bus through use
+	 * HAL_UART_Transmit_IT() ,this prevented the TXFNFIE flag from being cleared which caused this problem
+	 */
+	if( (READ_BIT(huart1.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
+			(huart1.gState == HAL_UART_STATE_READY))
+	{
+	      /* Disable the UART Transmit Data Register Empty Interrupt */
+	      ATOMIC_CLEAR_BIT(huart1.Instance->CR1, USART_CR1_TXEIE_TXFNFIE);
+
+	      /* Enable the UART Transmit Complete Interrupt */
+	      ATOMIC_SET_BIT(huart1.Instance->CR1, USART_CR1_TCIE);
+	}
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
 	 unblocked (higher priority) task is returned to immediately. */
@@ -145,6 +157,15 @@ void USART2_LPUART2_IRQHandler(void){
 	HAL_UART_IRQHandler(&huart2);
 #endif
 	
+	if( (READ_BIT(huart2.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
+			(huart2.gState == HAL_UART_STATE_READY))
+	{
+	      /* Disable the UART Transmit Data Register Empty Interrupt */
+	      ATOMIC_CLEAR_BIT(huart2.Instance->CR1, USART_CR1_TXEIE_TXFNFIE);
+
+	      /* Enable the UART Transmit Complete Interrupt */
+	      ATOMIC_SET_BIT(huart2.Instance->CR1, USART_CR1_TCIE);
+	}
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
 	 unblocked (higher priority) task is returned to immediately. */
@@ -173,6 +194,46 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 	HAL_UART_IRQHandler(&huart6);
 #endif
 	
+	if( (READ_BIT(huart3.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
+			(huart3.gState == HAL_UART_STATE_READY))
+	{
+	      /* Disable the UART Transmit Data Register Empty Interrupt */
+	      ATOMIC_CLEAR_BIT(huart3.Instance->CR1, USART_CR1_TXEIE_TXFNFIE);
+
+	      /* Enable the UART Transmit Complete Interrupt */
+	      ATOMIC_SET_BIT(huart3.Instance->CR1, USART_CR1_TCIE);
+	}
+
+	else if( (READ_BIT(huart4.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
+			(huart4.gState == HAL_UART_STATE_READY))
+	{
+	      /* Disable the UART Transmit Data Register Empty Interrupt */
+	      ATOMIC_CLEAR_BIT(huart4.Instance->CR1, USART_CR1_TXEIE_TXFNFIE);
+
+	      /* Enable the UART Transmit Complete Interrupt */
+	      ATOMIC_SET_BIT(huart4.Instance->CR1, USART_CR1_TCIE);
+	}
+
+	else if( (READ_BIT(huart5.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
+			(huart5.gState == HAL_UART_STATE_READY))
+	{
+	      /* Disable the UART Transmit Data Register Empty Interrupt */
+	      ATOMIC_CLEAR_BIT(huart5.Instance->CR1, USART_CR1_TXEIE_TXFNFIE);
+
+	      /* Enable the UART Transmit Complete Interrupt */
+	      ATOMIC_SET_BIT(huart5.Instance->CR1, USART_CR1_TCIE);
+	}
+
+	else if( (READ_BIT(huart6.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
+			(huart6.gState == HAL_UART_STATE_READY))
+	{
+	      /* Disable the UART Transmit Data Register Empty Interrupt */
+	      ATOMIC_CLEAR_BIT(huart6.Instance->CR1, USART_CR1_TXEIE_TXFNFIE);
+
+	      /* Enable the UART Transmit Complete Interrupt */
+	      ATOMIC_SET_BIT(huart6.Instance->CR1, USART_CR1_TCIE);
+	}
+
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
 	 unblocked (higher priority) task is returned to immediately. */

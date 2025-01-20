@@ -231,7 +231,7 @@
 		<link>
 			<name>Thirdparty/EEPROM_Emul</name>
 			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/H21R2x-Firmware/thirdparty/EEPROM_Emul</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Thirdparty/EEPROM_Emul</locationURI>
 		</link>
 		<link>
 			<name>Thirdparty/LSM303AGR</name>

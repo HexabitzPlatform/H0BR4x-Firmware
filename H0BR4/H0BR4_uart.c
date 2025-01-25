@@ -646,12 +646,14 @@ void SwapUartPins(UART_HandleTypeDef *huart,uint8_t direction){
 			huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 			huart->AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
 			HAL_UART_Init(huart);
+			HAL_UARTEx_ReceiveToIdle_DMA(huart,(uint8_t* )&UARTRxBuf[GetPort(huart) - 1],MSG_RX_BUF_SIZE);
 		}
 		else if(direction == NORMAL){
 			arrayPortsDir[myID - 1] &=(~(0x8000 >> (GetPort(huart) - 1))); /* Set bit to zero */
 			huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 			huart->AdvancedInit.Swap = UART_ADVFEATURE_SWAP_DISABLE;
 			HAL_UART_Init(huart);
+			HAL_UARTEx_ReceiveToIdle_DMA(huart,(uint8_t* )&UARTRxBuf[GetPort(huart) - 1],MSG_RX_BUF_SIZE);
 		}
 	}
 }

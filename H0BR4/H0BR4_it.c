@@ -25,6 +25,7 @@ extern uint8_t WakeupFromStopFlag;
 extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
 
 uint8_t hell = 0;
+
 uint16_t PacketLength = 0;
 uint8_t count = 0;
 /******************************************************************************/
@@ -77,42 +78,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart,uint16_t Size){
 	PacketLength =Size;
 	count++;
 
-	// Notify backend task
+	/* Notify backend task */
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	vTaskNotifyGiveFromISR(BackEndTaskHandle,&xHigherPriorityTaskWoken);
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-
-//	if(huart->Instance == USART3){
-//		if(__HAL_UART_GET_FLAG(&huart3,UART_FLAG_IDLE)){
-//			// IDLE flag is set
-//			++hell;
-//		}
-//	}
-//
-//    if (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE)) {
-//        // IDLE flag is set
-//    	++hell;
-//    }
-//
-//    if (__HAL_UART_GET_FLAG(&huart3, UART_FLAG_IDLE)) {
-//        // IDLE flag is set
-//    	++hell;
-//    }
-//
-//    if (__HAL_UART_GET_FLAG(&huart4, UART_FLAG_IDLE)) {
-//        // IDLE flag is set
-//    	++hell;
-//    }
-//
-//    if (__HAL_UART_GET_FLAG(&huart5, UART_FLAG_IDLE)) {
-//        // IDLE flag is set
-//    	++hell;
-//    }
-//
-//    if (__HAL_UART_GET_FLAG(&huart6, UART_FLAG_IDLE)) {
-//        // IDLE flag is set
-//    	++hell;
-//    }
 
 }
 

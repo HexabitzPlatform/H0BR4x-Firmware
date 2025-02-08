@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
  
- File Name     : H0BR4_dma.h
+ File Name     : H01R0_dma.h
  Description   : Header file contains Peripheral DMA setup.
 
  */
@@ -33,18 +33,21 @@ extern CRC_HandleTypeDef hcrc;
 /* External function prototypes ----------------------------------------------*/
 extern void DMA_Init(void);
 extern void DMA_MSG_RX_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch);
-extern void DMA_MSG_TX_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch);
+//extern void DMA_MSG_TX_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch);
 extern void DMA_STREAM_CH_Init(DMA_HandleTypeDef *hDMA,DMA_Channel_TypeDef *ch);
 extern void SetupMessagingRxDMAs(void);
 extern void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
-extern void DMA_MSG_TX_Setup(UART_HandleTypeDef *huart);
-extern void DMA_MSG_TX_UnSetup(UART_HandleTypeDef *huart);
+//extern void DMA_MSG_TX_Setup(UART_HandleTypeDef *huart);
+//extern void DMA_MSG_TX_UnSetup(UART_HandleTypeDef *huart);
 extern void CRC_Init(void);
 extern uint8_t  CalculateCRC8(uint8_t pBuffer[], uint16_t size);
-extern void StopMsgDMA(uint8_t port);
-extern void StopStreamDMA(uint8_t port);
+//extern void StopMsgDMA(uint8_t port);
+//extern void StopStreamDMA(uint8_t port);
+extern void StopDMA(uint8_t port);
 extern void SwitchMsgDMAToStream(uint8_t port);
 extern void SwitchStreamDMAToMsg(uint8_t port);
+extern void RemapAndLinkDMAtoUARTRx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
+extern void RemapAndLinkDMAtoUARTTx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
 
 #ifdef __cplusplus
 }

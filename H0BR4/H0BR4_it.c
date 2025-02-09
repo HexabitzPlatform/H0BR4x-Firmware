@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_it.c
+ File Name     : H01R0_it.c
  Description   :Interrupt Service Routines.
 
  */
@@ -21,10 +21,7 @@ extern uint8_t UARTRxBufIndex[NumOfPorts];
 extern uint8_t WakeupFromStopFlag;
 
 /* External function prototypes ----------------------------------------------*/
-
 extern TaskHandle_t xCommandConsoleTaskHandle; // CLI Task handler.
-
-uint8_t hell = 0;
 
 uint16_t PacketLength = 0;
 uint8_t count = 0;
@@ -86,6 +83,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart,uint16_t Size){
 }
 
 /*-----------------------------------------------------------*/
+
 /**
  * @brief This function handles USART1 global interrupt / USART1 wake-up interrupt through EXTI line 25.
  */
@@ -95,7 +93,7 @@ void USART1_IRQHandler(void){
 #if defined (_Usart1)		
 	HAL_UART_IRQHandler(&huart1);
 #endif
-	
+
 	/* Fix problem stuck CPU in UART IRQhandler because of error on UART bus through use
 	 * HAL_UART_Transmit_IT() ,this prevented the TXFNFIE flag from being cleared which caused this problem
 	 */
@@ -162,7 +160,7 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 #if defined (_Usart6)
 	HAL_UART_IRQHandler(&huart6);
 #endif
-	
+
 	if( (READ_BIT(huart3.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) &&
 			(huart3.gState == HAL_UART_STATE_READY))
 	{
@@ -216,8 +214,8 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
  */
 void DMA1_Ch1_IRQHandler(void){
 	/* Streaming or messaging DMA on P1 */
-	DMA_IRQHandler(P1);
-	
+//	DMA_IRQHandler(P1);
+
 }
 
 /*-----------------------------------------------------------*/
@@ -226,18 +224,18 @@ void DMA1_Ch1_IRQHandler(void){
  * @brief This function handles DMA1 channel 2 to 3 and DMA2 channel 1 to 2 interrupts.
  */
 void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void){
-	/* Streaming or messaging DMA on P5 */
-	if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF2) == SET){
-		DMA_IRQHandler(P5);
-		/* Streaming or messaging DMA on P2 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET){
-		DMA_IRQHandler(P2);
-		/* TX messaging DMA 0 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET){
-		HAL_DMA_IRQHandler(&msgTxDMA[0]);
-	}
+//	/* Streaming or messaging DMA on P5 */
+//	if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF2) == SET){
+//		DMA_IRQHandler(P5);
+//		/* Streaming or messaging DMA on P2 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET){
+//		DMA_IRQHandler(P2);
+//		/* TX messaging DMA 0 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET){
+//		HAL_DMA_IRQHandler(&msgTxDMA[0]);
+//	}
 }
 
 /*-----------------------------------------------------------*/
@@ -246,26 +244,26 @@ void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void){
  * @brief This function handles DMA1 channel 4 to 7 and DMA2 channel 3 to 5 interrupts.
  */
 void DMA1_Ch4_7_DMA2_Ch3_5_IRQHandler(void){
-	/* Streaming or messaging DMA on P3 */
-	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET){
-		DMA_IRQHandler(P3);
-		/* Streaming or messaging DMA on P4 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET){
-		DMA_IRQHandler(P4);
-		/* Streaming or messaging DMA on P6 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF3) == SET){
-		DMA_IRQHandler(P6);
-		/* TX messaging DMA 1 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET){
-		HAL_DMA_IRQHandler(&msgTxDMA[1]);
-		/* TX messaging DMA 2 */
-	}
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF7) == SET){
-		HAL_DMA_IRQHandler(&msgTxDMA[2]);
-	}
+//	/* Streaming or messaging DMA on P3 */
+//	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET){
+//		DMA_IRQHandler(P3);
+//		/* Streaming or messaging DMA on P4 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET){
+//		DMA_IRQHandler(P4);
+//		/* Streaming or messaging DMA on P6 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA2,DMA_ISR_GIF3) == SET){
+//		DMA_IRQHandler(P6);
+//		/* TX messaging DMA 1 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET){
+//		HAL_DMA_IRQHandler(&msgTxDMA[1]);
+//		/* TX messaging DMA 2 */
+//	}
+//	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF7) == SET){
+//		HAL_DMA_IRQHandler(&msgTxDMA[2]);
+//	}
 }
 
 /*-----------------------------------------------------------*/
@@ -274,8 +272,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
 	/* TX DMAs are shared so unsetup them here to be reused */
-	if(huart->hdmatx != NULL)
-		DMA_MSG_TX_UnSetup(huart);
+//	if(huart->hdmatx != NULL)
+//		DMA_MSG_TX_UnSetup(huart);
 	
 	/* Give back the mutex. */
 	xSemaphoreGiveFromISR(PxTxSemaphoreHandle[GetPort(huart)],&(xHigherPriorityTaskWoken));
@@ -309,36 +307,79 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 /*-----------------------------------------------------------*/
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
-
-//    if (huart->Instance == USART1) {
-//    	HAL_Delay(100);
-////        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-////
-////        // Notify the backend task that full buffer is complete
-////        vTaskNotifyGiveFromISR(BackendTaskHandle, &xHigherPriorityTaskWoken);
-////        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-//    }
+//	uint8_t port_number = GetPort(huart);
+//	uint8_t port_index = port_number - 1;
+//	if(Rx_Data[port_index] == 0x0D && portStatus[port_number] == FREE)
+//	{
+//		for(int i=0;i<=NumOfPorts;i++) // Free previous CLI port
+//		{
+//			if(portStatus[i] == CLI)
+//			{
+//				portStatus[i] = FREE;
+//			}
+//		}
+//		portStatus[port_number] =CLI; // Continue the CLI session on this port
+//		PcPort = port_number;
+//		xTaskNotifyGive(xCommandConsoleTaskHandle);
 //
-//    else if (huart->Instance == USART2) {
-//        HAL_Delay(100);
-//    }
+//		if(Activate_CLI_For_First_Time_Flag == 1) Read_In_CLI_Task_Flag = 1;
+//		Activate_CLI_For_First_Time_Flag = 1;
 //
-//    else if (huart->Instance == USART3) {
-//    	HAL_Delay(100);
-//    }
+//	}
+//	else if(portStatus[port_number] == CLI)
+//	{
+//		Read_In_CLI_Task_Flag = 1;
+//	}
 //
-//    else if (huart->Instance == USART4) {
-//    	HAL_Delay(100);
-//    }
+//	else if(Rx_Data[port_index] == 'H' && portStatus[port_number] == FREE)
+//	{
+//		portStatus[port_number] =H_Status; // H  Character was received, waiting for Z character.
+//	}
 //
-//    else if (huart->Instance == USART5) {
-//    	HAL_Delay(100);
-//    }
+//	else if(Rx_Data[port_index] == 'Z' && portStatus[port_number] == H_Status)
+//	{
+//		portStatus[port_number] =Z_Status; // Z  Character was received, waiting for length byte.
+//	}
 //
-//    else if (huart->Instance == USART6) {
-//    	HAL_Delay(100);
-//    }
-
+//	else if(Rx_Data[port_index] != 'Z' && portStatus[port_number] == H_Status)
+//	{
+//		portStatus[port_number] =FREE; // Z  Character was not received, so there is no message to receive.
+//	}
+//
+//	else if(portStatus[port_number] == Z_Status)
+//	{
+//		portStatus[port_number] =MSG; // Receive length byte.
+//		MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][2] = Rx_Data[port_index];
+//		temp_index[port_index] = 3;
+//		temp_length[port_index] = Rx_Data[port_index] + 1;
+//	}
+//
+//	else if(portStatus[port_number] == MSG)
+//	{
+//		if(temp_length[port_index] > 1)
+//		{
+//			MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][temp_index[port_index]] = Rx_Data[port_index];
+//			temp_index[port_index]++;
+//			temp_length[port_index]--;
+//		}
+//		else
+//		{
+//			MSG_Buffer[port_index][MSG_Buffer_Index_End[port_index]][temp_index[port_index]] = Rx_Data[port_index];
+//			temp_index[port_index]++;
+//			temp_length[port_index]--;
+//			MSG_Buffer_Index_End[port_index]++;
+//			if(MSG_Buffer_Index_End[port_index] == MSG_COUNT) MSG_Buffer_Index_End[port_index] = 0;
+//
+//
+//			Process_Message_Buffer[Process_Message_Buffer_Index_End] = port_number;
+//			Process_Message_Buffer_Index_End++;
+//			if(Process_Message_Buffer_Index_End == MSG_COUNT) Process_Message_Buffer_Index_End = 0;
+//			portStatus[port_number] =FREE; // End of receiving message.
+//		}
+//	}
+//
+////		HAL_UART_Receive_DMA(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
+//	HAL_UART_Receive_IT(huart,(uint8_t* )&Rx_Data[GetPort(huart) - 1] , 1);
 }
 
 /*-----------------------------------------------------------*/

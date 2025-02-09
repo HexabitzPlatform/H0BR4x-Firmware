@@ -28,8 +28,8 @@
 #define TOPOLOGY_START_ADDRESS  ((uint32_t)0x0807A800)      /* topology is stored here 		*/
 #define SNIPPETS_START_ADDRESS  ((uint32_t)0x0807B000) 		/* Snippet are stored here      */
 #define EEPROM_START_ADDRESS  	((uint32_t)0x0807B800)      /* EE_Variables are stored here */
-#define TOPOLOGY_PAGE_NUM		373
-#define SNIPPETS_PAGE_NUM		374
+#define TOPOLOGY_PAGE_NUM		117
+#define SNIPPETS_PAGE_NUM		118
 
 #ifdef __cplusplus
 }

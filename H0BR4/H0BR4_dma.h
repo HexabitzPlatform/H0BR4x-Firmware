@@ -48,7 +48,8 @@ extern void SwitchMsgDMAToStream(uint8_t port);
 extern void SwitchStreamDMAToMsg(uint8_t port);
 extern void RemapAndLinkDMAtoUARTRx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
 extern void RemapAndLinkDMAtoUARTTx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
-
+extern void DMA_NVIC_Setup(void);
+extern void DMA_NVIC_UnSetup(void);
 #ifdef __cplusplus
 }
 #endif

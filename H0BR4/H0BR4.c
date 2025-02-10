@@ -400,6 +400,8 @@ void Module_Peripheral_Init(void){
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
 
+//	DMA_NVIC_Setup();
+
 	GPIO_Init();
 	MEMS_GPIO_Init();
 	MX_I2C_Init();

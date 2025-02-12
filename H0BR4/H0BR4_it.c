@@ -74,12 +74,14 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart,uint16_t Size){
 
 	PacketLength =Size;
 	count++;
+	if(portStatus[GetPort(huart)] == STREAM) {
 
-	/* Notify backend task */
-	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	vTaskNotifyGiveFromISR(BackEndTaskHandle,&xHigherPriorityTaskWoken);
-	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-
+	} else {
+	  /* Notify backend task */
+	  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	  vTaskNotifyGiveFromISR(BackEndTaskHandle,&xHigherPriorityTaskWoken);
+	  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
 }
 
 /*-----------------------------------------------------------*/
@@ -275,7 +277,7 @@ void DMA1_Channel1_IRQHandler(void)
 
   /* USER CODE END DMA1_Channel1_IRQn 0 */
 //  HAL_DMA_IRQHandler(&msgRxDMA[0]);
-	DMA_IRQHandler(P1);
+	DMA_IRQHandler(P4);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
@@ -292,7 +294,7 @@ void DMA1_Channel2_3_IRQHandler(void)
 	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET)
 		DMA_IRQHandler(P2);
 	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET)
-		DMA_IRQHandler(P3);
+		DMA_IRQHandler(P6);
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
 
   /* USER CODE END DMA1_Channel2_3_IRQn 1 */
@@ -307,11 +309,11 @@ void DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler(void)
 
   /* USER CODE END DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn 0 */
    if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET)
-	   DMA_IRQHandler(P4);
+	   DMA_IRQHandler(P1);
    else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET)
 	   DMA_IRQHandler(P5);
    else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET)
-	   DMA_IRQHandler(P6);
+	   DMA_IRQHandler(P3);
   /* USER CODE BEGIN DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn 1 */
 
   /* USER CODE END DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn 1 */

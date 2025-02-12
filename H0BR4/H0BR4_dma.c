@@ -379,7 +379,7 @@ void SwitchStreamDMAToMsg(uint8_t port) {
 	HAL_UART_MspInit(huartSrc);
 	// Remove stream DMA and change port status
 	portStatus[GetPort(msgRxDMA/*streamDMA*/[port - 1]->Parent)] = FREE;
-	msgRxDMA/*streamDMA*/[port - 1]->Instance = 0;
+//	msgRxDMA/*streamDMA*/[port - 1]->Instance = 0;
 	dmaStreamDst[port - 1] = 0;
 
 	// Read this port again in messaging mode

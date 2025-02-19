@@ -24,7 +24,7 @@
 /* External variables --------------------------------------------------------*/
 
 /* Export DMA structs */
-extern DMA_HandleTypeDef msgRxDMA[6];
+extern DMA_HandleTypeDef *msgRxDMA[6];
 extern DMA_HandleTypeDef msgTxDMA[3];
 extern DMA_HandleTypeDef streamDMA[6];
 extern DMA_HandleTypeDef frontendDMA[3];
@@ -48,7 +48,8 @@ extern void SwitchMsgDMAToStream(uint8_t port);
 extern void SwitchStreamDMAToMsg(uint8_t port);
 extern void RemapAndLinkDMAtoUARTRx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
 extern void RemapAndLinkDMAtoUARTTx(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA);
-
+extern void DMA_NVIC_Setup(void);
+extern void DMA_NVIC_UnSetup(void);
 #ifdef __cplusplus
 }
 #endif

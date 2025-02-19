@@ -1,7 +1,7 @@
 /*
  BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
- 
+
  File Name     : H01R0_dma.c
  Description   : source file Contains Peripheral DMA setup .
 
@@ -16,8 +16,8 @@
 
 /* Variables ---------------------------------------------------------*/
 
-/* DMA structs. Number of structs depends on available DMA channels and array ports where some channels might be reconfigured. 
- - Update for non-standard MCUs 
+/* DMA structs. Number of structs depends on available DMA channels and array ports where some channels might be reconfigured.
+ - Update for non-standard MCUs
  */
 DMA_HandleTypeDef *msgRxDMA[6];
 //DMA_HandleTypeDef msgTxDMA[3] ={0};
@@ -33,17 +33,11 @@ extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 ///* Private function prototypes -----------------------------------------------*/
 //void SetupDMAInterrupts(DMA_HandleTypeDef *hDMA,uint8_t priority);
 //void UnSetupDMAInterrupts(DMA_HandleTypeDef *hDMA);
-extern DMA_HandleTypeDef hdma_usart1_rx;
-extern DMA_HandleTypeDef hdma_usart2_rx;
-extern DMA_HandleTypeDef hdma_usart3_rx;
-extern DMA_HandleTypeDef hdma_usart4_rx;
-extern DMA_HandleTypeDef hdma_usart5_rx;
-extern DMA_HandleTypeDef hdma_usart6_rx;
 
 
 /*-----------------------------------------------------------*/
 
-/** 
+/**
  * Initialize the DMAs
  */
 void DMA_Init(void){
@@ -193,7 +187,7 @@ void DMA_NVIC_UnSetup(void)
 /* Setup and control functions ------------------------------*/
 /*-----------------------------------------------------------*/
 
-/* Setup and start Messaging DMAs 
+/* Setup and start Messaging DMAs
  */
 void SetupMessagingRxDMAs(void){
 #ifdef _P1
@@ -224,7 +218,7 @@ void SetupMessagingRxDMAs(void){
 
 /*-----------------------------------------------------------*/
 
-/* Messaging DMA RX setup (port-to-memory) 
+/* Messaging DMA RX setup (port-to-memory)
  */
 void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	/* Remap and link to UART Rx */
@@ -243,12 +237,13 @@ void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 }
 
 /*-----------------------------------------------------------*/
-
+extern uint8_t Buffer[512];
 /* Streaming DMA setup (port-to-port)
  */
 void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,uint16_t num){
 	DMA_HandleTypeDef *hDMA;
 	uint8_t port =GetPort(huartSrc);
+	uint8_t dstPort =GetPort(huartDst);
 //
 //	/* Select DMA struct */
 	hDMA = msgRxDMA[port - 1];
@@ -262,9 +257,25 @@ void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,
 	/* Start DMA stream	*/
 //	huartSrc->gState =HAL_UART_STATE_READY;
 //	HAL_UART_Receive_DMA(huartSrc,(uint8_t* )(&(huartDst->Instance->TDR)),num);
-	HAL_UARTEx_ReceiveToIdle_DMA(huartSrc,(uint8_t* )(&(huartDst->Instance->TDR)),num);
-	__HAL_DMA_DISABLE_IT(hDMA , DMA_IT_HT);
-
+//	if(streamType != 1)
+//	{
+//		HAL_UARTEx_ReceiveToIdle_DMA(huartSrc,(uint8_t* )(&(huartDst->Instance->TDR)),num);
+////	else if(type == 1)
+////		HAL_UARTEx_ReceiveToIdle_DMA(huartSrc,Buffer,512);
+//	__HAL_DMA_DISABLE_IT(hDMA , DMA_IT_HT);
+//	}
+	if(dstPort == 0)
+	{
+		index_process[GetPort(huartSrc) - 1] = 0;
+		memset(Buffer,0,512);
+		HAL_UARTEx_ReceiveToIdle_DMA(huartSrc,Buffer,num);
+		__HAL_DMA_DISABLE_IT(hDMA , DMA_IT_HT);
+	}
+	else
+	{
+		HAL_UARTEx_ReceiveToIdle_DMA(huartSrc,(uint8_t* )(&(huartDst->Instance->TDR)),num);
+		__HAL_DMA_DISABLE_IT(hDMA , DMA_IT_HT);
+	}
 }
 /*-----------------------------------------------------------*/
 
@@ -381,7 +392,7 @@ void SwitchStreamDMAToMsg(uint8_t port) {
 	portStatus[GetPort(msgRxDMA/*streamDMA*/[port - 1]->Parent)] = FREE;
 //	msgRxDMA/*streamDMA*/[port - 1]->Instance = 0;
 	dmaStreamDst[port - 1] = 0;
-
+	index_process[port - 1] = 0;
 	// Read this port again in messaging mode
 	DMA_MSG_RX_Setup(GetUart(port), msgRxDMA[port - 1]);
 
@@ -613,7 +624,7 @@ uint8_t  CalculateCRC8(uint8_t pBuffer[], uint16_t size)
 
 	return pTemp;
   }
-  
+
 else
 	return 0;
 }

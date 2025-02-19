@@ -11,11 +11,11 @@
 #include "BOS.h"
 
 /*  */
-#ifndef __N
-uint16_t arrayPortsDir[MaxNumOfModules]; /* Array ports directions */
-#else
-uint16_t arrayPortsDir[__N ];
-#endif 
+//#ifndef __N
+//uint16_t arrayPortsDir[MaxNumOfModules]; /* Array ports directions */
+//#else
+//uint16_t arrayPortsDir[__N ];
+//#endif
 
 DMA_HandleTypeDef hdma_usart1_rx;
 

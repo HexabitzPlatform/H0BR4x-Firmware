@@ -29,15 +29,32 @@ int main(void) {
 /* User Task */
 void UserTask(void *argument) {
 
+//	AddPortButton(MOMENTARY_NO, 2);   //Define a button connected to port P1
+//	SetButtonEvents(2, 1, 0, 3, 0, 0, 0, 0, 0,1);    // Activate a click event and a pressed_for_x event for 3 seconds
 
+	StartScastDMAStream(P3, 1, P2, 4, BIDIRECTIONAL, 100, 0xFFFFFFFF, false);
 	// put your code here, to run repeatedly.
 	while (1) {
-		SampleTempCelsius(&TempBuffer[Index11]);
-		HAL_Delay(50);
-		Index11++;
-		if(Index11 > 100)
-			Index11 =0;
+//		SampleTempCelsius(&TempBuffer[Index11]);
+//		HAL_Delay(50);
+//		Index11++;
+//		if(Index11 > 100)
+//			Index11 =0;
 	}
 }
+void buttonClickedCallback(uint8_t port){
 
+	IND_ON();
+//	IND_blink(80);
+//	SendMessageToModule(2, CODE_PING, 0);
+//
+//	SendMessageToModule(3, CODE_PING, 0);
+
+	SendMessageToModule(4, CODE_PING, 0);
+	IND_OFF();
+
+//	HAL_Delay(3000);
+//
+//	SendMessageToModule(BOS_BROADCAST, CODE_PING, 0);
+}
 /*-----------------------------------------------------------*/

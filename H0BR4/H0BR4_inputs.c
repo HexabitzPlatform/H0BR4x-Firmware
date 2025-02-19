@@ -510,7 +510,7 @@ BOS_Status RemovePortButton(uint8_t port) {
 	/* 4. Start scanning this port */
 	portStatus[port] = FREE;
 	/* Read this port again */
-	HAL_UART_Receive_IT(huart, (uint8_t*) &cRxedChar, 1);
+//	HAL_UART_Receive_IT(huart, (uint8_t*) &cRxedChar, 1);
 
 	return result;
 }

@@ -27,8 +27,11 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart6;
 
+uint8_t ClearROtopology(void);
+Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_t dst,uint8_t shift);
+void Module_Peripheral_Init(void);
 /* Exported variables */
-extern uint8_t numOfRecordedSnippets;
+//extern uint8_t numOfRecordedSnippets;
 extern stmdev_ctx_t dev_ctx;
 /* variables for Streams ----------------------------------------------------*/
 uint32_t numofsamples[2], Timeout[2];

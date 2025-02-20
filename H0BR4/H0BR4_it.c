@@ -17,7 +17,7 @@ uint8_t* error_restart_message = "Restarting...\r\n";
 
 /* External variables --------------------------------------------------------*/
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
-extern uint8_t UARTRxBufIndex[NumOfPorts];
+//extern uint8_t UARTRxBufIndex[NumOfPorts];
 extern uint8_t WakeupFromStopFlag;
 
 /* External function prototypes ----------------------------------------------*/

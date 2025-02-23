@@ -42,7 +42,7 @@ void UserTask(void *argument) {
 	// put your code here, to run repeatedly.
 	while (1) {
 /* Problem 1: */
-/* when using 0xffffff for data count the module is being reset */
+///* when using 0xffffff for data count the module is being reset */
 //		for (uint8_t i = 1 ; i<= 100 ; i++) {
 //			TempBuffer[i] = i;
 //

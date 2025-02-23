@@ -9,7 +9,7 @@
 #include "BOS.h"
 
 /* Private variables ---------------------------------------------------------*/
-float TempBuffer[100];
+uint8_t TempBuffer[100];
 uint16_t Index11;
 /* Private function prototypes -----------------------------------------------*/
 
@@ -29,12 +29,30 @@ int main(void) {
 /* User Task */
 void UserTask(void *argument) {
 
-//	AddPortButton(MOMENTARY_NO, 2);   //Define a button connected to port P1
-//	SetButtonEvents(2, 1, 0, 3, 0, 0, 0, 0, 0,1);    // Activate a click event and a pressed_for_x event for 3 seconds
+//	for (uint8_t i = 1 ; i<= 100 ; i++) {
+//		TempBuffer[i] = i;
+//	}
+//StreamPortToPort(P3, 1, P3, 4, BIDIRECTIONAL, 100, 0xffffff, 0); // ok
+//StreamPortToMemory(P3, 4, 100, 0xffffff, 0);
+//StreamMemoryToPort(3, 4, (uint8_t *)TempBuffer, 100, 0xffffff, 0); // ok
+//StreamMemoryToMemory(4, uint8_t *pBuffer, 100, 0xffffff, 0);
 
-	StartScastDMAStream(P3, 1, P2, 4, BIDIRECTIONAL, 100, 0xFFFFFFFF, false);
+
+
 	// put your code here, to run repeatedly.
 	while (1) {
+/* Problem 1: */
+/* when using 0xffffff for data count the module is being reset */
+//		for (uint8_t i = 1 ; i<= 100 ; i++) {
+//			TempBuffer[i] = i;
+//
+//			StreamMemoryToPort(3, 4, TempBuffer, 100 , 0xffffff, 0);
+//			HAL_Delay(10);
+//
+//		}
+
+
+
 //		SampleTempCelsius(&TempBuffer[Index11]);
 //		HAL_Delay(50);
 //		Index11++;
@@ -42,19 +60,5 @@ void UserTask(void *argument) {
 //			Index11 =0;
 	}
 }
-void buttonClickedCallback(uint8_t port){
 
-	IND_ON();
-//	IND_blink(80);
-//	SendMessageToModule(2, CODE_PING, 0);
-//
-//	SendMessageToModule(3, CODE_PING, 0);
-
-	SendMessageToModule(4, CODE_PING, 0);
-	IND_OFF();
-
-//	HAL_Delay(3000);
-//
-//	SendMessageToModule(BOS_BROADCAST, CODE_PING, 0);
-}
 /*-----------------------------------------------------------*/

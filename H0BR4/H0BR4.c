@@ -767,97 +767,101 @@ void StreamTimeCallback(TimerHandle_t xTimerStream){
 }
 
 /***************************************************************************/
+/***************************************************************************/
 /*
- * @brief: Streams sensor data to the terminal.
+ * @brief: Streams a single sensor data sample to the terminal.
  * @param Port: Port number to stream data to.
  * @param function: Function to sample data (e.g., ACC, GYRO, MAG, TEMP).
- * @param Numofsamples: Number of samples to take.
+ * @param Numofsamples: Number of samples (kept for compatibility, not used for repetition).
  * @param timeout: Timeout period for the operation.
  * @retval: Module status indicating success or error.
  */
-Module_Status Exportstreamtoterminal(uint8_t Port,All_Data function,uint32_t Numofsamples,uint32_t timeout){
-	Module_Status status =H0BR4_OK;
-	int8_t *pcOutputString = NULL;
-	uint32_t period =timeout / Numofsamples;
-	char cstring[100];
-	float x =0, y =0, z =0;
-	int xm =0, ym =0, zm =0;
-	float TempCelsius =0;
+Module_Status Exportstreamtoterminal(uint8_t Port, All_Data function, uint32_t Numofsamples, uint32_t timeout) {
+    Module_Status status = H0BR4_OK;            // Initialize status as success
+    int8_t *pcOutputString = NULL;              // Pointer to CLI output buffer
+    uint32_t period = timeout / Numofsamples;   // Calculate period (used for PollingSleepCLISafe, not repetition)
+    char cstring[100];                          // Buffer for formatted output string
+    float x = 0, y = 0, z = 0;                  // Variables for accelerometer and gyroscope data
+    int xm = 0, ym = 0, zm = 0;                 // Variables for magnetometer data
+    float TempCelsius = 0;                      // Variable for temperature data
 
-	// Check if the calculated period is valid
-	if(period < MIN_MEMS_PERIOD_MS)
-		return H0BR4_ERR_WrongParams;
+    // Check if the calculated period is valid
+    if (period < MIN_MEMS_PERIOD_MS)
+        return H0BR4_ERR_WrongParams;
 
-	// TODO: Check if CLI is enable or not
+    // TODO: Check if CLI is enabled or not
 
-	switch(function){
-		case ACC:
-			if(period > timeout)
-				timeout =period;
-			stopStream = false;
-			while((Numofsamples-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
-				pcOutputString =FreeRTOS_CLIGetOutputBuffer();
-				if((status =SampleAccG(&x,&y,&z)) != H0BR4_OK)
-					return status;
-				snprintf(cstring,50,"Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z);
-				writePxMutex(Port,(char* )cstring,strlen((char* )cstring),cmd500ms,HAL_MAX_DELAY);
-				if(PollingSleepCLISafe(period,Numofsamples) != H0BR4_OK)
-					break;
-			}
-			break;
+    // Process based on the requested sensor function
+    switch (function) {
+        case ACC:
+            // Get the CLI output buffer
+            pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            // Sample accelerometer data (x, y, z in G units)
+            if ((status = SampleAccG(&x, &y, &z)) != H0BR4_OK)
+                return status;
+            // Format the accelerometer data into a string
+            snprintf(cstring, 50, "Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n", x, y, z);
+            // Send the formatted string to the specified port
+            writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
+            // Check for CLI commands or stop signals during the period
+            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+                return H0BR4_ERR_TERMINATED;
+            break;
 
-		case GYRO:
-			if(period > timeout)
-				timeout =period;
-			stopStream = false;
-			while((Numofsamples-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
-				pcOutputString =FreeRTOS_CLIGetOutputBuffer();
-				if((status =SampleGyroDPS(&x,&y,&z)) != H0BR4_OK)
-					return status;
-				snprintf(cstring,50,"Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z);
-				writePxMutex(Port,(char* )cstring,strlen((char* )cstring),cmd500ms,HAL_MAX_DELAY);
-				if(PollingSleepCLISafe(period,Numofsamples) != H0BR4_OK)
-					break;
-			}
-			break;
+        case GYRO:
+            // Get the CLI output buffer
+            pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            // Sample gyroscope data (x, y, z in degrees per second)
+            if ((status = SampleGyroDPS(&x, &y, &z)) != H0BR4_OK)
+                return status;
+            // Format the gyroscope data into a string
+            snprintf(cstring, 50, "Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n", x, y, z);
+            // Send the formatted string to the specified port
+            writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
+            // Check for CLI commands or stop signals during the period
+            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+                return H0BR4_ERR_TERMINATED;
+            break;
 
-		case MAG:
-			if(period > timeout)
-				timeout =period;
-			stopStream = false;
-			while((Numofsamples-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
-				pcOutputString =FreeRTOS_CLIGetOutputBuffer();
-				if((status =SampleMagMGauss(&xm,&ym,&zm)) != H0BR4_OK)
-					return status;
-				snprintf(cstring,50,"Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n",xm,ym,zm);
-				writePxMutex(Port,(char* )cstring,strlen((char* )cstring),cmd500ms,HAL_MAX_DELAY);
-				if(PollingSleepCLISafe(period,Numofsamples) != H0BR4_OK)
-					break;
-			}
-			break;
+        case MAG:
+            // Get the CLI output buffer
+            pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            // Sample magnetometer data (xm, ym, zm in milliGauss)
+            if ((status = SampleMagMGauss(&xm, &ym, &zm)) != H0BR4_OK)
+                return status;
+            // Format the magnetometer data into a string
+            snprintf(cstring, 50, "Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n", xm, ym, zm);
+            // Send the formatted string to the specified port
+            writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
+            // Check for CLI commands or stop signals during the period
+            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+                return H0BR4_ERR_TERMINATED;
+            break;
 
-		case TEMP:
-			if(period > timeout)
-				timeout =period;
-			stopStream = false;
-			while((Numofsamples-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
-				pcOutputString =FreeRTOS_CLIGetOutputBuffer();
-				if((status =SampleTempCelsius(&TempCelsius)) != H0BR4_OK)
-					return status;
-				snprintf(cstring,50,"Temp(Celsius) | %0.2f\r\n",TempCelsius);
-				writePxMutex(Port,(char* )cstring,strlen((char* )cstring),cmd500ms,HAL_MAX_DELAY);
-				if(PollingSleepCLISafe(period,Numofsamples) != H0BR4_OK)
-					break;
-			}
-			break;
+        case TEMP:
+            // Get the CLI output buffer
+            pcOutputString = FreeRTOS_CLIGetOutputBuffer();
+            // Sample temperature data (in Celsius)
+            if ((status = SampleTempCelsius(&TempCelsius)) != H0BR4_OK)
+                return status;
+            // Format the temperature data into a string
+            snprintf(cstring, 50, "Temp(Celsius) | %0.2f\r\n", TempCelsius);
+            // Send the formatted string to the specified port
+            writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
+            // Check for CLI commands or stop signals during the period
+            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+                return H0BR4_ERR_TERMINATED;
+            break;
 
-		default:
-			status =H0BR4_ERR_WrongParams;
-			break;
-	}
+        default:
+            // Return error if the function type is invalid
+            status = H0BR4_ERR_WrongParams;
+            break;
+    }
 
-	imuMode = DEFAULT;
-	return status;
+    // Reset IMU mode to default after processing
+    imuMode = DEFAULT;
+    return status;  // Return the final status (success or error)
 }
 
 /***************************************************************************/

@@ -77,7 +77,7 @@ void Module_Peripheral_Init(void);
 Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_t dst,uint8_t shift);
 
 /* Local function prototypes ***********************************************/
-void IMU_Task(void *argument);
+//void IMU_Task(void *argument);
 void StreamTimeCallback(TimerHandle_t xTimerStream);
 
 void SampleGyroDPSToString(char *cstring,size_t maxLen);
@@ -439,8 +439,8 @@ void Module_Peripheral_Init(void){
 		}
 	}
 
-	/* Create a IMU_Task task */
-	xTaskCreate(IMU_Task,(const char* )"IMU_Task",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&IMU_TaskTaskHandle);
+//	/* Create a IMU_Task task */
+//	xTaskCreate(IMU_Task,(const char* )"IMU_Task",configMINIMAL_STACK_SIZE,NULL,osPriorityNormal - osPriorityIdle,&IMU_TaskTaskHandle);
 	/* Create a timeout software timer StreamSamplsToPort() API */
 	xTimerStream =xTimerCreate("StreamTimer",pdMS_TO_TICKS(1000),pdTRUE,(void* )1,StreamTimeCallback);
 }
@@ -505,36 +505,36 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 }
 
 /***************************************************************************/
-/*
- * @brief: Task to handle IMU sensor operations.
- * This function continuously checks the mode of the IMU and performs actions
- * such as streaming data to a port or terminal based on the mode. The task
- * runs indefinitely as part of the RTOS.
- * @param argument: Pointer to the task's argument (if any).
- */
-void IMU_Task(void *argument){
-	/* Infinite loop */
-	for(;;){
-		/* Check the mode of the IMU and perform actions accordingly */
-		switch(imuMode){
-			case STREAM_TO_PORT:
-				Exportstreamtoport(Module[0],Port[0],mode[0],numofsamples[0],Timeout[0]);
-				break;
-
-			case STREAM_TO_Terminal:
-				Exportstreamtoterminal(Port[1],mode[1],numofsamples[1],Timeout[1]);
-				break;
-
-			default:
-				/* Delay for a short period before checking again */
-				osDelay(10);
-				break;
-		}
-
-		/* Yield the task to allow other tasks to run */
-		taskYIELD();
-	}
-}
+///*
+// * @brief: Task to handle IMU sensor operations.
+// * This function continuously checks the mode of the IMU and performs actions
+// * such as streaming data to a port or terminal based on the mode. The task
+// * runs indefinitely as part of the RTOS.
+// * @param argument: Pointer to the task's argument (if any).
+// */
+//void IMU_Task(void *argument){
+//	/* Infinite loop */
+//	for(;;){
+//		/* Check the mode of the IMU and perform actions accordingly */
+//		switch(imuMode){
+//			case STREAM_TO_PORT:
+//				Exportstreamtoport(Module[0],Port[0],mode[0],numofsamples[0],Timeout[0]);
+//				break;
+//
+//			case STREAM_TO_Terminal:
+//				Exportstreamtoterminal(Port[1],mode[1],numofsamples[1],Timeout[1]);
+//				break;
+//
+//			default:
+//				/* Delay for a short period before checking again */
+//				osDelay(10);
+//				break;
+//		}
+//
+//		/* Yield the task to allow other tasks to run */
+//		taskYIELD();
+//	}
+//}
 
 /***************************************************************************/
 /****************************** Local Functions ****************************/

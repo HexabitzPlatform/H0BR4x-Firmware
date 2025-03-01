@@ -121,7 +121,9 @@
 #define STREAM_TO_PORT          2
 #define STREAM_TO_Terminal      3
 #define DEFAULT                 4
-
+/* Macros definitions */
+#define STREAM_MODE_TO_PORT      1
+#define STREAM_MODE_TO_TERMINAL  2
 /* Module-specific Type Definition *****************************************/
 /* Module-status Type Definition */
 typedef enum {
@@ -171,13 +173,11 @@ Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ);
 Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ);
 Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ);
 
-Module_Status SampletoPort(uint8_t module,uint8_t port,All_Data function);
-Module_Status StreamtoPort(uint8_t module,uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
-Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
+Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction);
+Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
+Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
 Module_Status StreamSamplsToPort(uint8_t module, uint8_t port, All_Data function, uint32_t timeout, uint32_t period);
-
-Module_Status StreamSamplsToTerminal(uint8_t port, All_Data function, uint32_t timeout, uint32_t period) ;
 
 void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16_t *Z_offset);
 

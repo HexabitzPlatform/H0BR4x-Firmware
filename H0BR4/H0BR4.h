@@ -177,6 +177,8 @@ Module_Status StreamToTerminal(uint8_t port,All_Data function,uint32_t Numofsamp
 Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
 Module_Status StreamSamplsToPort(uint8_t module, uint8_t port, All_Data function, uint32_t timeout, uint32_t period);
 
+Module_Status StreamSamplsToTerminal(uint8_t port, All_Data function, uint32_t timeout, uint32_t period) ;
+
 void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16_t *Z_offset);
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);

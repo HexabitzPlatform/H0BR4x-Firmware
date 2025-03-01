@@ -37,10 +37,19 @@ uint8_t imuMode =0;
 uint16_t Index =0;
 
 /*variable for API "StreamSamplsToPort()"  */
-volatile uint32_t Numofsamples =0 , samples =0 ;
-volatile uint8_t module_t =0, port_t =0;
-uint8_t StopeCliStreamFlag =0;
-All_Data fun;
+
+volatile uint32_t Numofsamples_p = 0, samples_p = 0;
+volatile uint8_t module_p = 0, port_p = 0;
+uint8_t StopeCliStreamFlag = 0;
+All_Data fun_p;
+
+volatile uint32_t Numofsamples_t = 0;
+volatile uint8_t port_t = 0;
+All_Data fun_t;
+uint32_t timeout_t;
+uint8_t stream_mode;
+
+uint32_t sample_count;
 
 static bool stopStream = false;
 
@@ -756,15 +765,33 @@ void SampleGyroDPSToString(char *cstring, size_t maxLen) {
  * @param  xTimerStream: The handle of the timer that triggered the callback.
  * @retval None
  */
+
 void StreamTimeCallback(TimerHandle_t xTimerStream){
-	++samples;
-	if(samples <= Numofsamples || Numofsamples == 0){
-		SampletoPort(module_t,port_t,fun);
-	}
+	 ++sample_count;
+
+if (stream_mode  ==1 ){
+	if(sample_count <= Numofsamples_p || Numofsamples_p == 0){
+		SampletoPort(module_p,port_p,fun_p);}
+
+
 	else{
-		xTimerStop(xTimerStream,0);
+	xTimerStop(xTimerStream,0);
+}}
+
+else if (stream_mode == 2){
+
+	if(sample_count <= Numofsamples_t || Numofsamples_t == 0){
+	Exportstreamtoterminal(port_t, fun_t, Numofsamples_t, timeout_t);
+}
+else{xTimerStop(xTimerStream,0);}
+
+
+
 	}
 }
+
+
+
 
 /***************************************************************************/
 /***************************************************************************/
@@ -804,9 +831,9 @@ Module_Status Exportstreamtoterminal(uint8_t Port, All_Data function, uint32_t N
             // Send the formatted string to the specified port
             writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
             // Check for CLI commands or stop signals during the period
-            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
-                return H0BR4_ERR_TERMINATED;
-            break;
+//            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+//                return H0BR4_ERR_TERMINATED;
+//            break;
 
         case GYRO:
             // Get the CLI output buffer
@@ -819,9 +846,9 @@ Module_Status Exportstreamtoterminal(uint8_t Port, All_Data function, uint32_t N
             // Send the formatted string to the specified port
             writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
             // Check for CLI commands or stop signals during the period
-            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
-                return H0BR4_ERR_TERMINATED;
-            break;
+//            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+//                return H0BR4_ERR_TERMINATED;
+//            break;
 
         case MAG:
             // Get the CLI output buffer
@@ -834,9 +861,9 @@ Module_Status Exportstreamtoterminal(uint8_t Port, All_Data function, uint32_t N
             // Send the formatted string to the specified port
             writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
             // Check for CLI commands or stop signals during the period
-            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
-                return H0BR4_ERR_TERMINATED;
-            break;
+//            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+//                return H0BR4_ERR_TERMINATED;
+//            break;
 
         case TEMP:
             // Get the CLI output buffer
@@ -849,9 +876,9 @@ Module_Status Exportstreamtoterminal(uint8_t Port, All_Data function, uint32_t N
             // Send the formatted string to the specified port
             writePxMutex(Port, (char *)cstring, strlen((char *)cstring), cmd500ms, HAL_MAX_DELAY);
             // Check for CLI commands or stop signals during the period
-            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
-                return H0BR4_ERR_TERMINATED;
-            break;
+//            if (PollingSleepCLISafe(period, Numofsamples) != H0BR4_OK)
+//                return H0BR4_ERR_TERMINATED;
+//            break;
 
         default:
             // Return error if the function type is invalid
@@ -1447,24 +1474,68 @@ Module_Status StreamToBuffer(float *buffer, All_Data function, uint32_t Numofsam
  * @param  period: The interval (in milliseconds) between successive data transmissions.
  * @retval Module_Status.
  */
-Module_Status StreamSamplsToPort(uint8_t module, uint8_t port, All_Data function, uint32_t timeout, uint32_t period) {
-	Module_Status status = H0BR4_OK;
-	module_t = module;
-	port_t = port;
-	fun = function;
+Module_Status StreamSamplsToPort(uint8_t module, uint8_t port, All_Data function, uint32_t timeout, uint32_t period)
+{
+    Module_Status status = H0BR4_OK;
+    stream_mode = 1;
+    module_p = module;
+    port_p = port;
+    fun_p = function;
 
-	/*Calculate number of sample */
-	Numofsamples = timeout / period;
-	/* Stop (Reset) the TimerStream if it's already running */
-	if (xTimerIsTimerActive(xTimerStream)){
-		xTimerStop(xTimerStream, 100);}
-	/*Start the stream timer*/
-	xTimerStart( xTimerStream, 100 );
-	/* Update timer timeout - This also restarts the timer */
-	xTimerChangePeriod(xTimerStream, period, 100);
+    /* Calculate number of samples */
+    Numofsamples_p = timeout / period;
 
-	return status;
+    /* Stop (Reset) the TimerStream if it's already running */
+    if (xTimerIsTimerActive(xTimerStream))
+    {
+        xTimerStop(xTimerStream, 100);
+    }
+
+    /* Start the stream timer */
+    xTimerStart(xTimerStream, 100);
+
+    /* Update timer timeout - This also restarts the timer */
+    xTimerChangePeriod(xTimerStream, period, 100);
+
+    return status;
 }
+
+/***************************************************************************/
+/*
+ * @brief  Streams data to the specified port and module.
+ * @param  module: The target module to which data will be streamed.
+ * @param  port: The port number on the module.
+ * @param  function:Type of data that will be streamed[ACC, GYRO, MAG or TEMP],.
+ * @param  timeout: The total duration (in milliseconds) for which streaming will occur.
+ * @param  period: The interval (in milliseconds) between successive data transmissions.
+ * @retval Module_Status.
+ */
+Module_Status StreamSamplsToTerminal(uint8_t port, All_Data function, uint32_t timeout, uint32_t period)
+ {
+     Module_Status status = H0BR4_OK;
+     stream_mode = 2;
+     port_t = port;
+     fun_t = function;
+     timeout_t = timeout;
+
+     /* Calculate number of samples */
+     Numofsamples_t = timeout_t / period;
+
+     /* Stop (Reset) the TimerStream if it's already running */
+     if (xTimerIsTimerActive(xTimerStream))
+     {
+         xTimerStop(xTimerStream, 100);
+     }
+
+     /* Start the stream timer */
+     xTimerStart(xTimerStream, 100);
+
+     /* Update timer timeout - This also restarts the timer */
+     xTimerChangePeriod(xTimerStream, period, 100);
+
+     return status;
+ }
+
 
 /***************************************************************************/
 /********************************* Commands ********************************/
@@ -1491,6 +1562,7 @@ static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBuff
 	do{
 		if(!strncmp(pSensName,AccCmdName,strlen(AccCmdName))){
 			Exportstreamtoterminal(PcPort,ACC,1,500);
+
 
 		}
 		else if(!strncmp(pSensName,GyroCmdName,strlen(GyroCmdName))){

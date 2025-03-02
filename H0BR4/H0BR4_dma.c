@@ -19,14 +19,14 @@
 /* DMA structs. Number of structs depends on available DMA channels and array ports where some channels might be reconfigured.
  - Update for non-standard MCUs
  */
-DMA_HandleTypeDef *msgRxDMA[6];
+DMA_HandleTypeDef *UARTDMAHandler[6];
 //DMA_HandleTypeDef msgTxDMA[3] ={0};
 //DMA_HandleTypeDef streamDMA[6] ={0};
 //DMA_HandleTypeDef frontendDMA[3] ={0};
 //DMAMUX_Channel_TypeDef DMAMUXRx[6]={0};
 //DMAMUX_Channel_TypeDef DMAMUXTx[6]={0};
 CRC_HandleTypeDef hcrc;
-
+uint8_t Buffer[512];
 extern uint8_t UARTRxBuf[NumOfPorts][MSG_RX_BUF_SIZE];
 //extern uint8_t UARTTxBuf[3][MSG_TX_BUF_SIZE];
 
@@ -68,22 +68,22 @@ void DMA_Init(void){
 
 //	/* Initialize messaging RX DMAs x 6 - Update for non-standard MCUs */
 //#ifdef _P1
-//	DMA_MSG_RX_CH_Init(&msgRxDMA[0],DMA1_Channel4);
+//	DMA_MSG_RX_CH_Init(&UARTDMAHandler[0],DMA1_Channel4);
 //#endif
 //#ifdef _P2
-//	DMA_MSG_RX_CH_Init(&msgRxDMA[1],DMA1_Channel2);
+//	DMA_MSG_RX_CH_Init(&UARTDMAHandler[1],DMA1_Channel2);
 //#endif
 //#ifdef _P3
-//	DMA_MSG_RX_CH_Init(&msgRxDMA[2],DMA1_Channel3);
+//	DMA_MSG_RX_CH_Init(&UARTDMAHandler[2],DMA1_Channel3);
 //#endif
 //#ifdef _P4
-//	DMA_MSG_RX_CH_Init(&msgRxDMA[3],DMA1_Channel1);
+//	DMA_MSG_RX_CH_Init(&UARTDMAHandler[3],DMA1_Channel1);
 //#endif
 //#ifdef _P5
-//	DMA_MSG_RX_CH_Init(&msgRxDMA[4],DMA1_Channel5);
+//	DMA_MSG_RX_CH_Init(&UARTDMAHandler[4],DMA1_Channel5);
 //#endif
 //#ifdef _P6
-//	DMA_MSG_RX_CH_Init(&msgRxDMA[5],DMA1_Channel6);
+//	DMA_MSG_RX_CH_Init(&UARTDMAHandler[5],DMA1_Channel6);
 //#endif
 
 //	/* Initialize streaming RX DMAs x 0 */
@@ -192,27 +192,27 @@ void DMA_NVIC_UnSetup(void)
 void SetupMessagingRxDMAs(void){
 #ifdef _P1
 	if(portStatus[P1] == FREE)
-		DMA_MSG_RX_Setup(P1uart,msgRxDMA[0]);
+		DMA_MSG_RX_Setup(P1uart,UARTDMAHandler[0]);
 #endif
 #ifdef _P2
 	if(portStatus[P2] == FREE)
-		DMA_MSG_RX_Setup(P2uart,msgRxDMA[1]);
+		DMA_MSG_RX_Setup(P2uart,UARTDMAHandler[1]);
 #endif
 #ifdef _P3	
 	if(portStatus[P3] == FREE)
-		DMA_MSG_RX_Setup(P3uart,msgRxDMA[2]);
+		DMA_MSG_RX_Setup(P3uart,UARTDMAHandler[2]);
 #endif
 #ifdef _P4		
 	if(portStatus[P4] == FREE)
-		DMA_MSG_RX_Setup(P4uart,msgRxDMA[3]);
+		DMA_MSG_RX_Setup(P4uart,UARTDMAHandler[3]);
 #endif
 #ifdef _P5		
 	if(portStatus[P5] == FREE)
-		DMA_MSG_RX_Setup(P5uart,msgRxDMA[4]);
+		DMA_MSG_RX_Setup(P5uart,UARTDMAHandler[4]);
 #endif
 #ifdef _P6
 	if(portStatus[P6] == FREE)
-		DMA_MSG_RX_Setup(P6uart,msgRxDMA[5]);
+		DMA_MSG_RX_Setup(P6uart,UARTDMAHandler[5]);
 #endif
 }
 
@@ -237,7 +237,7 @@ void DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 }
 
 /*-----------------------------------------------------------*/
-extern uint8_t Buffer[512];
+
 /* Streaming DMA setup (port-to-port)
  */
 void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,uint16_t num){
@@ -246,7 +246,7 @@ void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,
 	uint8_t dstPort =GetPort(huartDst);
 //
 //	/* Select DMA struct */
-	hDMA = msgRxDMA[port - 1];
+	hDMA = UARTDMAHandler[port - 1];
 //
 //	/* Remap and link to UART RX */
 //	RemapAndLinkDMAtoUARTRx(huartSrc,hDMA);
@@ -325,7 +325,7 @@ void DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,
 //	DMA_HandleTypeDef *hDMA;
 //	UART_HandleTypeDef *huartSrc;
 //	/* Select DMA struct */
-//	hDMA = &msgRxDMA/*streamDMA*/[port - 1];
+//	hDMA = &UARTDMAHandler/*streamDMA*/[port - 1];
 //	huartSrc=GetUart(port);
 //	HAL_UART_DMAStop(huartSrc);
 //	hDMA->Instance->CNDTR = 0;
@@ -344,7 +344,7 @@ void StopDMA(uint8_t port)
 	UART_HandleTypeDef *huartSrc;
 	huartSrc=GetUart(port);
 	/* Select DMA struct */
-	hDMA = msgRxDMA[port - 1];
+	hDMA = UARTDMAHandler[port - 1];
 	HAL_UART_DMAStop(huartSrc);
 	hDMA->Instance->CNDTR =0;
 
@@ -370,7 +370,7 @@ void SwitchMsgDMAToStream(uint8_t port) {
 //	StopMsgDMA(port);
 
 	// Initialize a streaming DMA using same channel
-//	DMA_STREAM_CH_Init(&streamDMA[port - 1], msgRxDMA[port - 1].Instance);
+//	DMA_STREAM_CH_Init(&streamDMA[port - 1], UARTDMAHandler[port - 1].Instance);
 	HAL_UART_MspInit(huartSrc);
 }
 
@@ -386,15 +386,15 @@ void SwitchStreamDMAToMsg(uint8_t port) {
 	huartSrc=GetUart(port);
 	/* Select DMA struct */
 	// Initialize a messaging DMA using same channels
-//	DMA_MSG_RX_CH_Init(&msgRxDMA[port - 1], streamDMA[port - 1].Instance);
+//	DMA_MSG_RX_CH_Init(&UARTDMAHandler[port - 1], streamDMA[port - 1].Instance);
 	HAL_UART_MspInit(huartSrc);
 	// Remove stream DMA and change port status
-	portStatus[GetPort(msgRxDMA/*streamDMA*/[port - 1]->Parent)] = FREE;
-//	msgRxDMA/*streamDMA*/[port - 1]->Instance = 0;
+	portStatus[GetPort(UARTDMAHandler/*streamDMA*/[port - 1]->Parent)] = FREE;
+//	UARTDMAHandler/*streamDMA*/[port - 1]->Instance = 0;
 	dmaStreamDst[port - 1] = 0;
 	index_process[port - 1] = 0;
 	// Read this port again in messaging mode
-	DMA_MSG_RX_Setup(GetUart(port), msgRxDMA[port - 1]);
+	DMA_MSG_RX_Setup(GetUart(port), UARTDMAHandler[port - 1]);
 
 }
 

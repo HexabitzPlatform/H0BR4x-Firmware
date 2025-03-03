@@ -24,7 +24,7 @@
 /* External variables --------------------------------------------------------*/
 
 /* Export DMA structs */
-extern DMA_HandleTypeDef *msgRxDMA[6];
+extern DMA_HandleTypeDef *UARTDMAHandler[6];
 extern DMA_HandleTypeDef msgTxDMA[3];
 extern DMA_HandleTypeDef streamDMA[6];
 extern DMA_HandleTypeDef frontendDMA[3];

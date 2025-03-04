@@ -34,11 +34,11 @@
 #define P_PROG 			P2		/* ST factory bootloader UART */
 
 /* Define Available Ports */
-#define _P1 
-#define _P2 
-#define _P3 
-#define _P4 
-#define _P5 
+#define _P1
+#define _P2
+#define _P3
+#define _P4
+#define _P5
 #define _P6
 
 /* Define Available USARTs */
@@ -116,11 +116,6 @@
 #define MAX_MEMS_TIMEOUT_MS		0xFFFFFFFF
 #define NUM_MODULE_PARAMS		13
 
-/* Macros For IMU special Task */
-#define SAMPLE_TO_PORT          1
-#define STREAM_TO_PORT          2
-#define STREAM_TO_Terminal      3
-#define DEFAULT                 4
 /* Macros definitions */
 #define STREAM_MODE_TO_PORT      1
 #define STREAM_MODE_TO_TERMINAL  2
@@ -177,7 +172,6 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
 Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
-Module_Status StreamSamplsToPort(uint8_t module, uint8_t port, All_Data function, uint32_t timeout, uint32_t period);
 
 void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16_t *Z_offset);
 

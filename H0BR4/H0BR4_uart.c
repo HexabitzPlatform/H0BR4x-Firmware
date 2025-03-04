@@ -11,22 +11,12 @@
 #include "BOS.h"
 
 /*  */
-//#ifndef __N
-//uint16_t arrayPortsDir[MaxNumOfModules]; /* Array ports directions */
-//#else
-//uint16_t arrayPortsDir[__N ];
-//#endif
 
 DMA_HandleTypeDef hdma_usart1_rx;
-
 DMA_HandleTypeDef hdma_usart2_rx;
-
 DMA_HandleTypeDef hdma_usart3_rx;
-
 DMA_HandleTypeDef hdma_usart4_rx;
-
 DMA_HandleTypeDef hdma_usart5_rx;
-
 DMA_HandleTypeDef hdma_usart6_rx;
 
 /* USART1 init function */
@@ -52,9 +42,9 @@ void MX_USART1_UART_Init(void){
 	HAL_UARTEx_DisableFifoMode(&huart1);
 
 #if _P4pol_reversed
-		huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
-		huart1.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-	  HAL_UART_Init(&huart1);
+	huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+	huart1.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+	HAL_UART_Init(&huart1);
 	#endif	
 }
 #endif
@@ -82,9 +72,9 @@ void MX_USART2_UART_Init(void){
 	HAL_UARTEx_DisableFifoMode(&huart2);
 
 #if _P2pol_reversed
-		huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
-		huart2.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-		HAL_UART_Init(&huart2);
+	huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+	huart2.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+	HAL_UART_Init(&huart2);
 	#endif	
 }
 #endif
@@ -112,9 +102,9 @@ void MX_USART3_UART_Init(void){
 	HAL_UARTEx_DisableFifoMode(&huart3);
 
 #if _P6pol_reversed
-		huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
-		huart3.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-	  HAL_UART_Init(&huart3);
+	huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+	huart3.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+	HAL_UART_Init(&huart3);
 	#endif	
 }
 #endif
@@ -136,9 +126,9 @@ void MX_USART4_UART_Init(void){
 	HAL_UART_Init(&huart4);
 
 #if _P1pol_reversed
-		huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
-		huart4.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-	  HAL_UART_Init(&huart4);
+	huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+	huart4.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+	HAL_UART_Init(&huart4);
 	#endif	
 }
 #endif
@@ -160,9 +150,9 @@ void MX_USART5_UART_Init(void){
 	HAL_UART_Init(&huart5);
 
 #if _P5pol_reversed
-		huart5.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
-		huart5.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-	  HAL_UART_Init(&huart5);
+	huart5.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+	huart5.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+	HAL_UART_Init(&huart5);
 	#endif	
 }
 #endif
@@ -184,9 +174,9 @@ void MX_USART6_UART_Init(void){
 	HAL_UART_Init(&huart6);
 
 #if _P3pol_reversed	
-		huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
-		huart6.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-	  HAL_UART_Init(&huart6);
+	huart6.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+	huart6.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+	HAL_UART_Init(&huart6);
 	#endif	
 }
 #endif
@@ -237,14 +227,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		HAL_NVIC_EnableIRQ(USART1_IRQn);
 
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart1_rx);
-		/* USART1_TX Init */
 
-//		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx , DMA_IT_HT);
-//		__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
 
-		/* USER CODE BEGIN USART1_MspInit 1 */
-
-		/* USER CODE END USART1_MspInit 1 */
 #endif
 	}
 	else if(huart->Instance == USART2){
@@ -289,12 +273,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		HAL_NVIC_SetPriority(USART2_LPUART2_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART2_LPUART2_IRQn);
 
-		/* USART2_TX Init */
-//		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx , DMA_IT_HT);
-//		__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
-		/* USER CODE BEGIN USART2_MspInit 1 */
-
-		/* USER CODE END USART2_MspInit 1 */
 #endif
 	}
 	else if(huart->Instance == USART3){
@@ -339,12 +317,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart3_rx);
 
-		/* USART3_TX Init */
-//		__HAL_DMA_DISABLE_IT(&hdma_usart3_rx , DMA_IT_HT);
-//		__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
-		/* USER CODE BEGIN USART3_MspInit 1 */
-
-		/* USER CODE END USART3_MspInit 1 */
 #endif
 	}
 	else if(huart->Instance == USART4){
@@ -389,12 +361,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
 
-		/* USART4_TX Init */
-//		__HAL_DMA_DISABLE_IT(&hdma_usart4_rx , DMA_IT_HT);
-//		__HAL_UART_ENABLE_IT(&huart4, UART_IT_IDLE);
-		/* USER CODE BEGIN USART4_MspInit 1 */
-
-		/* USER CODE END USART4_MspInit 1 */
 #endif
 	}
 	else if(huart->Instance == USART5){
@@ -439,16 +405,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart5_rx);
 
-		/* USER CODE BEGIN USART5_MspInit 1 */
-
-		/* USER CODE END USART5_MspInit 1 */
-
-		/* USART5_TX Init */
-//		__HAL_DMA_DISABLE_IT(&hdma_usart5_rx , DMA_IT_HT);
-//		__HAL_UART_ENABLE_IT(&huart5, UART_IT_IDLE);
-		/* USER CODE BEGIN USART5_MspInit 1 */
-
-		/* USER CODE END USART5_MspInit 1 */
 #endif
 	}
 	else if(huart->Instance == USART6){
@@ -493,12 +449,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
 
-		/* USART6_TX Init */
-//		__HAL_DMA_DISABLE_IT(&hdma_usart6_rx , DMA_IT_HT);
-//		__HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE);
-		/* USER CODE BEGIN USART6_MspInit 1 */
-
-		/* USER CODE END USART6_MspInit 1 */
 #endif
 	}
 }

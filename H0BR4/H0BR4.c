@@ -30,20 +30,17 @@ UART_HandleTypeDef huart6;
 extern stmdev_ctx_t dev_ctx;
 
 /* Private Variables *******************************************************/
-uint16_t Index =0;
-
-/*variable for API "StreamSamplsToPort()"  */
 
 /* Stream to port variables */
-volatile uint32_t PortNumOfSamples = 0u;    /* Number of samples for port streaming */
-volatile uint32_t PortSamples = 0u;         /* Current sample count for port (if needed separately) */
+uint32_t PortNumOfSamples = 0u;    /* Number of samples for port streaming */
+uint32_t PortSamples = 0u;         /* Current sample count for port (if needed separately) */
 uint8_t PortModule = 0u;           /* Module ID for port streaming */
 uint8_t PortNumber = 0u;           /* Port number for streaming */
 All_Data PortFunction;                    /* Function pointer or struct for port streaming */
 
 /* Stream to terminal variables */
-volatile uint32_t TerminalNumOfSamples = 0u; /* Number of samples for terminal streaming */
-volatile uint8_t TerminalPort = 0u;          /* Port number for terminal streaming */
+uint32_t TerminalNumOfSamples = 0u; /* Number of samples for terminal streaming */
+uint8_t TerminalPort = 0u;          /* Port number for terminal streaming */
 All_Data TerminalFunction;                   /* Function pointer or struct for terminal streaming */
 uint32_t TerminalTimeout = 0u;               /* Timeout value for terminal streaming */
 uint8_t StreamMode = 0u;                     /* Streaming mode selector (port or terminal) */
@@ -87,7 +84,6 @@ void Module_Peripheral_Init(void);
 Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_t dst,uint8_t shift);
 
 /* Local function prototypes ***********************************************/
-//void IMU_Task(void *argument);
 void StreamTimeCallback(TimerHandle_t xTimerStream);
 
 void SampleGyroDPSToString(char *cstring,size_t maxLen);
@@ -139,7 +135,7 @@ const CLI_Command_Definition_t StreamCommandDefinition = {
 /************************ Private function Definitions *********************/
 /***************************************************************************/
 
-/**
+/*
  * @brief  System Clock Configuration
  *         This function configures the system clock as follows:
  *            - System Clock source            = PLL (HSE)
@@ -522,6 +518,7 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
  */
 static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function){
 	Module_Status status =H0BR4_OK;
+	uint16_t StreamIndex =0;
 	uint32_t period =timeout / Numofsamples;
 
 	/* Check if the calculated period is valid */
@@ -537,16 +534,16 @@ static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_
 		if(function == SampleTempBuff){
 			float sample;
 			function(&sample);
-			buffer[Index] =sample;
-			Index++;
+			buffer[StreamIndex] =sample;
+			StreamIndex++;
 		}
 		else{
 			float Axis[3];
 			function(Axis);
-			buffer[Index] =Axis[0];
-			buffer[Index + 1] =Axis[1];
-			buffer[Index + 2] =Axis[2];
-			Index +=3;
+			buffer[StreamIndex] =Axis[0];
+			buffer[StreamIndex + 1] =Axis[1];
+			buffer[StreamIndex + 2] =Axis[2];
+			StreamIndex +=3;
 		}
 
 		/* Delay for the specified period */
@@ -856,6 +853,7 @@ Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction, uint32_t 
   /* Return final status indicating success or prior error */
   return Status;
 }
+
 /***************************************************************************/
 /*
  * @brief: Polling and sleep function to safely manage CLI stream.
@@ -1266,6 +1264,7 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 
 	return Status;
 }
+
 /***************************************************************************/
 /*
  * @brief: Streams data to a buffer.

@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
  All rights reserved
  
- File Name     : H01R0_dma.h
+ File Name     : H0BR4_dma.h
  Description   : Header file contains Peripheral DMA setup.
 
  */

@@ -102,8 +102,7 @@ void ExecuteMonitor(void);
 typedef void (*SampleToString)(char*,size_t);
 typedef void (*SampleMemsToBuffer)(float *buffer);
 
-Module_Status SampleToTerminal(uint8_t Port,All_Data function,uint32_t Numofsamples,uint32_t timeout);
-
+Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction);
 static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples);
 static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function);
 static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function);
@@ -743,7 +742,7 @@ void StreamTimeCallback(TimerHandle_t xTimerStream){
 	/* Stream mode to terminal: Export to terminal */
 	else if(STREAM_MODE_TO_TERMINAL == StreamMode){
 		if((SampleCount <= TerminalNumOfSamples) || (0 == TerminalNumOfSamples)){
-			SampleToTerminal(TerminalPort,TerminalFunction,TerminalNumOfSamples,TerminalTimeout);
+			SampleToTerminal(TerminalPort,TerminalFunction);
 		}
 		else{
 			SampleCount =0;
@@ -761,7 +760,7 @@ void StreamTimeCallback(TimerHandle_t xTimerStream){
  * param streamTimeout: Timeout period for the operation (in milliseconds).
  * retval: of type Module_Status indicating the success or failure of the operation.
  */
-Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction, uint32_t numOfSamples, uint32_t streamTimeout)
+Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction)
 {
   Module_Status Status = H0BR4_OK;      /* Initialize operation status as success */
   int8_t* PcOutputString = NULL;        /* Pointer to CLI output buffer */
@@ -770,21 +769,6 @@ Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction, uint32_t 
   float X = 0.0f, Y = 0.0f, Z = 0.0f;   /* Variables for accelerometer and gyroscope data */
   int Xm = 0, Ym = 0, Zm = 0;           /* Variables for magnetometer data */
   float TempCelsius = 0.0f;             /* Variable for temperature data */
-
-  /* Check if the number of samples is valid to avoid division by zero */
-  if (numOfSamples == 0)
-  {
-    return H0BR4_ERR_WrongParams;       /* Return error for invalid sample count */
-  }
-
-  /* Calculate the period by dividing timeout by number of samples */
-  Period = streamTimeout / numOfSamples;
-
-  /* Validate the calculated period against minimum allowed value */
-  if (Period < MIN_MEMS_PERIOD_MS)
-  {
-    return H0BR4_ERR_WrongParams;       /* Return error if period is too short */
-  }
 
   /* Process data based on the requested sensor function */
   switch (dataFunction)
@@ -1355,8 +1339,8 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 	Module_Status Status =H0BR4_OK;
 	uint32_t SamplePeriod =0u;
 	/* Check timer handle and timeout validity */
-	if((NULL == xTimerStream) || (0 == streamTimeout)){
-		return H0BR4_ERROR; /* Assuming H0BR4_ERROR is defined in Module_Status */
+	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)){
+	return H0BR4_ERROR; /* Assuming H0BR4_ERROR is defined in Module_Status */
 	}
 
 	/* Set streaming parameters */
@@ -1413,20 +1397,20 @@ static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBuff
 
 	do{
 		if(!strncmp(pSensName,AccCmdName,strlen(AccCmdName))){
-			SampleToTerminal(PcPort,ACC,1,500);
+			SampleToTerminal(PcPort,ACC);
 
 
 		}
 		else if(!strncmp(pSensName,GyroCmdName,strlen(GyroCmdName))){
-			SampleToTerminal(PcPort,GYRO,1,500);
+			SampleToTerminal(PcPort,GYRO);
 
 		}
 		else if(!strncmp(pSensName,MagCmdName,strlen(MagCmdName))){
-			SampleToTerminal(PcPort,MAG,1,500);
+			SampleToTerminal(PcPort,MAG);
 
 		}
 		else if(!strncmp(pSensName,TempCmdName,strlen(TempCmdName))){
-			SampleToTerminal(PcPort,TEMP,1,500);
+			SampleToTerminal(PcPort,TEMP);
 
 		}
 		else{

@@ -62,20 +62,21 @@ int H0BR4_magX =0.0f;
 int H0BR4_magY =0.0f;
 int H0BR4_magZ =0.0f;
 
+
 TaskHandle_t IMU_TaskTaskHandle = NULL;
 TimerHandle_t xTimerStream = NULL;
 
 /* Exported Typedef */
 module_param_t modParam[NUM_MODULE_PARAMS] ={
-	{.paramPtr =&H0BR4_gyroX, .paramFormat =FMT_FLOAT, .paramName ="gyroX"},
-	{.paramPtr =&H0BR4_gyroY, .paramFormat =FMT_FLOAT, .paramName ="gyroY"},
-	{.paramPtr =&H0BR4_gyroZ, .paramFormat =FMT_FLOAT, .paramName ="gyroZ"},
-	{.paramPtr =&H0BR4_accX, .paramFormat =FMT_FLOAT, .paramName ="accX"},
-	{.paramPtr =&H0BR4_accY, .paramFormat =FMT_FLOAT, .paramName ="accY"},
-	{.paramPtr =&H0BR4_accZ, .paramFormat =FMT_FLOAT, .paramName ="accZ"},
-	{.paramPtr =&H0BR4_magX, .paramFormat =FMT_INT32, .paramName ="magX"},
-	{.paramPtr =&H0BR4_magY, .paramFormat =FMT_INT32, .paramName ="magY"},
-	{.paramPtr =&H0BR4_magZ, .paramFormat =FMT_INT32, .paramName ="magZ"},
+	{.paramPtr =&H0BR4_gyroX, .paramFormat =FMT_FLOAT, .paramName ="gyrox"},
+	{.paramPtr =&H0BR4_gyroY, .paramFormat =FMT_FLOAT, .paramName ="gyroy"},
+	{.paramPtr =&H0BR4_gyroZ, .paramFormat =FMT_FLOAT, .paramName ="gyroz"},
+	{.paramPtr =&H0BR4_accX, .paramFormat =FMT_FLOAT, .paramName ="accx"},
+	{.paramPtr =&H0BR4_accY, .paramFormat =FMT_FLOAT, .paramName ="accy"},
+	{.paramPtr =&H0BR4_accZ, .paramFormat =FMT_FLOAT, .paramName ="accz"},
+	{.paramPtr =&H0BR4_magX, .paramFormat =FMT_INT32, .paramName ="magx"},
+	{.paramPtr =&H0BR4_magY, .paramFormat =FMT_INT32, .paramName ="magy"},
+	{.paramPtr =&H0BR4_magZ, .paramFormat =FMT_INT32, .paramName ="magz"},
 	{.paramPtr =&H0BR4_temp, .paramFormat =FMT_FLOAT, .paramName ="temp"}, };
 
 /* Private function prototypes *********************************************/
@@ -503,6 +504,90 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 	
 	return 0;
 }
+
+/***************************************************************************/
+/*
+ * @brief: Samples a module parameter value based on parameter index.
+ * @param paramIndex: Index of the parameter (1-based index).
+ * @param value: Pointer to store the sampled float value.
+ * @retval: Module_Status indicating success or failure.
+ */
+Module_Status GetModuleParameter(uint8_t paramIndex, float *value) {
+    Module_Status status = H0BR4_OK;
+
+    switch (paramIndex) {
+        /* Sample gyroX */
+        case 1:
+            status = SampleGyroDPS(value, NULL, NULL);
+            break;
+
+        /* Sample gyroY */
+        case 2:
+            status = SampleGyroDPS(NULL, value, NULL);
+            break;
+
+        /* Sample gyroZ */
+        case 3:
+            status = SampleGyroDPS(NULL, NULL, value);
+            break;
+
+        /* Sample accX */
+        case 4:
+            status = SampleAccG(value, NULL, NULL);
+            break;
+
+        /* Sample accY */
+        case 5:
+            status = SampleAccG(NULL, value, NULL);
+            break;
+
+        /* Sample accZ */
+        case 6:
+            status = SampleAccG(NULL, NULL, value);
+            break;
+
+        /* Sample magX (convert int to float) */
+        case 7:
+        {
+            int temp = 0;
+            status = SampleMagMGauss(&temp, NULL, NULL);
+            if (status == H0BR4_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample magY (convert int to float) */
+        case 8:
+        {
+            int temp = 0;
+            status = SampleMagMGauss(NULL, &temp, NULL);
+            if (status == H0BR4_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample magZ (convert int to float) */
+        case 9:
+        {
+            int temp = 0;
+            status = SampleMagMGauss(NULL, NULL, &temp);
+            if (status == H0BR4_OK) *value = (float)temp;
+            break;
+        }
+
+        /* Sample temperature in Celsius */
+        case 10:
+            status = SampleTempCelsius(value);
+            break;
+
+        /* Invalid parameter index */
+        default:
+            status = H0BR4_ERR_WrongParams;
+            break;
+    }
+
+    return status;
+}
+
+
 
 /***************************************************************************/
 /****************************** Local Functions ****************************/

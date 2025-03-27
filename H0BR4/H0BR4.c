@@ -506,88 +506,86 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 }
 
 /***************************************************************************/
-/*
+/* This functions is useful only for input (sensors) modules.
  * @brief: Samples a module parameter value based on parameter index.
  * @param paramIndex: Index of the parameter (1-based index).
  * @param value: Pointer to store the sampled float value.
  * @retval: Module_Status indicating success or failure.
  */
-Module_Status GetModuleParameter(uint8_t paramIndex, float *value) {
-    Module_Status status = H0BR4_OK;
+Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
+	Module_Status status =BOS_OK;
 
-    switch (paramIndex) {
-        /* Sample gyroX */
-        case 1:
-            status = SampleGyroDPS(value, NULL, NULL);
-            break;
+	switch(paramIndex){
+		/* Sample gyroX */
+		case 1:
+			status =SampleGyroDPS(value,NULL,NULL);
+			break;
 
-        /* Sample gyroY */
-        case 2:
-            status = SampleGyroDPS(NULL, value, NULL);
-            break;
+		/* Sample gyroY */
+		case 2:
+			status =SampleGyroDPS(NULL,value,NULL);
+			break;
 
-        /* Sample gyroZ */
-        case 3:
-            status = SampleGyroDPS(NULL, NULL, value);
-            break;
+		/* Sample gyroZ */
+		case 3:
+			status =SampleGyroDPS(NULL,NULL,value);
+			break;
 
-        /* Sample accX */
-        case 4:
-            status = SampleAccG(value, NULL, NULL);
-            break;
+		/* Sample accX */
+		case 4:
+			status =SampleAccG(value,NULL,NULL);
+			break;
 
-        /* Sample accY */
-        case 5:
-            status = SampleAccG(NULL, value, NULL);
-            break;
+		/* Sample accY */
+		case 5:
+			status =SampleAccG(NULL,value,NULL);
+			break;
 
-        /* Sample accZ */
-        case 6:
-            status = SampleAccG(NULL, NULL, value);
-            break;
+		/* Sample accZ */
+		case 6:
+			status =SampleAccG(NULL,NULL,value);
+			break;
 
-        /* Sample magX (convert int to float) */
-        case 7:
-        {
-            int temp = 0;
-            status = SampleMagMGauss(&temp, NULL, NULL);
-            if (status == H0BR4_OK) *value = (float)temp;
-            break;
-        }
+		/* Sample magX (convert int to float) */
+		case 7: {
+			int temp =0;
+			status =SampleMagMGauss(&temp,NULL,NULL);
+			if(status == BOS_OK)
+				*value =(float )temp;
+			break;
+		}
 
-        /* Sample magY (convert int to float) */
-        case 8:
-        {
-            int temp = 0;
-            status = SampleMagMGauss(NULL, &temp, NULL);
-            if (status == H0BR4_OK) *value = (float)temp;
-            break;
-        }
+		/* Sample magY (convert int to float) */
+		case 8: {
+			int temp =0;
+			status =SampleMagMGauss(NULL,&temp,NULL);
+			if(status == BOS_OK)
+				*value =(float )temp;
+			break;
+		}
 
-        /* Sample magZ (convert int to float) */
-        case 9:
-        {
-            int temp = 0;
-            status = SampleMagMGauss(NULL, NULL, &temp);
-            if (status == H0BR4_OK) *value = (float)temp;
-            break;
-        }
+		/* Sample magZ (convert int to float) */
+		case 9: {
+			int temp =0;
+			status =SampleMagMGauss(NULL,NULL,&temp);
+			if(status == BOS_OK)
+				*value =(float )temp;
+			break;
+		}
 
-        /* Sample temperature in Celsius */
-        case 10:
-            status = SampleTempCelsius(value);
-            break;
+		/* Sample temperature in Celsius */
+		case 10:
+			status =SampleTempCelsius(value);
+			break;
 
-        /* Invalid parameter index */
-        default:
-            status = H0BR4_ERR_WrongParams;
-            break;
-    }
+		/* Invalid parameter index */
+		default:
+			status =BOS_ERR_WrongParam;
+			break;
+	}
 
-    return status;
+	return status;
 }
-
-
 
 /***************************************************************************/
 /****************************** Local Functions ****************************/

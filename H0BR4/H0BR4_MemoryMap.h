@@ -14,9 +14,9 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
-#ifdef FLASH_SIZE
-#undef FLASH_SIZE
-#endif
+//#ifdef FLASH_SIZE
+//#undef FLASH_SIZE
+//#endif
 /* Memory map: - STM32G0B0 : 0x08000000 - 0x0807FFFF >> 512 KB
    512 KB divided into :
  - Application: 0x08000000 - 0x0807A7FF >> 500 KB

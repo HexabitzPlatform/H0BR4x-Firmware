@@ -216,15 +216,15 @@ void GetTimeDate(void){
 	HAL_RTC_GetTime(&RtcHandle,&stimestructureget,RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&RtcHandle,&sdatestructureget,RTC_FORMAT_BIN);
 	
-	BOS.time.ampm =(stimestructureget.TimeFormat >> 7) + 1;
-	BOS.time.msec =stimestructureget.SubSeconds / 2;
-	BOS.time.seconds =stimestructureget.Seconds;
-	BOS.time.minutes =stimestructureget.Minutes;
-	BOS.time.hours =stimestructureget.Hours;
-	BOS.date.day =sdatestructureget.Date;
-	BOS.date.month =sdatestructureget.Month;
-	BOS.date.weekday =sdatestructureget.WeekDay;
-	BOS.date.year =sdatestructureget.Year + 2000;
+	BOS.Time.AMPM =(stimestructureget.TimeFormat >> 7) + 1;
+	BOS.Time.mSec =stimestructureget.SubSeconds / 2;
+	BOS.Time.Seconds =stimestructureget.Seconds;
+	BOS.Time.Minutes =stimestructureget.Minutes;
+	BOS.Time.Hours =stimestructureget.Hours;
+	BOS.Date.Day =sdatestructureget.Date;
+	BOS.Date.Month =sdatestructureget.Month;
+	BOS.Date.Weekday =sdatestructureget.WeekDay;
+	BOS.Date.Year =sdatestructureget.Year + 2000;
 }
 
 /**********************************************************************************/

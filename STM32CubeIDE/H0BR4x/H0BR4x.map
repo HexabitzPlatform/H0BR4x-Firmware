@@ -7792,7 +7792,7 @@ LOAD C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .bss           0x200013bc      0x1b8 BOS\BOS_CLI.o
                 0x2000140c                pcWelcomePortMessage
                 0x20001434                timedoutMsg
-                0x20001438                snippets
+                0x20001438                Snippets
  .bss           0x20001574       0xe2 BOS\BOS_CLIcommands.o
  *fill*         0x20001656        0x2 
  .bss           0x20001658      0x526 BOS\BOS_dma.o
@@ -8768,11 +8768,11 @@ LOAD C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
 
 .debug_str      0x00000000    0x13efb
  .debug_str     0x00000000     0x1d69 BOS\BOS.o
-                               0x1f7f (size before relaxing)
+                               0x1f79 (size before relaxing)
  .debug_str     0x00001d69      0x312 BOS\BOS_CLI.o
-                                0xcb7 (size before relaxing)
+                                0xcb1 (size before relaxing)
  .debug_str     0x0000207b      0xb90 BOS\BOS_CLIcommands.o
-                               0x1e18 (size before relaxing)
+                               0x1e12 (size before relaxing)
  .debug_str     0x00002c0b       0xe4 BOS\BOS_dma.o
                                 0xbea (size before relaxing)
  .debug_str     0x00002cef      0x4e2 BOS\BOS_freertos.o
@@ -8782,7 +8782,7 @@ LOAD C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_str     0x00003507      0x361 BOS\BOS_msgparser.o
                                0x16a8 (size before relaxing)
  .debug_str     0x00003868      0xb22 H0BR4\H0BR4.o
-                               0x1cfa (size before relaxing)
+                               0x1cf4 (size before relaxing)
  .debug_str     0x0000438a      0x52a H0BR4\H0BR4_dma.o
                                0x1141 (size before relaxing)
  .debug_str     0x000048b4      0x2a7 H0BR4\H0BR4_eeprom.o

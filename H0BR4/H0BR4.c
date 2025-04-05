@@ -270,7 +270,7 @@ uint8_t SaveTopologyToRO(void){
 /* Save Command Snippets in Flash RO */
 uint8_t SaveSnippetsToRO(void){
 	HAL_StatusTypeDef FlashStatus =HAL_OK;
-	uint8_t snipBuffer[sizeof(snippet_t) + 1] ={0};
+	uint8_t snipBuffer[sizeof(Snippet_t) + 1] ={0};
 
 	/* Unlock the FLASH control register access */
 	HAL_FLASH_Unlock();
@@ -292,12 +292,12 @@ uint8_t SaveSnippetsToRO(void){
 	int currentAdd = SNIPPETS_START_ADDRESS;
 	for(uint8_t index =0; index < numOfRecordedSnippets; index++){
 		/* Check if Snippet condition is true or false */
-		if(snippets[index].cond.ConditionType){
+		if(Snippets[index].cond.ConditionType){
 			/* A marker to separate Snippets */
 			snipBuffer[0] =0xFE;
-			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&snippets[index],sizeof(snippet_t));
-			/* Copy the snippet struct buffer (20 x numOfRecordedSnippets). Note this is assuming sizeof(snippet_t) is even */
-			for(uint8_t j =0; j < (sizeof(snippet_t) / 4); j++){
+			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&Snippets[index],sizeof(Snippet_t));
+			/* Copy the snippet struct buffer (20 x numOfRecordedSnippets). Note this is assuming sizeof(Snippet_t) is even */
+			for(uint8_t j =0; j < (sizeof(Snippet_t) / 4); j++){
 				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )&snipBuffer[j * 8]);
 				FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
 				if(FlashStatus != HAL_OK){
@@ -310,8 +310,8 @@ uint8_t SaveSnippetsToRO(void){
 				}
 			}
 			/* Copy the snippet commands buffer. Always an even number. Note the string termination char might be skipped */
-			for(uint8_t j =0; j < ((strlen(snippets[index].cmd) + 1) / 4); j++){
-				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )(snippets[index].cmd + j * 4));
+			for(uint8_t j =0; j < ((strlen(Snippets[index].CMD) + 1) / 4); j++){
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )(Snippets[index].CMD + j * 4));
 				FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
 				if(FlashStatus != HAL_OK){
 					return pFlash.ErrorCode;

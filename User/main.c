@@ -11,6 +11,9 @@
 /* Private variables ---------------------------------------------------------*/
 uint8_t TempBuffer[100];
 uint16_t Index11;
+
+uint8_t var = 0;
+varFormat_t format;
 /* Private function prototypes -----------------------------------------------*/
 
 /* Main function ------------------------------------------------------------*/
@@ -51,6 +54,8 @@ void UserTask(void *argument) {
 //
 //		}
 
+//		SendMessageToModule(2, CODE_PING, 0);
+//		HAL_Delay(500);
 
 
 //		SampleTempCelsius(&TempBuffer[Index11]);
@@ -58,6 +63,11 @@ void UserTask(void *argument) {
 //		Index11++;
 //		if(Index11 > 100)
 //			Index11 =0;
+
+
+//	var = *(uint8_t *) ReadRemoteVar (2, 1, &format, 1000);
+//	HAL_Delay(500);
+
 	}
 }
 

@@ -518,6 +518,9 @@ HAL_StatusTypeDef writePxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t m
 		}
 	}
 	
+	/* Delay Between Sending Two Messages */
+	Delay_ms(5);
+
 	return result;
 }
 

@@ -161,18 +161,18 @@ void CheckAttachedButtons(void) {
 			/* Analyze state */
 
 			/* 5.C. On press: Record a click if pressed less than 1 second */
-			if (pressCounter[i] < BOS.buttons.debounce) {
+			if (pressCounter[i] < BOS.buttons.Debounce) {
 				// This is noise. Ignore it
 			} else {
-				if (pressCounter[i] == BOS.buttons.debounce) {
+				if (pressCounter[i] == BOS.buttons.Debounce) {
 //					button[i].state = PRESSED;// Record a PRESSED event. This event is always reset on next tick.
 					++pressCounter[i];
 				}
 
-				if (releaseCounter[i] > BOS.buttons.debounce)// Reset releaseCounter if needed - to avoid masking pressCounter on NO switches
+				if (releaseCounter[i] > BOS.buttons.Debounce)// Reset releaseCounter if needed - to avoid masking pressCounter on NO switches
 					releaseCounter[i] = 0;
 
-				if (pressCounter[i] > BOS.buttons.singleClickTime
+				if (pressCounter[i] > BOS.buttons.SingleClickTime
 						&& pressCounter[i] < 500) {
 					if (clicked == 0)
 						clicked = 1;		// Record a possible single click
@@ -193,18 +193,18 @@ void CheckAttachedButtons(void) {
 			}
 
 			/* 5.D. On release: Record a click if pressed less than 1 second */
-			if (releaseCounter[i] < BOS.buttons.debounce) {
+			if (releaseCounter[i] < BOS.buttons.Debounce) {
 				// This is noise. Ignore it
 			} else {
-				if (releaseCounter[i] == BOS.buttons.debounce) {
+				if (releaseCounter[i] == BOS.buttons.Debounce) {
 					button[i].state = RELEASED;	// Record a RELEASED event. This event is always reset on next tick.
 					++releaseCounter[i];
 				}
 
-				if (pressCounter[i] > BOS.buttons.debounce)	// Reset pressCounter if needed - to avoid masking releaseCounter on NC switches
+				if (pressCounter[i] > BOS.buttons.Debounce)	// Reset pressCounter if needed - to avoid masking releaseCounter on NC switches
 					pressCounter[i] = 0;
 
-				if (releaseCounter[i] > BOS.buttons.singleClickTime
+				if (releaseCounter[i] > BOS.buttons.SingleClickTime
 						&& releaseCounter[i] < 500) {
 					if (clicked == 1) {
 						button[i].state = CLICKED;// Record a single button click event

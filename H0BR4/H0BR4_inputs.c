@@ -12,7 +12,7 @@
 
 /* Private and global variables ----------------------------------------------*/
 /* Buttons */
-button_t button[NumOfPorts + 1] = { 0 };
+Button_t Button[NumOfPorts + 1] = { 0 };
 uint32_t pressCounter[NumOfPorts + 1] = { 0 };
 uint32_t releaseCounter[NumOfPorts + 1] = { 0 };
 uint8_t dblCounter[NumOfPorts + 1] = { 0 };
@@ -77,11 +77,11 @@ void CheckAttachedButtons(void) {
 	static uint8_t clicked;
 
 	for (uint8_t i = 1; i <= NumOfPorts; i++) {
-		if (button[i].type)			// Only check defined butons
+		if (Button[i].Type)			// Only check defined butons
 		{
 			/* 1. Reset button state */
 			if (delayButtonStateReset == false)
-				button[i].state = NONE;
+				Button[i].State = NONE;
 
 			/* 2. Get button GPIOs */
 			GetPortGPIOs(i, &TX_Port, &TX_Pin, &RX_Port, &RX_Pin);
@@ -99,7 +99,7 @@ void CheckAttachedButtons(void) {
 			HAL_GPIO_WritePin((GPIO_TypeDef*) TX_Port, TX_Pin, GPIO_PIN_RESET);
 
 			/* 4. Determine button state based on port reading and button type */
-			switch (button[i].type) {
+			switch (Button[i].Type) {
 			case MOMENTARY_NO:
 				if (connected == GPIO_PIN_SET)
 					state = CLOSED;
@@ -197,7 +197,7 @@ void CheckAttachedButtons(void) {
 				// This is noise. Ignore it
 			} else {
 				if (releaseCounter[i] == BOS.buttons.Debounce) {
-					button[i].state = RELEASED;	// Record a RELEASED event. This event is always reset on next tick.
+					Button[i].State = RELEASED;	// Record a RELEASED event. This event is always reset on next tick.
 					++releaseCounter[i];
 				}
 
@@ -207,10 +207,10 @@ void CheckAttachedButtons(void) {
 				if (releaseCounter[i] > BOS.buttons.SingleClickTime
 						&& releaseCounter[i] < 500) {
 					if (clicked == 1) {
-						button[i].state = CLICKED;// Record a single button click event
+						Button[i].State = CLICKED;// Record a single button click event
 						clicked = 2;			// Prepare for a double click
 					} else if (clicked == 3) {
-						button[i].state = DBL_CLICKED;// Record a double button click event
+						Button[i].State = DBL_CLICKED;// Record a double button click event
 						clicked = 0;			// Prepare for a single click
 					}
 				} else if (releaseCounter[i] >= 500
@@ -221,7 +221,7 @@ void CheckAttachedButtons(void) {
 			}
 
 			/* 6. Run button callbacks if needed */
-			switch (button[i].state) {
+			switch (Button[i].State) {
 //			case PRESSED:
 //				buttonPressedCallback(i);
 //				button[i].state = NONE;
@@ -229,12 +229,12 @@ void CheckAttachedButtons(void) {
 
 			case RELEASED:
 				buttonReleasedCallback(i);
-				button[i].state = NONE;
+				Button[i].State = NONE;
 				break;
 
 			case CLICKED:
 				if (!delayButtonStateReset
-						&& (button[i].events & BUTTON_EVENT_CLICKED)) {
+						&& (Button[i].Event & BUTTON_EVENT_CLICKED)) {
 					delayButtonStateReset = true;
 					buttonClickedCallback(i);
 				}
@@ -242,7 +242,7 @@ void CheckAttachedButtons(void) {
 
 			case DBL_CLICKED:
 				if (!delayButtonStateReset
-						&& (button[i].events & BUTTON_EVENT_DBL_CLICKED)) {
+						&& (Button[i].Event & BUTTON_EVENT_DBL_CLICKED)) {
 					delayButtonStateReset = true;
 					buttonDblClickedCallback(i);
 				}
@@ -359,8 +359,8 @@ void CheckAttachedButtons(void) {
 void ResetAttachedButtonStates(uint8_t *deferReset) {
 	if (!*deferReset) {
 		for (uint8_t i = 1; i <= NumOfPorts; i++) {
-			if (button[i].state != NONE)
-				button[i].state = NONE;
+			if (Button[i].State != NONE)
+				Button[i].State = NONE;
 		}
 	}
 	//*deferReset = 0;
@@ -406,7 +406,7 @@ BOS_Status AddPortButton(ButtonType_e buttonType, uint8_t port)  {
 	HAL_GPIO_Init((GPIO_TypeDef*) RX_Port, &GPIO_InitStruct);
 
 	/* 4. Update button struct */
-	button[port].type = buttonType;
+	Button[port].Type = buttonType;
 
 	/* 5. Add to EEPROM if not already there */
 	res = EE_ReadVariable(_EE_BUTTON_BASE + 4 * (port - 1), &temp16);
@@ -447,15 +447,15 @@ BOS_Status RemovePortButton(uint8_t port) {
 	uint16_t res, temp16;
 
 	/* 1. Remove from button struct */
-	button[port].type = NONE;
-	button[port].state = NONE;
-	button[port].events = 0;
-	button[port].pressedX1Sec = 0;
-	button[port].pressedX2Sec = 0;
-	button[port].pressedX3Sec = 0;
-	button[port].releasedY1Sec = 0;
-	button[port].releasedY2Sec = 0;
-	button[port].releasedY3Sec = 0;
+	Button[port].Type = NONE;
+	Button[port].State = NONE;
+	Button[port].Event = 0;
+//	button[port].pressedX1Sec = 0;
+//	button[port].pressedX2Sec = 0;
+//	button[port].pressedX3Sec = 0;
+//	button[port].releasedY1Sec = 0;
+//	button[port].releasedY2Sec = 0;
+//	button[port].releasedY3Sec = 0;
 
 	/* 2. Remove from EEPROM if it's already there */
 	res = EE_ReadVariable(_EE_BUTTON_BASE + 4 * (port - 1), &temp16);
@@ -538,7 +538,7 @@ BOS_Status SetButtonEvents(uint8_t port, ButtonState_e buttonState, uint8_t mode
 	uint16_t res, temp16;
 	uint8_t temp8;
 
-	if (button[port].type == NONE)
+	if (Button[port].Type == NONE)
 		return BOS_ERR_BUTTON_NOT_DEFINED;
 
 //	button[port].pressedX1Sec = pressed_x1sec;
@@ -552,22 +552,22 @@ BOS_Status SetButtonEvents(uint8_t port, ButtonState_e buttonState, uint8_t mode
 //			|| (mode == BUTTON_EVENT_MODE_CLEAR && clicked)) {
 		if (mode == BUTTON_EVENT_MODE_OR
 				|| (mode == BUTTON_EVENT_MODE_CLEAR && buttonState == CLICKED)) {
-		button[port].events |= BUTTON_EVENT_CLICKED;
+			Button[port].Event |= BUTTON_EVENT_CLICKED;
 //	} else if (mode == BUTTON_EVENT_MODE_CLEAR && !clicked) {
 //		button[port].events &= ~BUTTON_EVENT_CLICKED;
 		} else if (mode == BUTTON_EVENT_MODE_CLEAR && !buttonState == CLICKED) {
-			button[port].events &= ~BUTTON_EVENT_CLICKED;
+			Button[port].Event &= ~BUTTON_EVENT_CLICKED;
 	}
 //	if (mode == BUTTON_EVENT_MODE_OR
 //			|| (mode == BUTTON_EVENT_MODE_CLEAR && dbl_clicked)) {
 		if (mode == BUTTON_EVENT_MODE_OR
 				|| (mode == BUTTON_EVENT_MODE_CLEAR && buttonState == DBL_CLICKED)) {
-		button[port].events |= BUTTON_EVENT_DBL_CLICKED;
+			Button[port].Event |= BUTTON_EVENT_DBL_CLICKED;
 //	} else if (mode == BUTTON_EVENT_MODE_CLEAR && !dbl_clicked) {
 //		button[port].events &= ~BUTTON_EVENT_DBL_CLICKED;
 //	}
 } else if (mode == BUTTON_EVENT_MODE_CLEAR && !buttonState == DBL_CLICKED) {
-	button[port].events &= ~BUTTON_EVENT_DBL_CLICKED;
+	Button[port].Event &= ~BUTTON_EVENT_DBL_CLICKED;
 }
 //	if (mode == BUTTON_EVENT_MODE_OR
 //			|| (mode == BUTTON_EVENT_MODE_CLEAR && pressed_x1sec)) {
@@ -612,8 +612,8 @@ BOS_Status SetButtonEvents(uint8_t port, ButtonState_e buttonState, uint8_t mode
 	{
 		temp8 = (uint8_t) (temp16 >> 8);					// Keep upper byte
 		/* Store event flags */
-		if ((uint8_t) (temp16) != button[port].events) {// Update only if different
-			temp16 = ((uint16_t) temp8 << 8) | (uint16_t) button[port].events;
+		if ((uint8_t) (temp16) != Button[port].Event) {// Update only if different
+			temp16 = ((uint16_t) temp8 << 8) | (uint16_t) Button[port].Event;
 			EE_WriteVariable(_EE_BUTTON_BASE + 4 * (port - 1), temp16);
 		}
 

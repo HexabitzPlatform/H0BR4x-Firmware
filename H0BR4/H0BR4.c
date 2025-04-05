@@ -292,7 +292,7 @@ uint8_t SaveSnippetsToRO(void){
 	int currentAdd = SNIPPETS_START_ADDRESS;
 	for(uint8_t index =0; index < numOfRecordedSnippets; index++){
 		/* Check if Snippet condition is true or false */
-		if(Snippets[index].cond.ConditionType){
+		if(Snippets[index].Condition.ConditionType){
 			/* A marker to separate Snippets */
 			snipBuffer[0] =0xFE;
 			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&Snippets[index],sizeof(Snippet_t));

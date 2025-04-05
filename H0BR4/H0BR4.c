@@ -67,17 +67,17 @@ TaskHandle_t IMU_TaskTaskHandle = NULL;
 TimerHandle_t xTimerStream = NULL;
 
 /* Exported Typedef */
-module_param_t modParam[NUM_MODULE_PARAMS] ={
-	{.paramPtr =&H0BR4_gyroX, .paramFormat =FMT_FLOAT, .paramName ="gyrox"},
-	{.paramPtr =&H0BR4_gyroY, .paramFormat =FMT_FLOAT, .paramName ="gyroy"},
-	{.paramPtr =&H0BR4_gyroZ, .paramFormat =FMT_FLOAT, .paramName ="gyroz"},
-	{.paramPtr =&H0BR4_accX, .paramFormat =FMT_FLOAT, .paramName ="accx"},
-	{.paramPtr =&H0BR4_accY, .paramFormat =FMT_FLOAT, .paramName ="accy"},
-	{.paramPtr =&H0BR4_accZ, .paramFormat =FMT_FLOAT, .paramName ="accz"},
-	{.paramPtr =&H0BR4_magX, .paramFormat =FMT_INT32, .paramName ="magx"},
-	{.paramPtr =&H0BR4_magY, .paramFormat =FMT_INT32, .paramName ="magy"},
-	{.paramPtr =&H0BR4_magZ, .paramFormat =FMT_INT32, .paramName ="magz"},
-	{.paramPtr =&H0BR4_temp, .paramFormat =FMT_FLOAT, .paramName ="temp"}, };
+ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={
+	{.ParamPtr =&H0BR4_gyroX, .ParamFormat =FMT_FLOAT, .ParamName ="gyrox"},
+	{.ParamPtr =&H0BR4_gyroY, .ParamFormat =FMT_FLOAT, .ParamName ="gyroy"},
+	{.ParamPtr =&H0BR4_gyroZ, .ParamFormat =FMT_FLOAT, .ParamName ="gyroz"},
+	{.ParamPtr =&H0BR4_accX, .ParamFormat =FMT_FLOAT, .ParamName ="accx"},
+	{.ParamPtr =&H0BR4_accY, .ParamFormat =FMT_FLOAT, .ParamName ="accy"},
+	{.ParamPtr =&H0BR4_accZ, .ParamFormat =FMT_FLOAT, .ParamName ="accz"},
+	{.ParamPtr =&H0BR4_magX, .ParamFormat =FMT_INT32, .ParamName ="magx"},
+	{.ParamPtr =&H0BR4_magY, .ParamFormat =FMT_INT32, .ParamName ="magy"},
+	{.ParamPtr =&H0BR4_magZ, .ParamFormat =FMT_INT32, .ParamName ="magz"},
+	{.ParamPtr =&H0BR4_temp, .ParamFormat =FMT_FLOAT, .ParamName ="temp"}, };
 
 /* Private function prototypes *********************************************/
 uint8_t ClearROtopology(void);
@@ -292,7 +292,7 @@ uint8_t SaveSnippetsToRO(void){
 	int currentAdd = SNIPPETS_START_ADDRESS;
 	for(uint8_t index =0; index < numOfRecordedSnippets; index++){
 		/* Check if Snippet condition is true or false */
-		if(snippets[index].cond.conditionType){
+		if(snippets[index].cond.ConditionType){
 			/* A marker to separate Snippets */
 			snipBuffer[0] =0xFE;
 			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&snippets[index],sizeof(snippet_t));

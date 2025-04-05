@@ -13,7 +13,7 @@ uint8_t TempBuffer[100];
 uint16_t Index11;
 
 uint8_t var = 0;
-varFormat_t format;
+VariableFormat_t format;
 /* Private function prototypes -----------------------------------------------*/
 
 /* Main function ------------------------------------------------------------*/

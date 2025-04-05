@@ -194,7 +194,7 @@ BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, W
 	if(HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN) != HAL_OK)
 		return BOS_ERROR;
 	/* Save RTC hourformat and daylightsaving to EEPROM */
-	EE_WriteVariable(_EE_PARAMS_RTC,((uint16_t )BOS.hourformat << 8) | (uint16_t )BOS.buttons.minInterClickTime);
+	EE_WriteVariable(_EE_PARAMS_RTC,((uint16_t )BOS.hourformat << 8) | (uint16_t )BOS.Buttons.minInterClickTime);
 	
 	/* Writes a data in a RTC Backup data Register1 */
 	HAL_RTCEx_BKUPWrite(&RtcHandle,RTC_BKP_DR1,0x32F2);

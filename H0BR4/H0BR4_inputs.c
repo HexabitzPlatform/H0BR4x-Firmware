@@ -150,9 +150,9 @@ void CheckAttachedButtons(void) {
 					releaseCounter[i] = 0;		// Reset debounce counter
 
 				if (clicked == 2
-						&& dblCounter[i] <= BOS.buttons.maxInterClickTime)// Advance the inter-click counter
+						&& dblCounter[i] <= BOS.Buttons.maxInterClickTime)// Advance the inter-click counter
 					++dblCounter[i];
-				else if (dblCounter[i] > BOS.buttons.maxInterClickTime) {
+				else if (dblCounter[i] > BOS.Buttons.maxInterClickTime) {
 					clicked = 0;
 					dblCounter[i] = 0;			// Reset the inter-click counter
 				}
@@ -161,25 +161,25 @@ void CheckAttachedButtons(void) {
 			/* Analyze state */
 
 			/* 5.C. On press: Record a click if pressed less than 1 second */
-			if (pressCounter[i] < BOS.buttons.Debounce) {
+			if (pressCounter[i] < BOS.Buttons.Debounce) {
 				// This is noise. Ignore it
 			} else {
-				if (pressCounter[i] == BOS.buttons.Debounce) {
+				if (pressCounter[i] == BOS.Buttons.Debounce) {
 //					button[i].state = PRESSED;// Record a PRESSED event. This event is always reset on next tick.
 					++pressCounter[i];
 				}
 
-				if (releaseCounter[i] > BOS.buttons.Debounce)// Reset releaseCounter if needed - to avoid masking pressCounter on NO switches
+				if (releaseCounter[i] > BOS.Buttons.Debounce)// Reset releaseCounter if needed - to avoid masking pressCounter on NO switches
 					releaseCounter[i] = 0;
 
-				if (pressCounter[i] > BOS.buttons.SingleClickTime
+				if (pressCounter[i] > BOS.Buttons.SingleClickTime
 						&& pressCounter[i] < 500) {
 					if (clicked == 0)
 						clicked = 1;		// Record a possible single click
 					else if (clicked == 2) {
-						if (dblCounter[i] > BOS.buttons.minInterClickTime
+						if (dblCounter[i] > BOS.Buttons.minInterClickTime
 								&& dblCounter[i]
-										< BOS.buttons.maxInterClickTime) {
+										< BOS.Buttons.maxInterClickTime) {
 							clicked = 3;	// Record a possible double click
 							dblCounter[i] = 0;	// Reset the inter-click counter
 						}
@@ -193,18 +193,18 @@ void CheckAttachedButtons(void) {
 			}
 
 			/* 5.D. On release: Record a click if pressed less than 1 second */
-			if (releaseCounter[i] < BOS.buttons.Debounce) {
+			if (releaseCounter[i] < BOS.Buttons.Debounce) {
 				// This is noise. Ignore it
 			} else {
-				if (releaseCounter[i] == BOS.buttons.Debounce) {
+				if (releaseCounter[i] == BOS.Buttons.Debounce) {
 					Button[i].State = RELEASED;	// Record a RELEASED event. This event is always reset on next tick.
 					++releaseCounter[i];
 				}
 
-				if (pressCounter[i] > BOS.buttons.Debounce)	// Reset pressCounter if needed - to avoid masking releaseCounter on NC switches
+				if (pressCounter[i] > BOS.Buttons.Debounce)	// Reset pressCounter if needed - to avoid masking releaseCounter on NC switches
 					pressCounter[i] = 0;
 
-				if (releaseCounter[i] > BOS.buttons.SingleClickTime
+				if (releaseCounter[i] > BOS.Buttons.SingleClickTime
 						&& releaseCounter[i] < 500) {
 					if (clicked == 1) {
 						Button[i].State = CLICKED;// Record a single button click event

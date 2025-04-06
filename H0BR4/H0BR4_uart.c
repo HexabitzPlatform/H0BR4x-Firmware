@@ -613,14 +613,14 @@ UART_HandleTypeDef* GetUart(uint8_t port){
 void SwapUartPins(UART_HandleTypeDef *huart,uint8_t direction){
 	if(huart != NULL){
 		if(direction == REVERSED){
-			arrayPortsDir[myID - 1] |=(0x8000 >> (GetPort(huart) - 1)); /* Set bit to one */
+			ArrayPortsDir[myID - 1] |=(0x8000 >> (GetPort(huart) - 1)); /* Set bit to one */
 			huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 			huart->AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
 			HAL_UART_Init(huart);
 			HAL_UARTEx_ReceiveToIdle_DMA(huart,(uint8_t* )&UARTRxBuf[GetPort(huart) - 1],MSG_RX_BUF_SIZE);
 		}
 		else if(direction == NORMAL){
-			arrayPortsDir[myID - 1] &=(~(0x8000 >> (GetPort(huart) - 1))); /* Set bit to zero */
+			ArrayPortsDir[myID - 1] &=(~(0x8000 >> (GetPort(huart) - 1))); /* Set bit to zero */
 			huart->AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
 			huart->AdvancedInit.Swap = UART_ADVFEATURE_SWAP_DISABLE;
 			HAL_UART_Init(huart);
@@ -637,14 +637,14 @@ BOS_Status ReadPortsDir(void){
 		if(i != myID){
 			SendMessageToModule(i,CODE_READ_PORT_DIR,0);
 			Delay_ms_no_rtos(50);
-			if(responseStatus != BOS_OK){
+			if(ResponseStatus != BOS_OK){
 				result =BOS_ERR_NoResponse;
 			}
 		}
 		else{
 			/* Check my own ports */
 			for(uint8_t p =1; p <= NumOfPorts; p++){
-				arrayPortsDir[myID - 1] |=(0x0000); /* Set bit to 1 */
+				ArrayPortsDir[myID - 1] |=(0x0000); /* Set bit to 1 */
 			}
 		}
 	}
@@ -660,7 +660,7 @@ BOS_Status ReadPortsDirMSG(uint8_t SourceModule){
 	/* Check my own ports */
 	for(int p =1; p <= NumOfPorts; p++){
 		if(GetUart(p)->AdvancedInit.Swap == UART_ADVFEATURE_SWAP_ENABLE){
-			messageParams[temp++] =p;
+			MessageParams[temp++] =p;
 		}
 	}
 	/* Send response */
@@ -676,7 +676,7 @@ BOS_Status UpdateMyPortsDir(void){
 
 	/* Check port direction */
 	for(uint8_t p =1; p <= NumOfPorts; p++){
-		if(!(arrayPortsDir[myID - 1] & (0x8000 >> (p - 1)))){
+		if(!(ArrayPortsDir[myID - 1] & (0x8000 >> (p - 1)))){
 			/* Port is normal */
 			SwapUartPins(GetUart(p),NORMAL);
 		}

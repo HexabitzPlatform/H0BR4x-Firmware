@@ -16,7 +16,7 @@ Button_t Button[NumOfPorts + 1] = { 0 };
 uint32_t pressCounter[NumOfPorts + 1] = { 0 };
 uint32_t releaseCounter[NumOfPorts + 1] = { 0 };
 uint8_t dblCounter[NumOfPorts + 1] = { 0 };
-bool needToDelayButtonStateReset = false, delayButtonStateReset = false;
+bool NeedToDelayButtonStateReset = false, DelayButtonStateReset = false;
 ADC_HandleTypeDef hadc;
 ADC_ChannelConfTypeDef sConfig = { 0 };
 
@@ -80,7 +80,7 @@ void CheckAttachedButtons(void) {
 		if (Button[i].Type)			// Only check defined butons
 		{
 			/* 1. Reset button state */
-			if (delayButtonStateReset == false)
+			if (DelayButtonStateReset == false)
 				Button[i].State = NONE;
 
 			/* 2. Get button GPIOs */
@@ -233,63 +233,63 @@ void CheckAttachedButtons(void) {
 				break;
 
 			case CLICKED:
-				if (!delayButtonStateReset
+				if (!DelayButtonStateReset
 						&& (Button[i].Event & BUTTON_EVENT_CLICKED)) {
-					delayButtonStateReset = true;
+					DelayButtonStateReset = true;
 					buttonClickedCallback(i);
 				}
 				break;
 
 			case DBL_CLICKED:
-				if (!delayButtonStateReset
+				if (!DelayButtonStateReset
 						&& (Button[i].Event & BUTTON_EVENT_DBL_CLICKED)) {
-					delayButtonStateReset = true;
+					DelayButtonStateReset = true;
 					buttonDblClickedCallback(i);
 				}
 				break;
 //
 //			case PRESSED_FOR_X1_SEC:
-//				if (!delayButtonStateReset
+//				if (!DelayButtonStateReset
 //						&& (button[i].events & BUTTON_EVENT_PRESSED_FOR_X1_SEC)) {
-//					delayButtonStateReset = true;
+//					DelayButtonStateReset = true;
 //					buttonPressedForXCallback(i, PRESSED_FOR_X1_SEC - 8);
 //				}
 //				break;
 //			case PRESSED_FOR_X2_SEC:
-//				if (!delayButtonStateReset
+//				if (!DelayButtonStateReset
 //						&& (button[i].events & BUTTON_EVENT_PRESSED_FOR_X2_SEC)) {
-//					delayButtonStateReset = true;
+//					DelayButtonStateReset = true;
 //					buttonPressedForXCallback(i, PRESSED_FOR_X2_SEC - 8);
 //				}
 //				break;
 //			case PRESSED_FOR_X3_SEC:
-//				if (!delayButtonStateReset
+//				if (!DelayButtonStateReset
 //						&& (button[i].events & BUTTON_EVENT_PRESSED_FOR_X3_SEC)) {
-//					delayButtonStateReset = true;
+//					DelayButtonStateReset = true;
 //					buttonPressedForXCallback(i, PRESSED_FOR_X3_SEC - 8);
 //				}
 //				break;
 //
 //			case RELEASED_FOR_Y1_SEC:
-//				if (!delayButtonStateReset
+//				if (!DelayButtonStateReset
 //						&& (button[i].events & BUTTON_EVENT_RELEASED_FOR_Y1_SEC)) {
-//					delayButtonStateReset = true;
+//					DelayButtonStateReset = true;
 //					buttonReleasedForYCallback(i, RELEASED_FOR_Y1_SEC - 11);
 //				}
 //				break;
 //
 //			case RELEASED_FOR_Y2_SEC:
-//				if (!delayButtonStateReset
+//				if (!DelayButtonStateReset
 //						&& (button[i].events & BUTTON_EVENT_RELEASED_FOR_Y2_SEC)) {
-//					delayButtonStateReset = true;
+//					DelayButtonStateReset = true;
 //					buttonReleasedForYCallback(i, RELEASED_FOR_Y2_SEC - 11);
 //				}
 //				break;
 //
 //			case RELEASED_FOR_Y3_SEC:
-//				if (!delayButtonStateReset
+//				if (!DelayButtonStateReset
 //						&& (button[i].events & BUTTON_EVENT_RELEASED_FOR_Y3_SEC)) {
-//					delayButtonStateReset = true;
+//					DelayButtonStateReset = true;
 //					buttonReleasedForYCallback(i, RELEASED_FOR_Y3_SEC - 11);
 //				}
 //				break;
@@ -380,14 +380,14 @@ BOS_Status AddPortButton(ButtonType_e buttonType, uint8_t port)  {
 	uint8_t temp8 = 0;
 
 	/* 1. Stop communication at this port (only if the scheduler is running) - TODO update*/
-	if (BOS_initialized) {
+	if (bosInitialized) {
 		osSemaphoreRelease(PxRxSemaphoreHandle[port]); /* Give back the semaphore if it was taken */
 		osSemaphoreRelease(PxTxSemaphoreHandle[port]);
 	}
-	portStatus[port] = PORTBUTTON;
+	PortStatus[port] = PORTBUTTON;
 
 	/* 2. Deinitialize UART (only if module is initialized) */
-	if (BOS_initialized) {
+	if (bosInitialized) {
 		HAL_UART_DeInit(GetUart(port));
 	}
 
@@ -499,7 +499,7 @@ BOS_Status RemovePortButton(uint8_t port) {
 		result = BOS_ERROR;
 
 	/* 4. free port */
-	portStatus[port] = FREE;
+	PortStatus[port] = FREE;
 	/* Setup UART DMA */
 	DMA_MSG_RX_Setup(huart,UARTDMAHandler[port - 1]);
 
@@ -733,7 +733,7 @@ void ADCSelectChannel(uint8_t ADC_port, char *side) {
 	    else
 		{flag_ADC_Select[1]=1;}
 		HAL_UART_DeInit(GetUart(ADC_port));
-		portStatus[ADC_port] = CUSTOM;
+		PortStatus[ADC_port] = CUSTOM;
 		Channel = Get_channel(GetUart(ADC_port), side);
 		Rank_t = Get_Rank(ADC_port, side);
 		if (ADC_flag == 0)
@@ -859,7 +859,7 @@ float GetReadPrecentage(uint8_t port, float *precentageValue) {
 				GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 				GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 				HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-				portStatus[port] = CUSTOM;
+				PortStatus[port] = CUSTOM;
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 			} else {
 				HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2);
@@ -867,7 +867,7 @@ float GetReadPrecentage(uint8_t port, float *precentageValue) {
 				GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 				GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 				HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-				portStatus[port] = CUSTOM;
+				PortStatus[port] = CUSTOM;
 				HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
 
 			}
@@ -938,7 +938,7 @@ void Deinit_ADC_Channel(uint8_t port) {
 
 	HAL_ADC_DeInit(&hadc);
 	HAL_UART_Init(GetUart(port));
-	portStatus[port] = FREE;
+	PortStatus[port] = FREE;
 	ADC_flag = 0;
 }
 

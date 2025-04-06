@@ -17,7 +17,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal.h"
 
-#define __N	10					// Number of array modules
+#define __N	10					// Number of Array modules
 
 // Array modules
 #define _mod1	1<<3
@@ -32,7 +32,7 @@
 #define _mod10	10<<3
 
 // Topology
-static uint16_t array[__N ][7] ={
+static uint16_t Array[__N ][7] ={
 	{_H01R0, _mod2 | P6, 0, _mod4 | P4, 0, _mod7 | P5, 0}, // Module 1
 	{_H0BR4, 0, 0, _mod3 | P5, 0, 0, _mod1 | P1},          // Module 2
 	{_H1FR5, 0, 0, 0, 0, _mod2 | P3, 0},                   // Module 3

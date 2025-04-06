@@ -65,8 +65,8 @@ void UserTask(void *argument) {
 //			Index11 =0;
 
 
-//	var = *(uint8_t *) ReadRemoteVar (2, 1, &format, 1000);
-//	HAL_Delay(500);
+	var = *(uint8_t *) ReadRemoteVar (2, 1, &format, 1000);
+	HAL_Delay(500);
 
 	}
 }

@@ -45,8 +45,8 @@ void SysTick_Handler(void){
 void HardFault_Handler(void){
 	/* Loop here */
 	uint8_t* error_message = "HardFault Error\r\n";
-	writePxMutex(PcPort, (char*) error_message, 17, 0xff, 0xff);
-	writePxMutex(PcPort, (char*) error_restart_message, 15, 0xff, 0xff);
+	writePxMutex(pcPort, (char*) error_message, 17, 0xff, 0xff);
+	writePxMutex(pcPort, (char*) error_restart_message, 15, 0xff, 0xff);
 	NVIC_SystemReset();
 	for(;;){
 	};
@@ -74,7 +74,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart,uint16_t Size){
 
 	PacketLength =Size;
 	count++;
-	if(portStatus[GetPort(huart)] == STREAM) {
+	if(PortStatus[GetPort(huart)] == STREAM) {
 
 	} else {
 	  /* Notify backend task */
@@ -266,13 +266,13 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 	
 	/* Resume streaming DMA for this UART port */
 	uint8_t port =GetPort(huart);
-	if(portStatus[port] == STREAM){
+	if(PortStatus[port] == STREAM){
 		HAL_UARTEx_ReceiveToIdle_DMA(huart,(uint8_t* )(&(dmaStreamDst[port - 1]->Instance->TDR)),huart->hdmarx->Instance->CNDTR);
 		/* Or parse the circular buffer and restart messaging DMA for this port */
 	}
 	else{
-		index_input[port - 1] = 0;
-		index_process[port - 1] = 0;
+		IndexInput[port - 1] = 0;
+		IndexProcess[port - 1] = 0;
 		memset((uint8_t* )&UARTRxBuf[port - 1], 0, MSG_RX_BUF_SIZE);
 		HAL_UARTEx_ReceiveToIdle_DMA(huart,(uint8_t* )&UARTRxBuf[port - 1] ,MSG_RX_BUF_SIZE);
 		MsgDMAStopped[port - 1] = true;		// Set a flag here and let the backend task restart DMA after parsing the buffer	
@@ -317,8 +317,8 @@ void vApplicationStackOverflowHook( xTaskHandle pxTask,signed char *pcTaskName){
 	(void )pcTaskName;
 	(void )pxTask;
 	uint8_t* error_message = "Stack Overflow\r\n";
-	writePxMutex(PcPort, (char*) error_message, 16, 0xff, 0xff);
-	writePxMutex(PcPort, (char*) error_restart_message, 15, 0xff, 0xff);
+	writePxMutex(pcPort, (char*) error_message, 16, 0xff, 0xff);
+	writePxMutex(pcPort, (char*) error_restart_message, 15, 0xff, 0xff);
 	NVIC_SystemReset();
 //	taskDISABLE_INTERRUPTS();
 	for(;;);
@@ -337,8 +337,8 @@ void vApplicationStackOverflowHook( xTaskHandle pxTask,signed char *pcTaskName){
  provide information on how the remaining heap might be fragmented). */
 void vApplicationMallocFailedHook(void){
 	uint8_t* error_message = "Heap size exceeded\r\n";
-	writePxMutex(PcPort, (char*) error_message, 20, 0xff, 0xff);
-	writePxMutex(PcPort, (char*) error_restart_message, 15, 0xff, 0xff);
+	writePxMutex(pcPort, (char*) error_message, 20, 0xff, 0xff);
+	writePxMutex(pcPort, (char*) error_restart_message, 15, 0xff, 0xff);
 	NVIC_SystemReset();
 //	taskDISABLE_INTERRUPTS();
 	for(;;);

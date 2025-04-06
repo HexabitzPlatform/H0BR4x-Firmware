@@ -66,7 +66,7 @@
 #define _EE_GROUP_ALIAS_BASE		153		/* 10 groups/10 chars - 50 variables */
 #define _EE_GROUP_MODULES_BASE		203		/* 25 modules - 25 variables */
 #define _EE_DMA_STREAM_BASE			228		/* 8 variables */
-#define _EE_BUTTON_BASE				236		/* 4 * MaxNumOfPorts (10) variables for buttons: port(4 bits), type (4 bits), events (8 bits)
+#define _EE_BUTTON_BASE				236		/* 4 * MAX_NUM_OF_PORTS (10) variables for buttons: port(4 bits), type (4 bits), events (8 bits)
 											 * pressed_for_x_1 (8 bits), released_for_y_1 (8 bits), etc. */
 #define _EE_PARAMS_BASE				276		/* Parameter base: BOS trace (MSB) | BOS response - 1 variable */
 #define _EE_PARAMS_DEBOUNCE			277		/* Parameter: Button debounce - 1 variable */

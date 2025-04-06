@@ -164,7 +164,7 @@ BOS_Status EraseSector(uint32_t Sector) {
 	//TOBECHECKED
 	erase.NbPages = 1;
 	if ((HAL_OK != HAL_FLASHEx_Erase(&erase, &eraseError)) || eraseError != 0xFFFFFFFF)
-		responseStatus = BOS_ERR_REMOTE_WRITE_FLASH;
+		ResponseStatus = BOS_ERR_REMOTE_WRITE_FLASH;
 
 	return Status;
 }

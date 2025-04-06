@@ -52,32 +52,32 @@ BOS_Status SetupMessagingRxDMAs(void){
 	BOS_Status Status = BOS_OK;
 
 #ifdef _P1
-	if(portStatus[P1] == FREE){
+	if(PortStatus[P1] == FREE){
 		if(BOS_OK != DMA_MSG_RX_Setup(P1uart,UARTDMAHandler[0]))
 			return Status = BOS_ERROR;}
 #endif
 #ifdef _P2
-	if(portStatus[P2] == FREE){
+	if(PortStatus[P2] == FREE){
 		if(BOS_OK != DMA_MSG_RX_Setup(P2uart,UARTDMAHandler[1]))
 			return Status = BOS_ERROR;}
 #endif
 #ifdef _P3	
-	if(portStatus[P3] == FREE){
+	if(PortStatus[P3] == FREE){
 		if(BOS_OK != DMA_MSG_RX_Setup(P3uart,UARTDMAHandler[2]))
 			return Status = BOS_ERROR;}
 #endif
 #ifdef _P4		
-	if(portStatus[P4] == FREE){
+	if(PortStatus[P4] == FREE){
 		if(BOS_OK != DMA_MSG_RX_Setup(P4uart,UARTDMAHandler[3]))
 			return Status = BOS_ERROR;}
 #endif
 #ifdef _P5		
-	if(portStatus[P5] == FREE){
+	if(PortStatus[P5] == FREE){
 		if(BOS_OK != DMA_MSG_RX_Setup(P5uart,UARTDMAHandler[4]))
 			return Status = BOS_ERROR;}
 #endif
 #ifdef _P6
-	if(portStatus[P6] == FREE){
+	if(PortStatus[P6] == FREE){
 		if(BOS_OK != DMA_MSG_RX_Setup(P6uart,UARTDMAHandler[5]))
 			return Status = BOS_ERROR;}
 #endif
@@ -125,9 +125,9 @@ BOS_Status DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *hua
 	/* dstPort = 0 this mean we will receive stream data on RAM memory incoming from a destination module */
 	if(dstPort == 0){
 		/* set DMA index corresponding to UART to zero, so that the DMA starts writing from the beginning of the specific buffer */
-		index_process[GetPort(huartSrc) - 1] = 0;
-		memset(streamBuffer,0,STREAM_BUF_SIZE);
-		if(HAL_OK != HAL_UARTEx_ReceiveToIdle_DMA(huartSrc,streamBuffer,num))
+		IndexProcess[GetPort(huartSrc) - 1] = 0;
+		memset(StreamBuffer,0,STREAM_BUF_SIZE);
+		if(HAL_OK != HAL_UARTEx_ReceiveToIdle_DMA(huartSrc,StreamBuffer,num))
 			return Status = BOS_ERROR;
 		__HAL_DMA_DISABLE_IT(hDMA , DMA_IT_HT);
 	}
@@ -160,7 +160,7 @@ BOS_Status StopDMA(uint8_t port){
 		return Status = BOS_ERROR;
 
 	hDMA->Instance->CNDTR =0;
-	if(portStatus[port] == STREAM)
+	if(PortStatus[port] == STREAM)
 	{
 		dmaStreamCount[port - 1] = 0;
 		dmaStreamTotal[port - 1] = 0;
@@ -209,10 +209,10 @@ BOS_Status SwitchStreamDMAToMsg(uint8_t port) {
 	/* Initialize a messaging DMA using same channels */
 	HAL_UART_MspInit(huartSrc);
 	/* change port status */
-	portStatus[GetPort(UARTDMAHandler[port - 1]->Parent)] = FREE;
+	PortStatus[GetPort(UARTDMAHandler[port - 1]->Parent)] = FREE;
 
 	dmaStreamDst[port - 1] = 0;
-	index_process[port - 1] = 0;
+	IndexProcess[port - 1] = 0;
 	/* Read this port again in messaging mode */
 	if(BOS_OK != DMA_MSG_RX_Setup(GetUart(port), UARTDMAHandler[port - 1]))
 		return Status = BOS_ERROR;

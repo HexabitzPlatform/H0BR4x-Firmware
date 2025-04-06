@@ -239,13 +239,13 @@ uint8_t SaveTopologyToRO(void){
 
 		/* Save topology */
 		for(uint8_t row =1; row <= N; row++){
-			for(uint8_t column =0; column <= MaxNumOfPorts; column++){
+			for(uint8_t column =0; column <= MAX_NUM_OF_PORTS; column++){
 				/* Check the module serial number
 				 * Note: there isn't a module has serial number 0
 				 */
-				if(array[row - 1][0]){
-					/* Save each element in topology array in Flash memory */
-					HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,TOPOLOGY_START_ADDRESS + flashAdd,array[row - 1][column]);
+				if(Array[row - 1][0]){
+					/* Save each element in topology Array in Flash memory */
+					HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,TOPOLOGY_START_ADDRESS + flashAdd,Array[row - 1][column]);
 					/* Wait for a Write operation to complete */
 					flashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
 					if(flashStatus != HAL_OK){
@@ -290,13 +290,13 @@ uint8_t SaveSnippetsToRO(void){
 
 	/* Save Command Snippets */
 	int currentAdd = SNIPPETS_START_ADDRESS;
-	for(uint8_t index =0; index < numOfRecordedSnippets; index++){
+	for(uint8_t index =0; index < NumOfRecordedSnippets; index++){
 		/* Check if Snippet condition is true or false */
 		if(Snippets[index].Condition.ConditionType){
 			/* A marker to separate Snippets */
 			snipBuffer[0] =0xFE;
 			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&Snippets[index],sizeof(Snippet_t));
-			/* Copy the snippet struct buffer (20 x numOfRecordedSnippets). Note this is assuming sizeof(Snippet_t) is even */
+			/* Copy the snippet struct buffer (20 x NumOfRecordedSnippets). Note this is assuming sizeof(Snippet_t) is even */
 			for(uint8_t j =0; j < (sizeof(Snippet_t) / 4); j++){
 				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )&snipBuffer[j * 8]);
 				FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
@@ -329,10 +329,10 @@ uint8_t SaveSnippetsToRO(void){
 }
 
 /***************************************************************************/
-/* Clear array topology in SRAM and Flash RO */
+/* Clear Array topology in SRAM and Flash RO */
 uint8_t ClearROtopology(void){
-	/* Clear the array */
-	memset(array,0,sizeof(array));
+	/* Clear the Array */
+	memset(Array,0,sizeof(Array));
 	N =1;
 	myID =0;
 	
@@ -346,7 +346,7 @@ void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 	uint8_t myOutport =0, lastModule =0;
 	int8_t *pcOutputString;
 
-	/* 1. Get route to destination module */
+	/* 1. Get Route to destination module */
 	myOutport =FindRoute(myID,dst);
 	if(outport && dst == myID){ /* This is a 'via port' update and I'm the last module */
 		myOutport =outport;
@@ -356,7 +356,7 @@ void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 		if(NumberOfHops(dst)== 1)
 		lastModule = myID;
 		else
-		lastModule = route[NumberOfHops(dst)-1]; /* previous module = route[Number of hops - 1] */
+		lastModule = Route[NumberOfHops(dst)-1]; /* previous module = Route[Number of hops - 1] */
 	}
 
 	/* 2. If this is the source of the message, show status on the CLI */
@@ -424,22 +424,22 @@ void Module_Peripheral_Init(void){
 	/* Circulating DMA Channels ON All Module */
 	for(int i =1; i <= NumOfPorts; i++){
 		if(GetUart(i) == &huart1){
-			index_dma[i - 1] =&(DMA1_Channel1->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel1->CNDTR);
 		}
 		else if(GetUart(i) == &huart2){
-			index_dma[i - 1] =&(DMA1_Channel2->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel2->CNDTR);
 		}
 		else if(GetUart(i) == &huart3){
-			index_dma[i - 1] =&(DMA1_Channel3->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel3->CNDTR);
 		}
 		else if(GetUart(i) == &huart4){
-			index_dma[i - 1] =&(DMA1_Channel4->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel4->CNDTR);
 		}
 		else if(GetUart(i) == &huart5){
-			index_dma[i - 1] =&(DMA1_Channel5->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel5->CNDTR);
 		}
 		else if(GetUart(i) == &huart6){
-			index_dma[i - 1] =&(DMA1_Channel6->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel6->CNDTR);
 		}
 	}
 	/* Create a timeout software timer StreamSamplsToPort() API */
@@ -714,8 +714,8 @@ static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleTo
 
 	/* Check if CLI is enabled */
 	for(uint8_t chr =0; chr < MSG_RX_BUF_SIZE; chr++){
-		if(UARTRxBuf[PcPort - 1][chr] == '\r'){
-			UARTRxBuf[PcPort - 1][chr] =0; // Null-terminate the buffer
+		if(UARTRxBuf[pcPort - 1][chr] == '\r'){
+			UARTRxBuf[pcPort - 1][chr] =0; // Null-terminate the buffer
 		}
 	}
 
@@ -723,7 +723,7 @@ static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleTo
 	if(1 == StopeCliStreamFlag){
 		StopeCliStreamFlag =0;
 		static char *pcOKMessage =(int8_t* )"Stop stream!\n\r"; // Message to indicate stopping stream
-		writePxITMutex(PcPort,pcOKMessage,strlen(pcOKMessage),10); // Write the stop message to CLI
+		writePxITMutex(pcPort,pcOKMessage,strlen(pcOKMessage),10); // Write the stop message to CLI
 		return status;
 	}
 
@@ -738,7 +738,7 @@ static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleTo
 	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
 		pcOutputString =FreeRTOS_CLIGetOutputBuffer(); // Get output buffer for CLI
 		function((char* )pcOutputString,100); // Call the sampling function to get data
-		writePxMutex(PcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY); // Write data to CLI
+		writePxMutex(pcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY); // Write data to CLI
 
 		if(PollingSleepCLISafe(period,Numofsamples) != H0BR4_OK)
 			break;
@@ -939,8 +939,8 @@ static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples){
 
 		/* Look for ENTER key to stop the stream */
 		for(uint8_t chr =1; chr < MSG_RX_BUF_SIZE; chr++){
-			if(UARTRxBuf[PcPort - 1][chr] == '\r'){
-				UARTRxBuf[PcPort - 1][chr] =0;
+			if(UARTRxBuf[pcPort - 1][chr] == '\r'){
+				UARTRxBuf[pcPort - 1][chr] =0;
 				StopeCliStreamFlag =1;
 				return H0BR4_ERR_TERMINATED;
 			}
@@ -959,9 +959,9 @@ static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples){
 
 /***************************************************************************/
 /*
- * @brief: Calculates the average of an array of readings.
- * @param1: Pointer to an array of float readings.
- * @param2: Number of readings in the array.
+ * @brief: Calculates the average of an Array of readings.
+ * @param1: Pointer to an Array of float readings.
+ * @param2: Number of readings in the Array.
  * @retval: The average value of the readings.
  */
 float calculate_average(float *readings, int num_readings) {
@@ -1186,21 +1186,21 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_FLOAT;
-				messageParams[2] =3;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&AccX) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&AccX) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&AccX) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&AccX) >> 24);
-				messageParams[7] =(uint8_t )((*(uint32_t* )&AccY) >> 0);
-				messageParams[8] =(uint8_t )((*(uint32_t* )&AccY) >> 8);
-				messageParams[9] =(uint8_t )((*(uint32_t* )&AccY) >> 16);
-				messageParams[10] =(uint8_t )((*(uint32_t* )&AccY) >> 24);
-				messageParams[11] =(uint8_t )((*(uint32_t* )&AccZ) >> 0);
-				messageParams[12] =(uint8_t )((*(uint32_t* )&AccZ) >> 8);
-				messageParams[13] =(uint8_t )((*(uint32_t* )&AccZ) >> 16);
-				messageParams[14] =(uint8_t )((*(uint32_t* )&AccZ) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_FLOAT;
+				MessageParams[2] =3;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&AccX) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&AccX) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&AccX) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&AccX) >> 24);
+				MessageParams[7] =(uint8_t )((*(uint32_t* )&AccY) >> 0);
+				MessageParams[8] =(uint8_t )((*(uint32_t* )&AccY) >> 8);
+				MessageParams[9] =(uint8_t )((*(uint32_t* )&AccY) >> 16);
+				MessageParams[10] =(uint8_t )((*(uint32_t* )&AccY) >> 24);
+				MessageParams[11] =(uint8_t )((*(uint32_t* )&AccZ) >> 0);
+				MessageParams[12] =(uint8_t )((*(uint32_t* )&AccZ) >> 8);
+				MessageParams[13] =(uint8_t )((*(uint32_t* )&AccZ) >> 16);
+				MessageParams[14] =(uint8_t )((*(uint32_t* )&AccZ) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
 			}
@@ -1230,21 +1230,21 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_FLOAT;
-				messageParams[2] =3;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&GyroX) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&GyroX) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&GyroX) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&GyroX) >> 24);
-				messageParams[7] =(uint8_t )((*(uint32_t* )&GyroY) >> 0);
-				messageParams[8] =(uint8_t )((*(uint32_t* )&GyroY) >> 8);
-				messageParams[9] =(uint8_t )((*(uint32_t* )&GyroY) >> 16);
-				messageParams[10] =(uint8_t )((*(uint32_t* )&GyroY) >> 24);
-				messageParams[11] =(uint8_t )((*(uint32_t* )&GyroZ) >> 0);
-				messageParams[12] =(uint8_t )((*(uint32_t* )&GyroZ) >> 8);
-				messageParams[13] =(uint8_t )((*(uint32_t* )&GyroZ) >> 16);
-				messageParams[14] =(uint8_t )((*(uint32_t* )&GyroZ) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_FLOAT;
+				MessageParams[2] =3;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&GyroX) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&GyroX) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&GyroX) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&GyroX) >> 24);
+				MessageParams[7] =(uint8_t )((*(uint32_t* )&GyroY) >> 0);
+				MessageParams[8] =(uint8_t )((*(uint32_t* )&GyroY) >> 8);
+				MessageParams[9] =(uint8_t )((*(uint32_t* )&GyroY) >> 16);
+				MessageParams[10] =(uint8_t )((*(uint32_t* )&GyroY) >> 24);
+				MessageParams[11] =(uint8_t )((*(uint32_t* )&GyroZ) >> 0);
+				MessageParams[12] =(uint8_t )((*(uint32_t* )&GyroZ) >> 8);
+				MessageParams[13] =(uint8_t )((*(uint32_t* )&GyroZ) >> 16);
+				MessageParams[14] =(uint8_t )((*(uint32_t* )&GyroZ) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
 			}
@@ -1274,21 +1274,21 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_INT32;
-				messageParams[2] =3;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&MagX) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&MagX) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&MagX) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&MagX) >> 24);
-				messageParams[7] =(uint8_t )((*(uint32_t* )&MagY) >> 0);
-				messageParams[8] =(uint8_t )((*(uint32_t* )&MagY) >> 8);
-				messageParams[9] =(uint8_t )((*(uint32_t* )&MagY) >> 16);
-				messageParams[10] =(uint8_t )((*(uint32_t* )&MagY) >> 24);
-				messageParams[11] =(uint8_t )((*(uint32_t* )&MagZ) >> 0);
-				messageParams[12] =(uint8_t )((*(uint32_t* )&MagZ) >> 8);
-				messageParams[13] =(uint8_t )((*(uint32_t* )&MagZ) >> 16);
-				messageParams[14] =(uint8_t )((*(uint32_t* )&MagZ) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_INT32;
+				MessageParams[2] =3;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&MagX) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&MagX) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&MagX) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&MagX) >> 24);
+				MessageParams[7] =(uint8_t )((*(uint32_t* )&MagY) >> 0);
+				MessageParams[8] =(uint8_t )((*(uint32_t* )&MagY) >> 8);
+				MessageParams[9] =(uint8_t )((*(uint32_t* )&MagY) >> 16);
+				MessageParams[10] =(uint8_t )((*(uint32_t* )&MagY) >> 24);
+				MessageParams[11] =(uint8_t )((*(uint32_t* )&MagZ) >> 0);
+				MessageParams[12] =(uint8_t )((*(uint32_t* )&MagZ) >> 8);
+				MessageParams[13] =(uint8_t )((*(uint32_t* )&MagZ) >> 16);
+				MessageParams[14] =(uint8_t )((*(uint32_t* )&MagZ) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(int) * 3) + 3);
 			}
@@ -1310,13 +1310,13 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_FLOAT;
-				messageParams[2] =1;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_FLOAT;
+				MessageParams[2] =1;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 1) + 3);
 			}
@@ -1480,20 +1480,20 @@ static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBuff
 
 	do{
 		if(!strncmp(pSensName,AccCmdName,strlen(AccCmdName))){
-			SampleToTerminal(PcPort,ACC);
+			SampleToTerminal(pcPort,ACC);
 
 
 		}
 		else if(!strncmp(pSensName,GyroCmdName,strlen(GyroCmdName))){
-			SampleToTerminal(PcPort,GYRO);
+			SampleToTerminal(pcPort,GYRO);
 
 		}
 		else if(!strncmp(pSensName,MagCmdName,strlen(MagCmdName))){
-			SampleToTerminal(PcPort,MAG);
+			SampleToTerminal(pcPort,MAG);
 
 		}
 		else if(!strncmp(pSensName,TempCmdName,strlen(TempCmdName))){
-			SampleToTerminal(PcPort,TEMP);
+			SampleToTerminal(pcPort,TEMP);
 
 		}
 		else{

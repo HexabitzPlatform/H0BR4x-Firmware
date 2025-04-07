@@ -13,7 +13,7 @@
 /* Variables ---------------------------------------------------------*/
 RTC_HandleTypeDef RtcHandle;
 uint8_t bootStatus =POWER_ON_BOOT;
-extern const char *monthStringAbreviated[];
+extern const char *MonthStringAbreviated[];
 
 /* Function prototypes ----------------------------------------------*/
 BOS_Status RTC_Init(void);
@@ -94,7 +94,7 @@ BOS_Status RTC_CalendarConfig(void){
 	day =atoi(comDate + 4);
 	*(comDate + 3) =0;
 	for(uint8_t i =0; i < 12; i++){
-		if(!strcmp(comDate,monthStringAbreviated[i]))
+		if(!strcmp(comDate,MonthStringAbreviated[i]))
 			month =i + 1;
 	}
 	

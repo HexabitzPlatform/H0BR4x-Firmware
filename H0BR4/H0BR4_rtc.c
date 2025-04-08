@@ -12,22 +12,21 @@
 
 /* Variables ***************************************************************/
 RTC_HandleTypeDef RtcHandle;
-uint8_t bootStatus =POWER_ON_BOOT;
-extern const char *MonthStringAbreviated[];
 
-/* Function prototypes ----------------------------------------------*/
+extern const char *MonthStringAbreviated[];
+uint8_t BootStatus =POWER_ON_BOOT;
+
+
+/* Private Functions Prototypes ********************************************/
 BOS_Status RTC_Init(void);
 BOS_Status RTC_CalendarConfig(void);
 void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc);
 void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc);
 
-/* Functions ---------------------------------------------------------*/
-
-/*
- * @brief: Initialize and configure the internal real-time clock (RTC) and boot status..
- * @retval: BOS_Status.
- */
-
+/***************************************************************************/
+/* Private Functions *******************************************************/
+/***************************************************************************/
+/* @brief: Initialize and configure the internal real-time clock (RTC) and boot status */
 BOS_Status RTC_Init(void){
 	RtcHandle.Instance = RTC;
 	RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -62,11 +61,11 @@ BOS_Status RTC_Init(void){
 	else{
 		/* Check if the Power On Reset flag is set */
 		if(__HAL_RCC_GET_FLAG(RCC_FLAG_PWRRST) != RESET){
-			bootStatus =POWER_ON_BOOT;
+			BootStatus =POWER_ON_BOOT;
 		}
 		/* Check if Pin Reset flag is set */
 		if(__HAL_RCC_GET_FLAG(RCC_FLAG_PINRST) != RESET){
-			bootStatus =RESET_BOOT;
+			BootStatus =RESET_BOOT;
 		}
 	}
 	/* Clear source Reset Flag */
@@ -76,12 +75,7 @@ BOS_Status RTC_Init(void){
 }
 
 /**********************************************************************************/
-
-/*
- * @brief: First time-configuration of the internal real-time clock.
- * @retval: BOS_Status.
- */
-
+/* @brief: First time-configuration of the internal real-time clock */
 BOS_Status RTC_CalendarConfig(void){
 	RTC_DateTypeDef sdatestructure;
 	RTC_TimeTypeDef stimestructure;
@@ -89,7 +83,7 @@ BOS_Status RTC_CalendarConfig(void){
 	char comDate[] = __DATE__, comTime[] = __TIME__;
 	
 	/* Get compile date */
-	year =atoi(comDate + 9);		// only last 2 digits
+	year =atoi(comDate + 9);		/* only last 2 digits */
 	*(comDate + 6) =0;
 	day =atoi(comDate + 4);
 	*(comDate + 3) =0;
@@ -109,7 +103,7 @@ BOS_Status RTC_CalendarConfig(void){
 	sdatestructure.Year =year;
 	sdatestructure.Month =month;
 	sdatestructure.Date =day;
-	sdatestructure.WeekDay = RTC_WEEKDAY_MONDAY;		// Todo - Calculate weekday later
+	sdatestructure.WeekDay = RTC_WEEKDAY_MONDAY;
 	
 	if(HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN) != HAL_OK)
 		return BOS_ERROR;
@@ -133,20 +127,7 @@ BOS_Status RTC_CalendarConfig(void){
 }
 
 /**********************************************************************************/
-
-/*
- * @brief: BOS internal real-time clock and calendar configuration.
- * param1: month
- * param2: month day
- * param3: year
- * param4: week day
- * param5: seconds
- * param6: minutes
- * param7: hours
- * param8: AMPM
- * @retval: BOS_Status.
- */
-
+/* @brief: BOS internal real-time clock and calendar configuration */
 BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, Weekdays_e weekDay, uint8_t seconds, uint8_t minutes, uint8_t hours, TimePeriod_e AMPM){
 	RTC_DateTypeDef sdatestructure;
 	RTC_TimeTypeDef stimestructure;
@@ -155,13 +136,13 @@ BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, W
 	sdatestructure.Year =year - 2000;
 	sdatestructure.Month =month;
 	sdatestructure.Date =monthDay;
-	sdatestructure.WeekDay =weekDay;		// Todo - Calculate weekday later
+	sdatestructure.WeekDay =weekDay;
 	
 	/* Set Time */
 	stimestructure.Hours =hours;
 	stimestructure.Minutes =minutes;
 	stimestructure.Seconds =seconds;
-	stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;		// Todo - Use this to make sure user does not change daylight settings again
+	stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
 	
 	if(AMPM == RTC_AM && hours <= 12){
 		HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR0, 1);
@@ -203,12 +184,7 @@ BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, W
 }
 
 /**********************************************************************************/
-
-/*
- * @brief: Get current RTC time and date.
- * @retval: None.
- */
-
+/* @brief: Get current RTC time and date */
 void GetTimeDate(void){
 	RTC_DateTypeDef sdatestructureget;
 	RTC_TimeTypeDef stimestructureget;
@@ -228,25 +204,13 @@ void GetTimeDate(void){
 }
 
 /**********************************************************************************/
-
-/**
-* @brief RTC MSP Initialization
-* This function configures the hardware resources used in this example
-* @param: RTC handle pointer
-* @retval None
-*/
-
+/* @brief RTC MSP Initialization */
 void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
 {
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   if(hrtc->Instance==RTC)
   {
-  /* USER CODE BEGIN RTC_MspInit 0 */
-
-  /* USER CODE END RTC_MspInit 0 */
-
-  /** Initializes the peripherals clocks
-  */
+  /* Initializes the peripherals clocks */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
     PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
@@ -257,38 +221,22 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     /* Peripheral clock enable */
     __HAL_RCC_RTC_ENABLE();
     __HAL_RCC_RTCAPB_CLK_ENABLE();
-  /* USER CODE BEGIN RTC_MspInit 1 */
-
-  /* USER CODE END RTC_MspInit 1 */
   }
-
 }
 
 /**********************************************************************************/
-
-/**
-* @brief RTC MSP De-Initialization
-* This function freeze the hardware resources used in this example
-* @param: RTC handle pointer
-* @retval None
-*/
+/* RTC MSP De-Initialization */
 void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
 {
   if(hrtc->Instance==RTC)
   {
-  /* USER CODE BEGIN RTC_MspDeInit 0 */
-
-  /* USER CODE END RTC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
     __HAL_RCC_RTCAPB_CLK_DISABLE();
-  /* USER CODE BEGIN RTC_MspDeInit 1 */
 
-  /* USER CODE END RTC_MspDeInit 1 */
   }
 
 }
 
-/*-----------------------------------------------------------*/
-
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************************************************************************/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

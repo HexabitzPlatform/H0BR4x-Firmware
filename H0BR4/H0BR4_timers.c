@@ -12,22 +12,22 @@
 
  */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 
+/* Exported Functions ******************************************************/
 void TIM_USEC_Init(void);
 void TIM_MSEC_Init(void);
 void MX_IWDG_Init(void);
-/*----------------------------------------------------------------------------*/
-/* Configure Timers                                                              */
-/*----------------------------------------------------------------------------*/
 
-/* Variables ---------------------------------------------------------*/
+/* Exported Variables ******************************************************/
 TIM_HandleTypeDef htim16; /* micro-second delay counter */
 TIM_HandleTypeDef htim17; /* milli-second delay counter */
 IWDG_HandleTypeDef hiwdg;
 
-
+/***************************************************************************/
+/* Configure Timers ********************************************************/
+/***************************************************************************/
 /* IWDG init function */
 void MX_IWDG_Init(void){
 
@@ -47,11 +47,8 @@ void MX_IWDG_Init(void){
 
 }
 
-/*-----------------------------------------------------------*/
-
+/***************************************************************************/
 void TIM_USEC_Init(void){
-//	/* Peripheral clock enable */
-
 	__TIM16_CLK_ENABLE();
 
 	htim16.Instance = TIM16;
@@ -67,12 +64,9 @@ void TIM_USEC_Init(void){
 
 }
 
-/*-----------------------------------------------------------*/
-
-/*  Milli-seconds timebase init function - TIM15 (16-bit)
- */
+/***************************************************************************/
+/* Milli-seconds timebase init function - TIM15 (16-bit) */
 void TIM_MSEC_Init(void){
-//	/* Peripheral clock enable */
 	
 	__TIM17_CLK_ENABLE();
 
@@ -88,10 +82,8 @@ void TIM_MSEC_Init(void){
 	HAL_TIM_Base_Start(&htim17);
 }
 
-/*-----------------------------------------------------------*/
-
-/* --- Load and start micro-second delay counter --- 
- */
+/***************************************************************************/
+/* Load and start micro-second delay counter */
 void StartMicroDelay(uint16_t Delay){
 	uint32_t t0 =0;
 	
@@ -107,10 +99,8 @@ void StartMicroDelay(uint16_t Delay){
 	portEXIT_CRITICAL();
 }
 
-/*-----------------------------------------------------------*/
-
-/* --- Load and start milli-second delay counter --- 
- */
+/***************************************************************************/
+/* Load and start milli-second delay counter */
 void StartMilliDelay(uint16_t Delay){
 	uint32_t t0 =0;
 	
@@ -125,6 +115,6 @@ void StartMilliDelay(uint16_t Delay){
 
 	portEXIT_CRITICAL();
 }
-/*-----------------------------------------------------------*/
 
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************************************************************************/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

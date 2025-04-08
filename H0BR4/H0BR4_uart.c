@@ -7,11 +7,10 @@
 
  */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 
-/*  */
-
+/* Exported Variables ******************************************************/
 DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart2_rx;
 DMA_HandleTypeDef hdma_usart3_rx;
@@ -19,6 +18,9 @@ DMA_HandleTypeDef hdma_usart4_rx;
 DMA_HandleTypeDef hdma_usart5_rx;
 DMA_HandleTypeDef hdma_usart6_rx;
 
+/***************************************************************************/
+/* Configure UARTs *********************************************************/
+/***************************************************************************/
 /* USART1 init function */
 #ifdef _Usart1
 void MX_USART1_UART_Init(void){
@@ -49,6 +51,7 @@ void MX_USART1_UART_Init(void){
 }
 #endif
 
+/***************************************************************************/
 /* USART2 init function */
 #ifdef _Usart2
 void MX_USART2_UART_Init(void){
@@ -79,6 +82,7 @@ void MX_USART2_UART_Init(void){
 }
 #endif
 
+/***************************************************************************/
 /* USART3 init function */
 #ifdef _Usart3
 void MX_USART3_UART_Init(void){
@@ -109,6 +113,7 @@ void MX_USART3_UART_Init(void){
 }
 #endif
 
+/***************************************************************************/
 /* USART4 init function */
 #ifdef _Usart4
 void MX_USART4_UART_Init(void){
@@ -133,6 +138,7 @@ void MX_USART4_UART_Init(void){
 }
 #endif
 
+/***************************************************************************/
 /* USART5 init function */
 #ifdef _Usart5
 void MX_USART5_UART_Init(void){
@@ -157,6 +163,7 @@ void MX_USART5_UART_Init(void){
 }
 #endif
 
+/***************************************************************************/
 /* USART6 init function */
 #ifdef _Usart6
 void MX_USART6_UART_Init(void){
@@ -181,6 +188,7 @@ void MX_USART6_UART_Init(void){
 }
 #endif
 
+/***************************************************************************/
 void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	
 	GPIO_InitTypeDef GPIO_InitStruct ={0};
@@ -194,8 +202,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		/* USART1 clock enable */
 		__HAL_RCC_USART1_CLK_ENABLE();
-
 		__HAL_RCC_GPIOA_CLK_ENABLE();
+
 		/**USART1 GPIO Configuration
 		 PA9     ------> USART1_TX
 		 PA10     ------> USART1_RX
@@ -219,15 +227,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart1_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart1_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[3] = &hdma_usart1_rx;
+		UARTDMAHandler[3] =&hdma_usart1_rx;
 
 		HAL_DMA_Init(&hdma_usart1_rx);
+		__HAL_LINKDMA(huart,hdmarx,hdma_usart1_rx);
 
 		HAL_NVIC_SetPriority(USART1_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART1_IRQn);
-
-		__HAL_LINKDMA(huart,hdmarx,hdma_usart1_rx);
-
 
 #endif
 	}
@@ -239,8 +245,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		/* USART2 clock enable */
 		__HAL_RCC_USART2_CLK_ENABLE();
-
 		__HAL_RCC_GPIOA_CLK_ENABLE();
+
 		/**USART2 GPIO Configuration
 		 PA2     ------> USART2_TX
 		 PA3     ------> USART2_RX
@@ -264,10 +270,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart2_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[1] = &hdma_usart2_rx;
+		UARTDMAHandler[1] =&hdma_usart2_rx;
 
 		HAL_DMA_Init(&hdma_usart2_rx);
-
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart2_rx);
 
 		HAL_NVIC_SetPriority(USART2_LPUART2_IRQn,0,0);
@@ -283,8 +288,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		/* USART3 clock enable */
 		__HAL_RCC_USART3_CLK_ENABLE();
-
 		__HAL_RCC_GPIOB_CLK_ENABLE();
+
 		/**USART3 GPIO Configuration
 		 PB8     ------> USART3_TX
 		 PB9     ------> USART3_RX
@@ -308,27 +313,23 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart3_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart3_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[5] = &hdma_usart3_rx;
+		UARTDMAHandler[5] =&hdma_usart3_rx;
 
 		HAL_DMA_Init(&hdma_usart3_rx);
+		__HAL_LINKDMA(huart,hdmarx,hdma_usart3_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
-
-		__HAL_LINKDMA(huart,hdmarx,hdma_usart3_rx);
 
 #endif
 	}
 	else if(huart->Instance == USART4){
 #ifdef _Usart4
-		/* USER CODE BEGIN USART4_MspInit 0 */
-
-		/* USER CODE END USART4_MspInit 0 */
 
 		/* USART4 clock enable */
 		__HAL_RCC_USART4_CLK_ENABLE();
-
 		__HAL_RCC_GPIOA_CLK_ENABLE();
+
 		/**USART4 GPIO Configuration
 		 PA0     ------> USART4_TX
 		 PA1     ------> USART4_RX
@@ -352,10 +353,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart4_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart4_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[0] = &hdma_usart4_rx;
+		UARTDMAHandler[0] =&hdma_usart4_rx;
 
 		HAL_DMA_Init(&hdma_usart4_rx);
-
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart4_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
@@ -365,9 +365,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 	}
 	else if(huart->Instance == USART5){
 #ifdef _Usart5
-		/* USER CODE BEGIN USART5_MspInit 0 */
-
-		/* USER CODE END USART5_MspInit 0 */
 
 		/* USART5 clock enable */
 		__HAL_RCC_USART5_CLK_ENABLE();
@@ -396,22 +393,18 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart5_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart5_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[4] = &hdma_usart5_rx;
+		UARTDMAHandler[4] =&hdma_usart5_rx;
 
 		HAL_DMA_Init(&hdma_usart5_rx);
+		__HAL_LINKDMA(huart,hdmarx,hdma_usart5_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
-
-		__HAL_LINKDMA(huart,hdmarx,hdma_usart5_rx);
 
 #endif
 	}
 	else if(huart->Instance == USART6){
 #ifdef _Usart6
-		/* USER CODE BEGIN USART6_MspInit 0 */
-
-		/* USER CODE END USART6_MspInit 0 */
 
 		/* USART6 clock enable */
 		__HAL_RCC_USART6_CLK_ENABLE();
@@ -440,21 +433,20 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart6_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart6_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[2] = &hdma_usart6_rx;
+		UARTDMAHandler[2] =&hdma_usart6_rx;
 
 		HAL_DMA_Init(&hdma_usart6_rx);
+		__HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
-
-		__HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
 
 #endif
 	}
 }
 
-/* --- Blocking (polling-based) read protected with a semaphore --- 
- */
+/***************************************************************************/
+/* Blocking (polling-based) read protected with a semaphore */
 HAL_StatusTypeDef readPxMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout,uint32_t portTimeout){
 	HAL_StatusTypeDef result =HAL_ERROR;
 	
@@ -468,12 +460,11 @@ HAL_StatusTypeDef readPxMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mute
 			osSemaphoreRelease(PxRxSemaphoreHandle[port]);
 		}
 	}
-	
 	return result;
 }
 
-/* --- Blocking (polling-based) write protected with a semaphore --- 
- */
+/***************************************************************************/
+/* Blocking (polling-based) write protected with a semaphore */
 HAL_StatusTypeDef writePxMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout,uint32_t portTimeout){
 	HAL_StatusTypeDef result =HAL_ERROR;
 	
@@ -487,12 +478,11 @@ HAL_StatusTypeDef writePxMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mut
 			osSemaphoreRelease(PxTxSemaphoreHandle[port]);
 		}
 	}
-	
 	return result;
 }
 
-/* --- Non-blocking (interrupt-based) read protected with a semaphore --- 
- */
+/***************************************************************************/
+/* Non-blocking (interrupt-based) read protected with a semaphore */
 HAL_StatusTypeDef readPxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout){
 	HAL_StatusTypeDef result =HAL_ERROR;
 	
@@ -502,12 +492,11 @@ HAL_StatusTypeDef readPxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mu
 			result =HAL_UART_Receive_IT(GetUart(port),(uint8_t* )buffer,n);
 		}
 	}
-	
 	return result;
 }
 
-/* --- Non-blocking (interrupt-based) write protected with a semaphore --- 
- */
+/***************************************************************************/
+/* Non-blocking (interrupt-based) write protected with a semaphore */
 HAL_StatusTypeDef writePxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout){
 	HAL_StatusTypeDef result =HAL_ERROR;
 	
@@ -524,27 +513,8 @@ HAL_StatusTypeDef writePxITMutex(uint8_t port,char *buffer,uint16_t n,uint32_t m
 	return result;
 }
 
-///* --- Non-blocking (DMA-based) write protected with a semaphore ---
-// */
-//HAL_StatusTypeDef writePxDMAMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout){
-//	HAL_StatusTypeDef result =HAL_ERROR;
-//	UART_HandleTypeDef *hUart =GetUart(port);
-//
-//	if(hUart != NULL){
-//		/* Wait for the mutex to be available. */
-//		if(osSemaphoreWait(PxTxSemaphoreHandle[port],mutexTimeout) == osOK){
-//			/* Setup TX DMA on this port */
-//			DMA_MSG_TX_Setup(hUart);
-//			/* Transmit the message */
-//			result =HAL_UART_Transmit_DMA(hUart,(uint8_t* )buffer,n);
-//		}
-//	}
-//
-//	return result;
-//}
-
-/* --- Update baudrate for this port --- 
- */
+/***************************************************************************/
+/* Update baudrate for this port */
 BOS_Status UpdateBaudrate(uint8_t port,uint32_t baudrate){
 	BOS_Status result =BOS_OK;
 	UART_HandleTypeDef *huart =GetUart(port);
@@ -555,10 +525,8 @@ BOS_Status UpdateBaudrate(uint8_t port,uint32_t baudrate){
 	return result;
 }
 
-/*-----------------------------------------------------------*/
-
-/* --- Get the UART for a given port. 
- */
+/***************************************************************************/
+/* Get the UART for a given port */
 UART_HandleTypeDef* GetUart(uint8_t port){
 	switch(port){
 #ifdef _P1
@@ -606,10 +574,8 @@ UART_HandleTypeDef* GetUart(uint8_t port){
 	}
 }
 
-/*-----------------------------------------------------------*/
-
-/* --- Swap UART pins ( NORMAL | REVERSED )--- 
- */
+/***************************************************************************/
+/* Swap UART pins ( NORMAL | REVERSED ) */
 void SwapUartPins(UART_HandleTypeDef *huart,uint8_t direction){
 	if(huart != NULL){
 		if(direction == REVERSED){
@@ -628,8 +594,9 @@ void SwapUartPins(UART_HandleTypeDef *huart,uint8_t direction){
 		}
 	}
 }
-/* --- Read Ports directions when a pre-defined topology file is used ---
- */
+
+/***************************************************************************/
+/* Read Ports directions when a pre-defined topology file is used */
 BOS_Status ReadPortsDir(void){
 	BOS_Status result =BOS_OK;
 	/* Ask all other modules for their ports directions */
@@ -652,8 +619,8 @@ BOS_Status ReadPortsDir(void){
 	return result;
 }
 
-/* --- Read Ports directions when a pre-defined topology file is used ---
- */
+/***************************************************************************/
+/* Read Ports directions when a pre-defined topology file is used */
 BOS_Status ReadPortsDirMSG(uint8_t SourceModule){
 	BOS_Status result =BOS_OK;
 	uint16_t temp =0;
@@ -667,10 +634,10 @@ BOS_Status ReadPortsDirMSG(uint8_t SourceModule){
 	SendMessageToModule(SourceModule,CODE_READ_PORT_DIR_RESPONSE,temp);
 	return result;
 }
-/*-----------------------------------------------------------*/
+
+/***************************************************************************/
 #ifndef __N
-/* --- Update module port directions based on what is stored in eeprom ---
- */
+/* Update module port directions based on what is stored in eeprom  */
 BOS_Status UpdateMyPortsDir(void){
 	BOS_Status result =BOS_OK;
 
@@ -690,6 +657,5 @@ BOS_Status UpdateMyPortsDir(void){
 }
 #endif
 
-/*-----------------------------------------------------------*/
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/***************************************************************************/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

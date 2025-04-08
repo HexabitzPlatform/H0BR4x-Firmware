@@ -178,12 +178,6 @@ void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
 void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
-/* -----------------------------------------------------------------------
- |								Commands							      |															 	|
-/* -----------------------------------------------------------------------
- */
-
-
 #endif /* H0BR4_H */
 
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

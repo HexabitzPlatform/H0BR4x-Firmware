@@ -7,30 +7,19 @@
  
  */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-
-//#ifndef BOS_INPUTS_H
-//#define BOS_INPUTS_H
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 #include "stm32g0xx_hal_adc.h"
 #include "stm32g0xx_hal_adc_ex.h"
 #include "string.h"
-/* Private and global variables ----------------------------------------------*/
 
-/* Private function prototypes -----------------------------------------------*/
-
-/* -----------------------------------------------------------------------
- |												Exported  Functions	 														|
- -----------------------------------------------------------------------
- */
-//extern BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
+/***************************************************************************/
+/* Exported Functions Prototypes *******************************************/
+/***************************************************************************/
 extern void ReadTempAndVref(float *temp,float *Vref);
 extern void ReadADCChannel(uint8_t Port,char *side,float *ADC_Value);
 extern void ADCSelectChannel(uint8_t ADC_port,char *side);
-extern float GetReadPrecentage(uint8_t port,float *precentageValue);
 extern void Deinit_ADC_Channel(uint8_t port);
+extern float GetReadPrecentage(uint8_t port,float *precentageValue);
 
-/*-----------------------------------------------------------*/
-
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

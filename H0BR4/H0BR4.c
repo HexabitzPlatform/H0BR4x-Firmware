@@ -32,11 +32,11 @@ extern stmdev_ctx_t dev_ctx;
 /* Private Variables *******************************************************/
 
 /* Stream to port variables */
-uint32_t PortNumOfSamples = 0u;    /* Number of samples for port streaming */
-uint32_t PortSamples = 0u;         /* Current sample count for port (if needed separately) */
-uint8_t PortModule = 0u;           /* Module ID for port streaming */
-uint8_t PortNumber = 0u;           /* Port number for streaming */
-All_Data PortFunction;                    /* Function pointer or struct for port streaming */
+uint32_t PortNumOfSamples = 0u;  /* Number of samples for port streaming */
+uint32_t PortSamples = 0u;       /* Current sample count for port (if needed separately) */
+uint8_t PortModule = 0u;         /* Module ID for port streaming */
+uint8_t PortNumber = 0u;         /* Port number for streaming */
+All_Data PortFunction;           /* Function pointer or struct for port streaming */
 
 /* Stream to terminal variables */
 uint32_t TerminalNumOfSamples = 0u; /* Number of samples for terminal streaming */
@@ -47,7 +47,6 @@ uint8_t StreamMode = 0u;                     /* Streaming mode selector (port or
 uint8_t StopeCliStreamFlag = 0u;             /* Flag to stop CLI streaming */
 /* General streaming variable */
 uint32_t SampleCount = 0u;                   /* Total sample counter */
-
 
 static bool stopStream = false;
 
@@ -107,7 +106,6 @@ Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction);
 static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples);
 static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function);
 static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function);
-
 
 /* Create CLI commands *****************************************************/
 static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
@@ -1615,5 +1613,4 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBuff
 	return pdFALSE;
 }
 /***************************************************************************/
-
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

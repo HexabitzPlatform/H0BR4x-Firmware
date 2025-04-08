@@ -13,25 +13,26 @@
 /*  */
 BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
 uint8_t IsFactoryReset(void);
-/*----------------------------------------------------------------------------*/
-/* Configure GPIO                                                             */
-/*----------------------------------------------------------------------------*/
 
-/** Pinout Configuration
- */
+/***************************************************************************/
+/* Configure GPIO **********************************************************/
+/***************************************************************************/
+
+/* Pinout Configuration */
 void GPIO_Init(void){
 	/* GPIO Ports Clock Enable */
 	__GPIOC_CLK_ENABLE();
 	__GPIOA_CLK_ENABLE();
 	__GPIOD_CLK_ENABLE();
 	__GPIOB_CLK_ENABLE();
-	__GPIOF_CLK_ENABLE();		// for HSE and Boot0
+	__GPIOF_CLK_ENABLE();		/* for HSE and Boot0 */
 	
 	IND_LED_Init();
 	MEMS_GPIO_Init();
 }
 
-//-- Configure indicator LED
+/***************************************************************************/
+/* Configure indicator LED */
 void IND_LED_Init(void){
 	GPIO_InitTypeDef GPIO_InitStruct;
 	
@@ -41,44 +42,42 @@ void IND_LED_Init(void){
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(_IND_LED_PORT,&GPIO_InitStruct);
 }
-void MEMS_GPIO_Init(void)
-{
+
+/***************************************************************************/
+void MEMS_GPIO_Init(void){
 // TODO: Enable INT pins and their interrupts.
-  GPIO_InitTypeDef GPIO_InitStruct;
+	GPIO_InitTypeDef GPIO_InitStruct;
 
-  /**I2C2 GPIO Configuration
-  PB13     ------> I2C2_SCL
-  PB14     ------> I2C2_SDA
-  */
+	/**I2C2 GPIO Configuration
+	 PB13     ------> I2C2_SCL
+	 PB14     ------> I2C2_SDA
+	 */
 
-  GPIO_InitStruct.Pin = _MEMS_I2C2_SCL_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
-  HAL_GPIO_Init(_MEMS_I2C2_SCL_PORT, &GPIO_InitStruct);
+	GPIO_InitStruct.Pin = _MEMS_I2C2_SCL_PIN;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
+	HAL_GPIO_Init(_MEMS_I2C2_SCL_PORT,&GPIO_InitStruct);
 
-  GPIO_InitStruct.Pin = _MEMS_I2C2_SDA_PIN;
-  HAL_GPIO_Init(_MEMS_I2C2_SDA_PORT, &GPIO_InitStruct);
+	GPIO_InitStruct.Pin = _MEMS_I2C2_SDA_PIN;
+	HAL_GPIO_Init(_MEMS_I2C2_SDA_PORT,&GPIO_InitStruct);
 
-  /* Peripheral clock enable */
-  __HAL_RCC_I2C2_CLK_ENABLE();
+	/* Peripheral clock enable */
+	__HAL_RCC_I2C2_CLK_ENABLE();
 
-  /* I2C2 interrupt Init */
-  HAL_NVIC_SetPriority(I2C2_3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(I2C2_3_IRQn);
+	/* I2C2 interrupt Init */
+	HAL_NVIC_SetPriority(I2C2_3_IRQn,0,0);
+	HAL_NVIC_EnableIRQ(I2C2_3_IRQn);
 }
-/*-----------------------------------------------------------*/
 
-/* --- Check for factory reset condition: 
- - P1 TXD is connected to last port RXD    
- */
+/***************************************************************************/
+/* Check for factory reset condition:
+ - P1 TXD is connected to last port RXD  */
 uint8_t IsFactoryReset(void){
 	GPIO_InitTypeDef GPIO_InitStruct;
 	uint32_t P1_TX_Port, P1_RX_Port, P_last_TX_Port, P_last_RX_Port;
 	uint16_t P1_TX_Pin, P1_RX_Pin, P_last_TX_Pin, P_last_RX_Pin;
-	
-	/* -- Setup GPIOs -- */
 
 	/* Enable all GPIO Ports Clocks */
 	__GPIOA_CLK_ENABLE();
@@ -120,10 +119,8 @@ uint8_t IsFactoryReset(void){
 	return 0;
 }
 
-/*-----------------------------------------------------------*/
-
-/* --- Get GPIO pins and ports of this array port
- */
+/***************************************************************************/
+/* Get GPIO pins and ports of this array port */
 BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin){
 	BOS_Status result =BOS_OK;
 	
@@ -202,4 +199,5 @@ BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t
 	return result;
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+/***************************************************************************/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

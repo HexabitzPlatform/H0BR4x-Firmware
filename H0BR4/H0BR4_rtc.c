@@ -7,10 +7,10 @@
 
  */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 
-/* Variables ---------------------------------------------------------*/
+/* Variables ***************************************************************/
 RTC_HandleTypeDef RtcHandle;
 uint8_t bootStatus =POWER_ON_BOOT;
 extern const char *MonthStringAbreviated[];

@@ -9,14 +9,14 @@
  */
 
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive inclusion ***********************************/
 #ifndef __gpio_H
 #define __gpio_H
 #ifdef __cplusplus
  extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "stm32g0xx_hal.h"
 
 extern void GPIO_Init(void);
@@ -27,4 +27,4 @@ extern void MEMS_GPIO_Init(void);
 #endif
 #endif /*__gpio_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+ /***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

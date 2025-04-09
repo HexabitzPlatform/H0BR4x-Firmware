@@ -63,7 +63,7 @@ uint32_t Get_channel(UART_HandleTypeDef *huart,char *side);
 /***************************************************************************/
 /* Private Functions *******************************************************/
 /***************************************************************************/
-/** Configure the global features of the ADC (Clock, Resolution,
+/* Configure the global features of the ADC (Clock, Resolution,
  * Data Alignment and number of conversion) to read multiple ADC
  * channel in Port 2 and port 3 and for calculate internal temperature and internal voltage
  */
@@ -356,8 +356,8 @@ void ResetAttachedButtonStates(uint8_t *deferReset){
 
 /***************************************************************************/
 /* Define a new button attached to one of array ports
- buttonType: MOMENTARY_NO, MOMENTARY_NC, ONOFF_NO, ONOFF_NC
- port: array port (P1 - Px)
+ * buttonType: MOMENTARY_NO, MOMENTARY_NC, ONOFF_NO, ONOFF_NC
+ * port: array port (P1 - Px)
  */
 BOS_Status AddPortButton(ButtonType_e buttonType,uint8_t port){
 	BOS_Status result =BOS_OK;
@@ -427,7 +427,8 @@ BOS_Status AddPortButton(ButtonType_e buttonType,uint8_t port){
 
 /***************************************************************************/
 /* Undefine a button attached to one of array ports and restore the port to default state
- port: array port (P1 - Px) */
+ *  port: array port (P1 - Px)
+ */
 BOS_Status RemovePortButton(uint8_t port){
 	BOS_Status result =BOS_OK;
 	uint16_t res, temp16;

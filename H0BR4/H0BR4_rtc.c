@@ -26,7 +26,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc);
 /***************************************************************************/
 /* Private Functions *******************************************************/
 /***************************************************************************/
-/* @brief: Initialize and configure the internal real-time clock (RTC) and boot status */
+/* Initialize and configure the internal real-time clock (RTC) and boot status */
 BOS_Status RTC_Init(void){
 	RtcHandle.Instance = RTC;
 	RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -75,7 +75,7 @@ BOS_Status RTC_Init(void){
 }
 
 /**********************************************************************************/
-/* @brief: First time-configuration of the internal real-time clock */
+/* First time-configuration of the internal real-time clock */
 BOS_Status RTC_CalendarConfig(void){
 	RTC_DateTypeDef sdatestructure;
 	RTC_TimeTypeDef stimestructure;
@@ -127,7 +127,7 @@ BOS_Status RTC_CalendarConfig(void){
 }
 
 /**********************************************************************************/
-/* @brief: BOS internal real-time clock and calendar configuration */
+/* BOS internal real-time clock and calendar configuration */
 BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, Weekdays_e weekDay, uint8_t seconds, uint8_t minutes, uint8_t hours, TimePeriod_e AMPM){
 	RTC_DateTypeDef sdatestructure;
 	RTC_TimeTypeDef stimestructure;
@@ -184,7 +184,7 @@ BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, W
 }
 
 /**********************************************************************************/
-/* @brief: Get current RTC time and date */
+/* Get current RTC time and date */
 void GetTimeDate(void){
 	RTC_DateTypeDef sdatestructureget;
 	RTC_TimeTypeDef stimestructureget;
@@ -204,7 +204,7 @@ void GetTimeDate(void){
 }
 
 /**********************************************************************************/
-/* @brief RTC MSP Initialization */
+/* RTC MSP Initialization */
 void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
 {
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};

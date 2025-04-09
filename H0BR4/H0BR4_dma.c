@@ -38,11 +38,7 @@ HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn);
 }
 
 /***************************************************************************/
-/*
- * @brief: Setup and start Messaging DMAs.
- * @retval: BOS_Status.
- */
-
+/* Setup and start Messaging DMAs */
 BOS_Status SetupMessagingRxDMAs(void){
 	BOS_Status Status =BOS_OK;
 
@@ -92,13 +88,7 @@ BOS_Status SetupMessagingRxDMAs(void){
 }
 
 /***************************************************************************/
-/*
- * @brief: Messaging DMA RX setup.
- * @param1: UART handler.
- * @param2: DMA handler.
- * @retval: BOS_Status.
- */
-
+/* Messaging DMA RX setup */
 BOS_Status DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 	BOS_Status Status =BOS_OK;
 
@@ -110,14 +100,7 @@ BOS_Status DMA_MSG_RX_Setup(UART_HandleTypeDef *huart,DMA_HandleTypeDef *hDMA){
 }
 
 /***************************************************************************/
-/*
- * @brief: Streaming DMA setup.
- * param1: UART source handler.
- * param2: UART destination handler.
- * param3: data size.
- * @retval: BOS_Status.
- */
-
+/* Streaming DMA setup */
 BOS_Status DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *huartDst,uint16_t num){
 	BOS_Status Status =BOS_OK;
 	DMA_HandleTypeDef *hDMA;
@@ -145,12 +128,7 @@ BOS_Status DMA_STREAM_Setup(UART_HandleTypeDef *huartSrc,UART_HandleTypeDef *hua
 }
 
 /***************************************************************************/
-/*
- * @brief: Stop (Stream or message) DMA.
- * param1: port
- * @retval: BOS_Status.
- */
-
+/* Stop (Stream or message) DMA */
 BOS_Status StopDMA(uint8_t port){
 	BOS_Status Status =BOS_OK;
 	DMA_HandleTypeDef *hDMA;
@@ -172,12 +150,7 @@ BOS_Status StopDMA(uint8_t port){
 }
 
 /***************************************************************************/
-/*
- * @brief: Switch messaging DMA channels to streaming.
- * @param1: port
- * @retval: BOS_Status.
- */
-
+/* Switch messaging DMA channels to streaming */
 BOS_Status SwitchMsgDMAToStream(uint8_t port){
 	BOS_Status Status =BOS_OK;
 	UART_HandleTypeDef *huartSrc;
@@ -192,12 +165,7 @@ BOS_Status SwitchMsgDMAToStream(uint8_t port){
 }
 
 /***************************************************************************/
-/*
- * @brief: Switch streaming DMA channel to messaging.
- * @param1: port
- * @retval: BOS_Status.
- */
-
+/* Switch streaming DMA channel to messaging */
 BOS_Status SwitchStreamDMAToMsg(uint8_t port){
 	BOS_Status Status =BOS_OK;
 	UART_HandleTypeDef *huartSrc;

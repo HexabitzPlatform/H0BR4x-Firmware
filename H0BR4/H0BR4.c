@@ -170,6 +170,136 @@ void SystemClock_Config(void){
 }
 
 /***************************************************************************/
+/* enable stop mode regarding only UART1 , UART2 , and UART3 */
+BOS_Status EnableStopModebyUARTx(uint8_t port){
+
+	UART_WakeUpTypeDef WakeUpSelection;
+	UART_HandleTypeDef *huart =GetUart(port);
+
+	if((huart->Instance == USART1) || (huart->Instance == USART2) || (huart->Instance == USART3)){
+
+		/* make sure that no UART transfer is on-going */
+		while(__HAL_UART_GET_FLAG(huart, USART_ISR_BUSY) == SET);
+
+		/* make sure that UART is ready to receive */
+		while(__HAL_UART_GET_FLAG(huart, USART_ISR_REACK) == RESET);
+
+		/* set the wake-up event:
+		 * specify wake-up on start-bit detection */
+		WakeUpSelection.WakeUpEvent = UART_WAKEUP_ON_STARTBIT;
+		HAL_UARTEx_StopModeWakeUpSourceConfig(huart,WakeUpSelection);
+
+		/* Enable the UART Wake UP from stop mode Interrupt */
+		__HAL_UART_ENABLE_IT(huart,UART_IT_WUF);
+
+		/* enable MCU wake-up by LPUART */
+		HAL_UARTEx_EnableStopMode(huart);
+
+		/* enter STOP mode */
+		HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFI);
+	}
+	else
+		return BOS_ERROR;
+
+}
+
+/***************************************************************************/
+/* Enable standby mode regarding wake-up pins:
+ * WKUP1: PA0  pin
+ * WKUP4: PA2  pin
+ * WKUP6: PB5  pin
+ * WKUP2: PC13 pin
+ * NRST pin
+ *  */
+BOS_Status EnableStandbyModebyWakeupPinx(WakeupPins_t wakeupPins){
+
+	/* Clear the WUF FLAG */
+	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WUF);
+
+	/* Enable the WAKEUP PIN */
+	switch(wakeupPins){
+
+		case PA0_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1); /* PA0 */
+			break;
+
+		case PA2_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4); /* PA2 */
+			break;
+
+		case PB5_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN6); /* PB5 */
+			break;
+
+		case PC13_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN2); /* PC13 */
+			break;
+
+		case NRST_PIN:
+			/* do no thing*/
+			break;
+	}
+
+	/* Enable SRAM content retention in Standby mode */
+	HAL_PWREx_EnableSRAMRetention();
+
+	/* Finally enter the standby mode */
+	HAL_PWR_EnterSTANDBYMode();
+
+	return BOS_OK;
+}
+
+/***************************************************************************/
+/* Disable standby mode regarding wake-up pins:
+ * WKUP1: PA0  pin
+ * WKUP4: PA2  pin
+ * WKUP6: PB5  pin
+ * WKUP2: PC13 pin
+ * NRST pin
+ *  */
+BOS_Status DisableStandbyModeWakeupPinx(WakeupPins_t wakeupPins){
+
+	/* The standby wake-up is same as a system RESET:
+	 * The entire code runs from the beginning just as if it was a RESET.
+	 * The only difference between a reset and a STANDBY wake-up is that, when the MCU wakes-up,
+	 * The SBF status flag in the PWR power control/status register (PWR_CSR) is set */
+	if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET){
+		/* clear the flag */
+		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+
+		/* Disable  Wake-up Pinx */
+		switch(wakeupPins){
+
+			case PA0_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1); /* PA0 */
+				break;
+
+			case PA2_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); /* PA2 */
+				break;
+
+			case PB5_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN6); /* PB5 */
+				break;
+
+			case PC13_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN2); /* PC13 */
+				break;
+
+			case NRST_PIN:
+				/* do no thing*/
+				break;
+		}
+
+		IND_blink(1000);
+
+	}
+	else
+		return BOS_OK;
+
+}
+
+/***************************************************************************/
 /* Save Command Topology in Flash RO */
 uint8_t SaveTopologyToRO(void){
 
@@ -904,68 +1034,6 @@ static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples){
 	vTaskDelay(pdMS_TO_TICKS(lastDelayMS));
 
 	return H0BR4_OK;
-}
-
-/***************************************************************************/
-/* Calculates the average of an Array of readings.
- * readings: Pointer to an Array of float readings.
- * num_readings: Number of readings in the Array.
- */
-float calculate_average(float *readings,int num_readings){
-	float sum =0;
-	for(int i =0; i < num_readings; i++){
-		sum +=readings[i];
-	}
-	return (float )(sum / num_readings); /* Return the average value */
-}
-
-/***************************************************************************/
-/* Calibrates the sensor by calculating offsets for X, Y, and Z axes.
- * num_readings: Number of readings to take for calibration.
- * X_offset: Pointer to store the X-axis offset.
- * Y_offset: Pointer to store the Y-axis offset.
- * Z_offset: Pointer to store the Z-axis offset.
- * @note: This function assumes the Z-axis is aligned with gravity (1G).
- *        It should be called to determine the optimal offset values.
- * @note: This function writes the offset values to the registers. Once you get the desired output,
- *        take the appropriate offset values for your sensor and write them to the registers using the set_offsets function.
- *        Then, stop calling this function.
- * @note: It is recommended to keep the number of samples between 50 and 200.
- */
-void ACC_SetOffset(int num_readings,int16_t *X_offset,int16_t *Y_offset,int16_t *Z_offset){
-	float accx, accy, accz;
-	float z_avg, y_avg, x_avg;
-	float x_readings[num_readings], y_readings[num_readings], z_readings[num_readings];
-
-	HAL_Delay(1000); /* Initial delay before starting the calibration */
-
-	/* Collect data */
-	for(int i =0; i < num_readings; i++){
-		HAL_Delay(10); /* Delay between each reading */
-
-		SampleAccG(&accx,&accy,&accz); /* Sample accelerometer data */
-
-		x_readings[i] =accx;
-		y_readings[i] =accy;
-		z_readings[i] =accz;
-	}
-
-	/* Calculate average values */
-	x_avg =calculate_average(x_readings,num_readings);
-	y_avg =calculate_average(y_readings,num_readings);
-	z_avg =calculate_average(z_readings,num_readings);
-
-	/* Calculate offsets */
-	int16_t x_offset =0 - (x_avg * 1000);
-	int16_t y_offset =0 - (y_avg * 1000);
-	int16_t z_offset =1000 - (z_avg * 1000);
-
-	*X_offset =x_offset;
-	*Y_offset =y_offset;
-	*Z_offset =-z_offset;
-
-	/* Apply offsets */
-	set_offsets(&dev_ctx,x_offset,y_offset,-z_offset);
 }
 
 /***************************************************************************/

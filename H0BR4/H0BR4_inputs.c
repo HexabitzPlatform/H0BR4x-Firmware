@@ -40,6 +40,8 @@ float Current =0.0f;
 ADC_HandleTypeDef hadc;
 ADC_ChannelConfTypeDef sConfig ={0};
 
+BOS_Status SetButtonEvents(uint8_t port, ButtonState_e buttonState, uint8_t mode);
+BOS_Status AddPortButton(ButtonType_e buttonType, uint8_t port);
 /* Private buttons function prototypes *************************************/
 BOS_Status CheckForTimedButtonPress(uint8_t port);
 BOS_Status CheckForTimedButtonRelease(uint8_t port);

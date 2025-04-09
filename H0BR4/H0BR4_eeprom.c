@@ -16,14 +16,7 @@ extern FLASH_ProcessTypeDef pFlash;
 /***************************************************************************/
 /************************ Private function Definitions *********************/
 /***************************************************************************/
-
-/*
- * @brief  Restore the pages to a known good state in case of page's status
- *   corruption after a power loss.
- * @param  None.
- * @retval - BOS_OK.
- *         - BOS_ERR_EEPROM.
- */
+/* Restore the pages to a known good state in case of page's status corruption after a power loss */
 BOS_Status EE_Init(void) {
 	BOS_Status Status = BOS_OK;
 	EE_Status eeStatus = EE_OK;
@@ -42,12 +35,9 @@ BOS_Status EE_Init(void) {
 }
 
 /***************************************************************************/
-/*
- * @brief  Read the last stored variable data.
- * @param  VirtAddress: Variable virtual address.
- * @param  Data: Global variable contains the read variable value.
- * @retval - BOS_OK.
- *         - BOS_ERR_EEPROM.
+/* Read the last stored variable data.
+ * VirtAddress: Variable virtual address.
+ * Data: Global variable contains the read variable value.
  */
 BOS_Status EE_ReadVariable(uint16_t VirtAddress, uint16_t *Data) {
 	BOS_Status Status = BOS_OK;
@@ -59,13 +49,9 @@ BOS_Status EE_ReadVariable(uint16_t VirtAddress, uint16_t *Data) {
 }
 
 /******************************************************************************/
-
-/*
- * @brief  Writes/upadtes variable data in EEPROM.
- * @param  VirtAddress: Variable virtual address.
- * @param  Data: 16 bit data to be written.
- * @retval - BOS_OK.
- *         - BOS_ERR_EEPROM.
+/* @brief  Writes/upadtes variable data in EEPROM.
+ * VirtAddress: Variable virtual address.
+ * Data: 16 bit data to be written.
  */
 BOS_Status EE_WriteVariable(uint16_t VirtAddress,uint16_t Data){
 	BOS_Status Status =BOS_OK;
@@ -86,12 +72,7 @@ BOS_Status EE_WriteVariable(uint16_t VirtAddress,uint16_t Data){
 }
 
 /***************************************************************************/
-/*
- * @brief  Erasing reserve pages for EEPROM emulator and assign the first page as Active.
- * @param  None.
- * @retval - BOS_OK.
- *         - BOS_ERR_EEPROM.
- */
+/* Erasing reserve pages for EEPROM emulator and assign the first page as Active */
 BOS_Status EE_Format(void){
 	BOS_Status Status =BOS_OK;
 
@@ -107,15 +88,9 @@ BOS_Status EE_Format(void){
 }
 
 /***************************************************************************/
-/*
- * @brief  Writes/upadtes variable data in Flash.
- * @param  Address: Variable address.
- * @param  Data: 16 bit data to be written.
- * @retval Success or error status:
- *           - FLASH_COMPLETE: on success.
- *           - PAGE_FULL: if valid page is full.
- *           - NO_VALID_PAGE: if no valid page was found.
- *           - Flash error code: on write Flash error.
+/* Writes/upadtes variable data in Flash.
+ * Address: Variable address.
+ * Data: 16 bit data to be written.
  */
 uint16_t Flash_WriteVariable(uint32_t Address,uint16_t Data){
 	HAL_StatusTypeDef FlashStatus =HAL_OK;
@@ -139,11 +114,8 @@ uint16_t Flash_WriteVariable(uint32_t Address,uint16_t Data){
 }
 
 /***************************************************************************/
-/*
- * @brief  Erase sector in flash memory.
- * @param  Sector : Sector to be erased.
- * @retval - BOS_OK.
- *         - BOS_ERR_REMOTE_WRITE_FLASH.
+/* Erase sector in flash memory.
+ * Sector : Sector to be erased.
  */
 BOS_Status EraseSector(uint32_t Sector){
 	BOS_Status Status =BOS_OK;
@@ -157,6 +129,22 @@ BOS_Status EraseSector(uint32_t Sector){
 		ResponseStatus =BOS_ERR_REMOTE_WRITE_FLASH;
 
 	return Status;
+}
+
+/***************************************************************************/
+/* Format Emulated EEPROM for a factory reset */
+void EE_FormatForFactoryReset(void){
+	/* Check if EEPROM was just formated? */
+	/* Flag address (STM32F09x) - Last 4 words of SRAM */
+	if(*((unsigned long* )0x20007FF0) == 0xBEEFDEAD){
+		// Do nothing
+	}
+	else{
+		if(EE_Format() == HAL_OK){
+			/* Set flag for formated EEPROM */
+			*((unsigned long* )0x20007FF0) =0xBEEFDEAD;
+		}
+	}
 }
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

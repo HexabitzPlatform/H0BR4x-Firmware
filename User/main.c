@@ -40,7 +40,12 @@ void UserTask(void *argument) {
 //StreamMemoryToPort(3, 4, (uint8_t *)TempBuffer, 100, 0xffffff, 0); // ok
 //StreamMemoryToMemory(4, uint8_t *pBuffer, 100, 0xffffff, 0);
 
-
+//	SwapUartPins(GetUart(P1),REVERSED);
+//	SwapUartPins(GetUart(P2),REVERSED);
+//	SwapUartPins(GetUart(P3),REVERSED);
+//	SwapUartPins(GetUart(P4),REVERSED);
+//	SwapUartPins(GetUart(P5),REVERSED);
+//	SwapUartPins(GetUart(P6),REVERSED);
 
 	// put your code here, to run repeatedly.
 	while (1) {
@@ -65,8 +70,8 @@ void UserTask(void *argument) {
 //			Index11 =0;
 
 
-	var = *(uint8_t *) ReadRemoteVar (2, 1, &format, 1000);
-	HAL_Delay(500);
+//	var = *(uint8_t *) ReadRemoteVar (2, 1, &format, 1000);
+//	HAL_Delay(500);
 
 	}
 }

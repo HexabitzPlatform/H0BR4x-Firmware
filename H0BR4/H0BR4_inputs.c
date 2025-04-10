@@ -40,18 +40,17 @@ float Current =0.0f;
 ADC_HandleTypeDef hadc;
 ADC_ChannelConfTypeDef sConfig ={0};
 
-BOS_Status SetButtonEvents(uint8_t port, ButtonState_e buttonState, uint8_t mode);
 BOS_Status AddPortButton(ButtonType_e buttonType, uint8_t port);
+BOS_Status SetButtonEvents(uint8_t port, ButtonState_e buttonState, uint8_t mode);
+
 /* Private buttons function prototypes *************************************/
 BOS_Status CheckForTimedButtonPress(uint8_t port);
 BOS_Status CheckForTimedButtonRelease(uint8_t port);
-extern BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
+BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
 void buttonPressedCallback(uint8_t port);
 void buttonReleasedCallback(uint8_t port);
 void buttonClickedCallback(uint8_t port);
 void buttonDblClickedCallback(uint8_t port);
-void buttonPressedForXCallback(uint8_t port,uint8_t eventType);
-void buttonReleasedForYCallback(uint8_t port,uint8_t eventType);
 
 /* Private ADC function prototypes *****************************************/
 void MX_ADC_Init(void);
@@ -733,40 +732,30 @@ void Deinit_ADC_Channel(uint8_t port){
 /* User Button Functions ***************************************************/
 /***************************************************************************/
 /* Button press callback. DO NOT MODIFY THIS CALLBACK.
- This function is declared as __weak to be overwritten by other implementations in user file.
+ * This function is declared as __weak to be overwritten by other implementations in user file.
  */
 __weak void buttonPressedCallback(uint8_t port){
 }
 
 /***************************************************************************/
 /* Button release callback. DO NOT MODIFY THIS CALLBACK.
- This function is declared as __weak to be overwritten by other implementations in user file */
+ * This function is declared as __weak to be overwritten by other implementations in user file.
+ */
 __weak void buttonReleasedCallback(uint8_t port){
 }
 
 /***************************************************************************/
 /* Button single click callback. DO NOT MODIFY THIS CALLBACK.
- This function is declared as __weak to be overwritten by other implementations in user file */
+ * This function is declared as __weak to be overwritten by other implementations in user file.
+ */
 __weak void buttonClickedCallback(uint8_t port){
 }
 
 /***************************************************************************/
 /* Button double click callback. DO NOT MODIFY THIS CALLBACK.
- This function is declared as __weak to be overwritten by other implementations in user file */
-__weak void buttonDblClickedCallback(uint8_t port){
-}
-
-/***************************************************************************/
-/* --- Button pressed_for_x callbacks. DO NOT MODIFY THIS CALLBACK.
- This function is declared as __weak to be overwritten by other implementations in user file.
+ * This function is declared as __weak to be overwritten by other implementations in user file.
  */
-__weak void buttonPressedForXCallback(uint8_t port,uint8_t eventType){
-}
-
-/***************************************************************************/
-/* Button released_for_y callbacks. DO NOT MODIFY THIS CALLBACK.
- This function is declared as __weak to be overwritten by other implementations in user file */
-__weak void buttonReleasedForYCallback(uint8_t port,uint8_t eventType){
+__weak void buttonDblClickedCallback(uint8_t port){
 }
 
 /***************************************************************************/

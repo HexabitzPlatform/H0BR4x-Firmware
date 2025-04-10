@@ -204,10 +204,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		__HAL_RCC_USART1_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 
-		/**USART1 GPIO Configuration
-		 PA9     ------> USART1_TX
-		 PA10     ------> USART1_RX
-		 */
 		GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -247,10 +243,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		__HAL_RCC_USART2_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 
-		/**USART2 GPIO Configuration
-		 PA2     ------> USART2_TX
-		 PA3     ------> USART2_RX
-		 */
 		GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -290,10 +282,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		__HAL_RCC_USART3_CLK_ENABLE();
 		__HAL_RCC_GPIOB_CLK_ENABLE();
 
-		/**USART3 GPIO Configuration
-		 PB8     ------> USART3_TX
-		 PB9     ------> USART3_RX
-		 */
 		GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -330,10 +318,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		__HAL_RCC_USART4_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 
-		/**USART4 GPIO Configuration
-		 PA0     ------> USART4_TX
-		 PA1     ------> USART4_RX
-		 */
 		GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -368,12 +352,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		/* USART5 clock enable */
 		__HAL_RCC_USART5_CLK_ENABLE();
-
 		__HAL_RCC_GPIOD_CLK_ENABLE();
-		/**USART5 GPIO Configuration
-		 PD2     ------> USART5_RX
-		 PD3     ------> USART5_TX
-		 */
+
 		GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -408,12 +388,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 
 		/* USART6 clock enable */
 		__HAL_RCC_USART6_CLK_ENABLE();
-
 		__HAL_RCC_GPIOA_CLK_ENABLE();
-		/**USART6 GPIO Configuration
-		 PA4     ------> USART6_TX
-		 PA5     ------> USART6_RX
-		 */
+
 		GPIO_InitStruct.Pin = GPIO_PIN_4 | GPIO_PIN_5;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;

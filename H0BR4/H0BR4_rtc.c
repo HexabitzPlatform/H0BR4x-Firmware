@@ -2,7 +2,7 @@
  BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H01R0_rtc.c
+ File Name     : H0BR4_rtc.c
  Description   : Peripheral RTC setup source file.
 
  */
@@ -16,12 +16,11 @@ RTC_HandleTypeDef RtcHandle;
 extern const char *MonthStringAbreviated[];
 uint8_t BootStatus =POWER_ON_BOOT;
 
-
 /* Private Functions Prototypes ********************************************/
 BOS_Status RTC_Init(void);
 BOS_Status RTC_CalendarConfig(void);
-void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc);
-void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc);
+void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc);
+void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc);
 
 /***************************************************************************/
 /* Private Functions *******************************************************/
@@ -30,8 +29,8 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc);
 BOS_Status RTC_Init(void){
 	RtcHandle.Instance = RTC;
 	RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
-	RtcHandle.Init.AsynchPrediv = 127;
-	RtcHandle.Init.SynchPrediv = 255;
+	RtcHandle.Init.AsynchPrediv =127;
+	RtcHandle.Init.SynchPrediv =255;
 	RtcHandle.Init.OutPut = RTC_OUTPUT_DISABLE;
 	RtcHandle.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
 	RtcHandle.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
@@ -39,18 +38,16 @@ BOS_Status RTC_Init(void){
 	RtcHandle.Init.OutPutPullUp = RTC_OUTPUT_PULLUP_NONE;
 
 	/* read time format(12/24) from specified RTC Backup */
-	RtcHandle.TampOffset = (TAMP_BASE - RTC_BASE);
+	RtcHandle.TampOffset =(TAMP_BASE - RTC_BASE);
 	/* Enable RTC clock in order to read from RTC Backup */
 	HAL_RTC_MspInit(&RtcHandle);
 
-	if(HAL_RTCEx_BKUPRead(&RtcHandle,RTC_BKP_DR0) == 1)
-	{
+	if(HAL_RTCEx_BKUPRead(&RtcHandle,RTC_BKP_DR0) == 1){
 		RtcHandle.Init.HourFormat = RTC_HOURFORMAT_12;
 	}
 
-	if (HAL_RTC_Init(&RtcHandle) != HAL_OK)
+	if(HAL_RTC_Init(&RtcHandle) != HAL_OK)
 		return BOS_ERROR;
-
 
 	/* Check if Data stored in BackUp register1: No Need to reconfigure RTC */
 	/* Read the Back Up Register 1 Data */
@@ -83,7 +80,7 @@ BOS_Status RTC_CalendarConfig(void){
 	char comDate[] = __DATE__, comTime[] = __TIME__;
 	
 	/* Get compile date */
-	year =atoi(comDate + 9);		/* only last 2 digits */
+	year =atoi(comDate + 9); /* only last 2 digits */
 	*(comDate + 6) =0;
 	day =atoi(comDate + 4);
 	*(comDate + 3) =0;
@@ -128,7 +125,7 @@ BOS_Status RTC_CalendarConfig(void){
 
 /**********************************************************************************/
 /* BOS internal real-time clock and calendar configuration */
-BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, Weekdays_e weekDay, uint8_t seconds, uint8_t minutes, uint8_t hours, TimePeriod_e AMPM){
+BOS_Status BOS_CalendarConfig(Months_e month,uint8_t monthDay,uint16_t year,Weekdays_e weekDay,uint8_t seconds,uint8_t minutes,uint8_t hours,TimePeriod_e AMPM){
 	RTC_DateTypeDef sdatestructure;
 	RTC_TimeTypeDef stimestructure;
 	
@@ -145,7 +142,7 @@ BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, W
 	stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
 	
 	if(AMPM == RTC_AM && hours <= 12){
-		HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR0, 1);
+		HAL_RTCEx_BKUPWrite(&RtcHandle,RTC_BKP_DR0,1);
 		stimestructure.TimeFormat = RTC_HOURFORMAT12_AM;
 		BOS.HourFormat =12;
 		HAL_RTC_DeInit(&RtcHandle);
@@ -153,16 +150,15 @@ BOS_Status BOS_CalendarConfig(Months_e month, uint8_t monthDay, uint16_t year, W
 		HAL_RTC_Init(&RtcHandle);
 	}
 	else if(AMPM == RTC_PM && hours <= 12){
-		HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR0, 1);
+		HAL_RTCEx_BKUPWrite(&RtcHandle,RTC_BKP_DR0,1);
 		stimestructure.TimeFormat = RTC_HOURFORMAT12_PM;
 		BOS.HourFormat =12;
 		HAL_RTC_DeInit(&RtcHandle);
 		RtcHandle.Init.HourFormat = RTC_HOURFORMAT_12;
 		HAL_RTC_Init(&RtcHandle);
 	}
-	else
-	{
-		HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR0, 0);
+	else{
+		HAL_RTCEx_BKUPWrite(&RtcHandle,RTC_BKP_DR0,0);
 		BOS.HourFormat =24;
 		HAL_RTC_DeInit(&RtcHandle);
 		RtcHandle.Init.HourFormat = RTC_HOURFORMAT_24;
@@ -205,37 +201,31 @@ void GetTimeDate(void){
 
 /**********************************************************************************/
 /* RTC MSP Initialization */
-void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
-{
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-  if(hrtc->Instance==RTC)
-  {
-  /* Initializes the peripherals clocks */
-    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-    {
-      /*Error_Handler();*/
-    }
+void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc){
+	RCC_PeriphCLKInitTypeDef PeriphClkInit ={0};
+	if(hrtc->Instance == RTC){
+		/* Initializes the peripherals clocks */
+		PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+		PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+		if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK){
+			/*Error_Handler();*/
+		}
 
-    /* Peripheral clock enable */
-    __HAL_RCC_RTC_ENABLE();
-    __HAL_RCC_RTCAPB_CLK_ENABLE();
-  }
+		/* Peripheral clock enable */
+		__HAL_RCC_RTC_ENABLE();
+		__HAL_RCC_RTCAPB_CLK_ENABLE();
+	}
 }
 
 /**********************************************************************************/
 /* RTC MSP De-Initialization */
-void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
-{
-  if(hrtc->Instance==RTC)
-  {
-    /* Peripheral clock disable */
-    __HAL_RCC_RTC_DISABLE();
-    __HAL_RCC_RTCAPB_CLK_DISABLE();
+void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc){
+	if(hrtc->Instance == RTC){
+		/* Peripheral clock disable */
+		__HAL_RCC_RTC_DISABLE();
+		__HAL_RCC_RTCAPB_CLK_DISABLE();
 
-  }
-
+	}
 }
 
 /***************************************************************************/

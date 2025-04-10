@@ -1,8 +1,8 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H01R0_it.c
+ File Name     : H0BR4_it.c
  Description   :Interrupt Service Routines.
 
  */
@@ -21,12 +21,12 @@ extern TaskHandle_t xCommandConsoleTaskHandle; /* CLI Task handler */
 
 /* Local Variables *********************************************************/
 uint16_t PacketLength =0;
-uint8_t count =0;
+uint8_t Count =0;
 
 /***************************************************************************/
 /******** Cortex-M0+ Processor Interruption and Exception Handlers *********/
 /***************************************************************************/
-/* @brief This function handles System tick timer */
+/* This function handles System tick timer */
 void SysTick_Handler(void){
 	
 	HAL_IncTick();
@@ -35,7 +35,7 @@ void SysTick_Handler(void){
 }
 
 /***************************************************************************/
-/* @brief This function handles Hard Fault error callback */
+/* This function handles Hard Fault error callback */
 void HardFault_Handler(void){
 	/* Loop here */
 	uint8_t *error_message ="HardFault Error\r\n";
@@ -59,7 +59,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart,uint16_t Size){
 	extern TaskHandle_t BackEndTaskHandle;
 
 	PacketLength =Size;
-	count++;
+	Count++;
 	if(PortStatus[GetPort(huart)] == STREAM){
 
 	}
@@ -72,7 +72,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart,uint16_t Size){
 }
 
 /***************************************************************************/
-/* @brief This function handles USART1 global interrupt */
+/* This function handles USART1 global interrupt */
 void USART1_IRQHandler(void){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
@@ -97,7 +97,7 @@ void USART1_IRQHandler(void){
 }
 
 /***************************************************************************/
-/* @brief This function handles USART2 global interrupt */
+/* This function handles USART2 global interrupt */
 void USART2_LPUART2_IRQHandler(void){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
@@ -119,7 +119,7 @@ void USART2_LPUART2_IRQHandler(void){
 }
 
 /***************************************************************************/
-/* @brief This function handles USART3 to USART8 global interrupts */
+/* This function handles USART3 to USART8 global interrupts */
 void USART3_4_5_6_LPUART1_IRQHandler(void){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
@@ -175,15 +175,14 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 }
 
 /***************************************************************************/
-/* @brief This function handles DMA1 channel 1 interrupt */
-extern DMA_HandleTypeDef hdma_usart2_rx;
+/* This function handles DMA1 channel 1 interrupt */
 void DMA1_Channel1_IRQHandler(void){
 	DMA_IRQHandler(P4);
 
 }
 
 /***************************************************************************/
-/* @brief This function handles DMA1 channel 2 and channel 3 interrupts */
+/* This function handles DMA1 channel 2 and channel 3 interrupts */
 void DMA1_Channel2_3_IRQHandler(void){
 	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET)
 		DMA_IRQHandler(P2);
@@ -192,7 +191,7 @@ void DMA1_Channel2_3_IRQHandler(void){
 }
 
 /***************************************************************************/
-/* @brief This function handles DMA1 Ch4 to Ch7, DMA2 Ch1 to Ch5 and DMAMUX1 Overrun Interrupts */
+/* This function handles DMA1 Ch4 to Ch7, DMA2 Ch1 to Ch5 and DMAMUX1 Overrun Interrupts */
 void DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler(void){
 	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET)
 		DMA_IRQHandler(P1);
@@ -202,8 +201,8 @@ void DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler(void){
 		DMA_IRQHandler(P3);
 
 }
-/*-----------------------------------------------------------*/
 
+/***************************************************************************/
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 	
@@ -211,8 +210,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	xSemaphoreGiveFromISR(PxTxSemaphoreHandle[GetPort(huart)],&(xHigherPriorityTaskWoken));
 }
 
-/*-----------------------------------------------------------*/
-
+/***************************************************************************/
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 	/* Set the UART state ready to be able to start the process again */
 	huart->gState =HAL_UART_STATE_READY;

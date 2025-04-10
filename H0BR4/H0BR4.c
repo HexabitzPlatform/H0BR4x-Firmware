@@ -19,6 +19,7 @@
 #include "LSM303AGR_APIS.h"
 #include <math.h>
 
+/* Exported Typedef ******************************************************/
 /* Define UART variables */
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -26,6 +27,12 @@ UART_HandleTypeDef huart3;
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart6;
+
+All_Data PortFunction;
+All_Data TerminalFunction;
+
+TimerHandle_t xTimerStream = NULL;
+TaskHandle_t IMU_TaskTaskHandle = NULL;
 
 extern stmdev_ctx_t dev_ctx;
 
@@ -55,7 +62,7 @@ float H0BR4_gyroX =0.0f;
 float H0BR4_gyroY =0.0f;
 float H0BR4_gyroZ =0.0f;
 
-/* Exported Typedef */
+/* Module Parameters */
 ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={
 	{.ParamPtr =&H0BR4_gyroX, .ParamFormat =FMT_FLOAT, .ParamName ="gyrox"},
 	{.ParamPtr =&H0BR4_gyroY, .ParamFormat =FMT_FLOAT, .ParamName ="gyroy"},
@@ -69,11 +76,6 @@ ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={
 	{.ParamPtr =&H0BR4_temp, .ParamFormat =FMT_FLOAT, .ParamName ="temp"},
 };
 
-All_Data PortFunction;
-All_Data TerminalFunction;
-
-TimerHandle_t xTimerStream = NULL;
-TaskHandle_t IMU_TaskTaskHandle = NULL;
 /* Private function prototypes *********************************************/
 uint8_t ClearROtopology(void);
 void Module_Peripheral_Init(void);
@@ -91,9 +93,6 @@ void SampleTempBuff(float *buffer);
 void SampleMagBuf(float *buffer);
 void SampleAccBuf(float *buffer);
 void SampleGyroBuf(float *buffer);
-
-void FLASH_Page_Eras(uint32_t Addr);
-void ExecuteMonitor(void);
 
 typedef void (*SampleToString)(char*,size_t);
 typedef void (*SampleMemsToBuffer)(float *buffer);
@@ -593,13 +592,6 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 }
 
 /***************************************************************************/
-/* Register this module CLI Commands */
-void RegisterModuleCLICommands(void){
-	FreeRTOS_CLIRegisterCommand(&SampleCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&StreamCommandDefinition);
-}
-
-/***************************************************************************/
 /* Get the port for a given UART */
 uint8_t GetPort(UART_HandleTypeDef *huart){
 
@@ -617,6 +609,12 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 		return P3;
 	
 	return 0;
+}
+/***************************************************************************/
+/* Register this module CLI Commands */
+void RegisterModuleCLICommands(void){
+	FreeRTOS_CLIRegisterCommand(&SampleCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&StreamCommandDefinition);
 }
 
 /***************************************************************************/

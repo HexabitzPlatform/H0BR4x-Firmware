@@ -55,9 +55,9 @@ void buttonDblClickedCallback(uint8_t port);
 /* Private ADC function prototypes *****************************************/
 void MX_ADC_Init(void);
 void Error_Handler(void);
-uint8_t Get_Rank(uint8_t Port,char *side);
-uint16_t Get_PIN(UART_HandleTypeDef *huart);
-uint32_t Get_channel(UART_HandleTypeDef *huart,char *side);
+uint8_t GetRank(uint8_t Port,char *side);
+uint16_t GetPIN(UART_HandleTypeDef *huart);
+uint32_t GetChannel(UART_HandleTypeDef *huart,char *side);
 
 /***************************************************************************/
 /* Private Functions *******************************************************/
@@ -133,7 +133,7 @@ void Error_Handler(void){
 
 /***************************************************************************/
 /* Get the ADC_channel Number for a given UART */
-uint32_t Get_channel(UART_HandleTypeDef *huart,char *side){
+uint32_t GetChannel(UART_HandleTypeDef *huart,char *side){
 
 	if(huart->Instance == USART2 && !strcmp(side,"top"))
 		return ADC_CHANNEL_2;
@@ -146,7 +146,7 @@ uint32_t Get_channel(UART_HandleTypeDef *huart,char *side){
 }
 
 /***************************************************************************/
-uint8_t Get_Rank(uint8_t Port,char *side){
+uint8_t GetRank(uint8_t Port,char *side){
 
 	if(Port == 2 && !strcmp(side,"top"))
 		adcChannelRank =0;
@@ -160,7 +160,7 @@ uint8_t Get_Rank(uint8_t Port,char *side){
 }
 
 /***************************************************************************/
-uint16_t Get_PIN(UART_HandleTypeDef *huart){
+uint16_t GetPIN(UART_HandleTypeDef *huart){
 
 	if(huart->Instance == USART2)
 		return GPIO_PIN_2;
@@ -568,8 +568,8 @@ void ADCSelectChannel(uint8_t ADC_port,char *side){
 		}
 		HAL_UART_DeInit(GetUart(ADC_port));
 		PortStatus[ADC_port] =CUSTOM;
-		Channel =Get_channel(GetUart(ADC_port),side);
-		adcChannelRank =Get_Rank(ADC_port,side);
+		Channel =GetChannel(GetUart(ADC_port),side);
+		adcChannelRank =GetRank(ADC_port,side);
 		if(adcEnableFlag == 0)
 			MX_ADC_Init();
 	}
@@ -581,8 +581,8 @@ void ReadADCChannel(uint8_t Port,char *side,float *ADC_Value){
 	if(adcEnableFlag == 1){
 
 		/* Enable chosen channel to be read */
-		Channel =Get_channel(GetUart(Port),side);
-		adcChannelRank =Get_Rank(Port,side);
+		Channel =GetChannel(GetUart(Port),side);
+		adcChannelRank =GetRank(Port,side);
 
 		sConfig.Channel =Channel;
 		sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
@@ -692,7 +692,7 @@ float GetReadPrecentage(uint8_t port,float *precentageValue){
 
 			}
 		}
-		Channel =Get_channel(GetUart(port),"bottom");
+		Channel =GetChannel(GetUart(port),"bottom");
 		sConfig.Channel =Channel;
 		sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
 		sConfig.SamplingTime = ADC_SAMPLETIME_7CYCLES_5;

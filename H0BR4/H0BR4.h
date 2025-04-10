@@ -119,6 +119,7 @@
 /* Macros definitions */
 #define STREAM_MODE_TO_PORT      1
 #define STREAM_MODE_TO_TERMINAL  2
+
 /* Module-specific Type Definition *****************************************/
 /* Module-status Type Definition */
 typedef enum {
@@ -153,7 +154,6 @@ extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 extern void SystemClock_Config(void);
-extern void ExecuteMonitor(void);
 
 /***************************************************************************/
 /***************************** General Functions ***************************/

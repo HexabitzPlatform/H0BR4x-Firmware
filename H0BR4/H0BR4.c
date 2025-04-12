@@ -454,7 +454,7 @@ uint8_t ClearROtopology(void){
 
 /***************************************************************************/
 /* Trigger ST factory bootloader update for a remote module */
-void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport){
+void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport){
 
 	uint8_t myOutport =0, lastModule =0;
 	int8_t *pcOutputString;
@@ -535,7 +535,7 @@ void Module_Peripheral_Init(void){
 	LSM303MagInit();
 
 	/* Circulating DMA Channels ON All Module */
-	for(int i =1; i <= NumOfPorts; i++){
+	for(int i =1; i <= NUM_OF_PORTS; i++){
 		if(GetUart(i) == &huart1){
 			dmaIndex[i - 1] =&(DMA1_Channel1->CNDTR);
 		}

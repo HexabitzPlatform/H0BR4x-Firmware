@@ -27,10 +27,10 @@
 #include "H0BR4_eeprom.h"
 
 /* Exported Macros *********************************************************/
-#define	modulePN		_H0BR4
+#define	MODULE_PN		_H0BR4
 
 /* Port-related Definitions */
-#define	NumOfPorts		6
+#define	NUM_OF_PORTS	6
 #define P_PROG 			P2		/* ST factory bootloader UART */
 
 /* Define Available Ports */
@@ -42,20 +42,20 @@
 #define _P6
 
 /* Define Available USARTs */
-#define _Usart1
-#define _Usart2
-#define _Usart3
-#define _Usart4
-#define _Usart5
-#define _Usart6
+#define _USART1
+#define _USART2
+#define _USART3
+#define _USART4
+#define _USART5
+#define _USART6
 
 /* Port-UART Mapping */
-#define P1uart &huart4
-#define P2uart &huart2
-#define P3uart &huart6
-#define P4uart &huart1
-#define P5uart &huart5
-#define P6uart &huart3
+#define UART_P1 &huart4
+#define UART_P2 &huart2
+#define UART_P3 &huart6
+#define UART_P4 &huart1
+#define UART_P5 &huart5
+#define UART_P6 &huart3
 
 /* Module-specific Hardware Definitions ************************************/
 /* Port Definitions */
@@ -174,7 +174,7 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
 
 void SetupPortForRemoteBootloaderUpdate(uint8_t port);
-void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
+void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
 #endif /* H0BR4_H */
 

@@ -44,42 +44,42 @@ BOS_Status SetupMessagingRxDMAs(void){
 
 #ifdef _P1
 	if(PortStatus[P1] == FREE){
-		if(BOS_OK != DMA_MSG_RX_Setup(P1uart,UARTDMAHandler[0]))
+		if(BOS_OK != DMA_MSG_RX_Setup(UART_P1,UARTDMAHandler[0]))
 			return Status =BOS_ERROR;
 	}
 #endif
 
 #ifdef _P2
 	if(PortStatus[P2] == FREE){
-		if(BOS_OK != DMA_MSG_RX_Setup(P2uart,UARTDMAHandler[1]))
+		if(BOS_OK != DMA_MSG_RX_Setup(UART_P2,UARTDMAHandler[1]))
 			return Status =BOS_ERROR;
 	}
 #endif
 
 #ifdef _P3	
 	if(PortStatus[P3] == FREE){
-		if(BOS_OK != DMA_MSG_RX_Setup(P3uart,UARTDMAHandler[2]))
+		if(BOS_OK != DMA_MSG_RX_Setup(UART_P3,UARTDMAHandler[2]))
 			return Status =BOS_ERROR;
 	}
 #endif
 
 #ifdef _P4		
 	if(PortStatus[P4] == FREE){
-		if(BOS_OK != DMA_MSG_RX_Setup(P4uart,UARTDMAHandler[3]))
+		if(BOS_OK != DMA_MSG_RX_Setup(UART_P4,UARTDMAHandler[3]))
 			return Status =BOS_ERROR;
 	}
 #endif
 
 #ifdef _P5		
 	if(PortStatus[P5] == FREE){
-		if(BOS_OK != DMA_MSG_RX_Setup(P5uart,UARTDMAHandler[4]))
+		if(BOS_OK != DMA_MSG_RX_Setup(UART_P5,UARTDMAHandler[4]))
 			return Status =BOS_ERROR;
 	}
 #endif
 
 #ifdef _P6
 	if(PortStatus[P6] == FREE){
-		if(BOS_OK != DMA_MSG_RX_Setup(P6uart,UARTDMAHandler[5]))
+		if(BOS_OK != DMA_MSG_RX_Setup(UART_P6,UARTDMAHandler[5]))
 			return Status =BOS_ERROR;
 	}
 #endif

@@ -16,11 +16,11 @@ bool NeedToDelayButtonStateReset = false;
 
 /* Private variables *******************************************************/
 /* Buttons */
-uint8_t dblCounter[NumOfPorts + 1] ={0};
-uint32_t PressCounter[NumOfPorts + 1] ={0};
-uint32_t ReleaseCounter[NumOfPorts + 1] ={0};
+uint8_t dblCounter[NUM_OF_PORTS + 1] ={0};
+uint32_t PressCounter[NUM_OF_PORTS + 1] ={0};
+uint32_t ReleaseCounter[NUM_OF_PORTS + 1] ={0};
 
-Button_t Button[NumOfPorts + 1] ={0};
+Button_t Button[NUM_OF_PORTS + 1] ={0};
 
 /* ADC */
 #define VREF_CAL   ((uint16_t *)((uint32_t)0x1ffff7BA))
@@ -177,7 +177,7 @@ void CheckAttachedButtons(void){
 	uint8_t connected =GPIO_PIN_RESET, state =0;
 	static uint8_t clicked;
 
-	for(uint8_t i =1; i <= NumOfPorts; i++){
+	for(uint8_t i =1; i <= NUM_OF_PORTS; i++){
 		/* Only check defined buttons */
 		if(Button[i].Type){
 			/* 1. Reset button state */
@@ -346,7 +346,7 @@ void CheckAttachedButtons(void){
 /* Reset state of attached buttons to avoid recurring callbacks */
 void ResetAttachedButtonStates(uint8_t *deferReset){
 	if(!*deferReset){
-		for(uint8_t i =1; i <= NumOfPorts; i++){
+		for(uint8_t i =1; i <= NUM_OF_PORTS; i++){
 			if(Button[i].State != NONE)
 				Button[i].State =NONE;
 		}
@@ -453,32 +453,32 @@ BOS_Status RemovePortButton(uint8_t port){
 	UART_HandleTypeDef *huart =GetUart(port);
 
 	if(huart->Instance == USART1){
-#ifdef _Usart1		
+#ifdef _USART1
 		MX_USART1_UART_Init();
 #endif
 	}
 	else if(huart->Instance == USART2){
-#ifdef _Usart2	
+#ifdef _USART2
 		MX_USART2_UART_Init();
 #endif
 	}
 	else if(huart->Instance == USART3){
-#ifdef _Usart3	
+#ifdef _USART3
 		MX_USART3_UART_Init();
 #endif
 	}
 	else if(huart->Instance == USART4){
-#ifdef _Usart4	
+#ifdef _USART4
 		MX_USART4_UART_Init();
 #endif
 	}
 	else if(huart->Instance == USART5){
-#ifdef _Usart5	
+#ifdef _USART5
 		MX_USART5_UART_Init();
 #endif
 	}
 	else if(huart->Instance == USART6){
-#ifdef _Usart6	
+#ifdef _USART6
 		MX_USART6_UART_Init();
 #endif
 	}

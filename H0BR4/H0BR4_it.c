@@ -77,7 +77,6 @@ void USART1_IRQHandler(void){
 	
 #if defined (_USART1)
 	HAL_UART_IRQHandler(&huart1);
-#endif
 
 	/* Fix problem stuck CPU in UART IRQhandler because of error on UART bus through use
 	 * HAL_UART_Transmit_IT() ,this prevented the TXFNFIE flag from being cleared which caused this problem
@@ -89,6 +88,8 @@ void USART1_IRQHandler(void){
 		/* Enable the UART Transmit Complete Interrupt */
 		ATOMIC_SET_BIT(huart1.Instance->CR1,USART_CR1_TCIE);
 	}
+#endif
+
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
 	 unblocked (higher priority) task is returned to immediately. */
@@ -102,7 +103,6 @@ void USART2_LPUART2_IRQHandler(void){
 	
 #if defined (_USART2)
 	HAL_UART_IRQHandler(&huart2);
-#endif
 	
 	if((READ_BIT(huart2.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart2.gState == HAL_UART_STATE_READY)){
 		/* Disable the UART Transmit Data Register Empty Interrupt */
@@ -111,6 +111,8 @@ void USART2_LPUART2_IRQHandler(void){
 		/* Enable the UART Transmit Complete Interrupt */
 		ATOMIC_SET_BIT(huart2.Instance->CR1,USART_CR1_TCIE);
 	}
+#endif
+
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
 	 unblocked (higher priority) task is returned to immediately. */
@@ -124,16 +126,6 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 	
 #if defined (_USART3)
 	HAL_UART_IRQHandler(&huart3);
-#endif
-#if defined (_USART4)
-	HAL_UART_IRQHandler(&huart4);
-#endif
-#if defined (_USART5)
-	HAL_UART_IRQHandler(&huart5);
-#endif
-#if defined (_USART6)
-	HAL_UART_IRQHandler(&huart6);
-#endif
 
 	if((READ_BIT(huart3.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart3.gState == HAL_UART_STATE_READY)){
 		/* Disable the UART Transmit Data Register Empty Interrupt */
@@ -142,30 +134,43 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 		/* Enable the UART Transmit Complete Interrupt */
 		ATOMIC_SET_BIT(huart3.Instance->CR1,USART_CR1_TCIE);
 	}
+#endif
 
-	else if((READ_BIT(huart4.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart4.gState == HAL_UART_STATE_READY)){
+#if defined (_USART4)
+	HAL_UART_IRQHandler(&huart4);
+
+	if((READ_BIT(huart4.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart4.gState == HAL_UART_STATE_READY)){
 		/* Disable the UART Transmit Data Register Empty Interrupt */
 		ATOMIC_CLEAR_BIT(huart4.Instance->CR1,USART_CR1_TXEIE_TXFNFIE);
 
 		/* Enable the UART Transmit Complete Interrupt */
 		ATOMIC_SET_BIT(huart4.Instance->CR1,USART_CR1_TCIE);
 	}
+#endif
 
-	else if((READ_BIT(huart5.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart5.gState == HAL_UART_STATE_READY)){
+#if defined (_USART5)
+	HAL_UART_IRQHandler(&huart5);
+
+	if((READ_BIT(huart5.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart5.gState == HAL_UART_STATE_READY)){
 		/* Disable the UART Transmit Data Register Empty Interrupt */
 		ATOMIC_CLEAR_BIT(huart5.Instance->CR1,USART_CR1_TXEIE_TXFNFIE);
 
 		/* Enable the UART Transmit Complete Interrupt */
 		ATOMIC_SET_BIT(huart5.Instance->CR1,USART_CR1_TCIE);
 	}
+#endif
 
-	else if((READ_BIT(huart6.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart6.gState == HAL_UART_STATE_READY)){
+#if defined (_USART6)
+	HAL_UART_IRQHandler(&huart6);
+
+	if((READ_BIT(huart6.Instance->CR1, USART_CR1_TXEIE_TXFNFIE) == USART_CR1_TXEIE_TXFNFIE_Msk) && (huart6.gState == HAL_UART_STATE_READY)){
 		/* Disable the UART Transmit Data Register Empty Interrupt */
 		ATOMIC_CLEAR_BIT(huart6.Instance->CR1,USART_CR1_TXEIE_TXFNFIE);
 
 		/* Enable the UART Transmit Complete Interrupt */
 		ATOMIC_SET_BIT(huart6.Instance->CR1,USART_CR1_TCIE);
 	}
+#endif
 
 	/* If lHigherPriorityTaskWoken is now equal to pdTRUE, then a context
 	 switch should be performed before the interrupt exists.  That ensures the
@@ -175,29 +180,43 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 
 /***************************************************************************/
 /* This function handles DMA1 channel 1 interrupt */
-void DMA1_Channel1_IRQHandler(void){
+void DMA1_Channel1_IRQHandler(void) {
+#if defined (_USART1)
 	DMA_IRQHandler(GetPort(&huart1));
-
+#endif
 }
 
 /***************************************************************************/
 /* This function handles DMA1 channel 2 and channel 3 interrupts */
-void DMA1_Channel2_3_IRQHandler(void){
-	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET)
+void DMA1_Channel2_3_IRQHandler(void) {
+#if defined (_USART2)
+	if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET)
 		DMA_IRQHandler(GetPort(&huart2));
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET)
+#endif
+
+#if defined (_USART3)
+	if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET)
 		DMA_IRQHandler(GetPort(&huart3));
+#endif
 }
 
 /***************************************************************************/
 /* This function handles DMA1 Ch4 to Ch7, DMA2 Ch1 to Ch5 and DMAMUX1 Overrun Interrupts */
-void DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler(void){
-	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET)
+void DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler(void) {
+#if defined (_USART4)
+	if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET)
 		DMA_IRQHandler(GetPort(&huart4));
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET)
+#endif
+
+#if defined (_USART5)
+	if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET)
 		DMA_IRQHandler(GetPort(&huart5));
-	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET)
+#endif
+
+#if defined (_USART6)
+	if (HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET)
 		DMA_IRQHandler(GetPort(&huart6));
+#endif
 
 }
 

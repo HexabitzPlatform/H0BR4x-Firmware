@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_gpio.c
@@ -7,10 +7,10 @@
 
  */
 
-/* Includes ------------------------------------------------------------------*/
+/* Includes ****************************************************************/
 #include "BOS.h"
 
-/*  */
+/* Local Variables *********************************************************/
 BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
 uint8_t IsFactoryReset(void);
 

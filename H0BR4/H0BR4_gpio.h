@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_gpio.h
@@ -22,6 +22,7 @@
 extern void GPIO_Init(void);
 extern void IND_LED_Init(void);
 extern void MEMS_GPIO_Init(void);
+
 #ifdef __cplusplus
 }
 #endif

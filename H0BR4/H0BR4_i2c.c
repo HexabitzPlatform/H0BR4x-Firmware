@@ -1,8 +1,8 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name          : H0AR9_i2c.c
+ File Name          : H0BR4_i2c.c
  Description        : This file provides code for the configuration
  of the I2C instances.
 

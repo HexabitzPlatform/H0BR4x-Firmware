@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_dma.c
@@ -28,9 +28,11 @@ __DMA2_CLK_ENABLE();
 /* DMA1_Channel1_IRQn interrupt configuration */
 HAL_NVIC_SetPriority(DMA1_Channel1_IRQn,0,0);
 HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+
 /* DMA1_Channel2_3_IRQn interrupt configuration */
 HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn,0,0);
 HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
+
 /* DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn interrupt configuration */
 HAL_NVIC_SetPriority(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn,0,0);
 HAL_NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQn);

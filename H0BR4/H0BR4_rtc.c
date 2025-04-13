@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2025 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_rtc.c
@@ -10,11 +10,12 @@
 /* Includes ****************************************************************/
 #include "BOS.h"
 
-/* Variables ***************************************************************/
-RTC_HandleTypeDef RtcHandle;
-
-extern const char *MonthStringAbreviated[];
+/* Local Variables *********************************************************/
 uint8_t BootStatus =POWER_ON_BOOT;
+
+/* Exported Variables ******************************************************/
+RTC_HandleTypeDef RtcHandle;
+extern const char *MonthStringAbreviated[];
 
 /* Private Functions Prototypes ********************************************/
 BOS_Status RTC_Init(void);

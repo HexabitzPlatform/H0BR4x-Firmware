@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2025 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H0BR4_it.c
@@ -10,8 +10,7 @@
 /* Includes ****************************************************************/
 #include "BOS.h"
 
-uint8_t temp_length[NUM_OF_PORTS] ={0};
-uint8_t temp_index[NUM_OF_PORTS] ={0};
+/* Local Variables *********************************************************/
 uint8_t *error_restart_message ="Restarting...\r\n";
 
 /* Exported Variables ******************************************************/
@@ -177,7 +176,7 @@ void USART3_4_5_6_LPUART1_IRQHandler(void){
 /***************************************************************************/
 /* This function handles DMA1 channel 1 interrupt */
 void DMA1_Channel1_IRQHandler(void){
-	DMA_IRQHandler(P4);
+	DMA_IRQHandler(GetPort(&huart1));
 
 }
 
@@ -185,20 +184,20 @@ void DMA1_Channel1_IRQHandler(void){
 /* This function handles DMA1 channel 2 and channel 3 interrupts */
 void DMA1_Channel2_3_IRQHandler(void){
 	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF2) == SET)
-		DMA_IRQHandler(P2);
+		DMA_IRQHandler(GetPort(&huart2));
 	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF3) == SET)
-		DMA_IRQHandler(P6);
+		DMA_IRQHandler(GetPort(&huart3));
 }
 
 /***************************************************************************/
 /* This function handles DMA1 Ch4 to Ch7, DMA2 Ch1 to Ch5 and DMAMUX1 Overrun Interrupts */
 void DMA1_Ch4_7_DMA2_Ch1_5_DMAMUX1_OVR_IRQHandler(void){
 	if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF4) == SET)
-		DMA_IRQHandler(P1);
+		DMA_IRQHandler(GetPort(&huart4));
 	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF5) == SET)
-		DMA_IRQHandler(P5);
+		DMA_IRQHandler(GetPort(&huart5));
 	else if(HAL_DMA_GET_IT_SOURCE(DMA1,DMA_ISR_GIF6) == SET)
-		DMA_IRQHandler(P3);
+		DMA_IRQHandler(GetPort(&huart6));
 
 }
 

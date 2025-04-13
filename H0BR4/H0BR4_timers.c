@@ -48,6 +48,7 @@ void MX_IWDG_Init(void){
 }
 
 /***************************************************************************/
+/* Micro-seconds timebase init function - TIM16 (16-bit) */
 void TIM_USEC_Init(void){
 	__TIM16_CLK_ENABLE();
 
@@ -65,7 +66,7 @@ void TIM_USEC_Init(void){
 }
 
 /***************************************************************************/
-/* Milli-seconds timebase init function - TIM15 (16-bit) */
+/* Milli-seconds timebase init function - TIM17 (16-bit) */
 void TIM_MSEC_Init(void){
 	
 	__TIM17_CLK_ENABLE();

@@ -46,7 +46,6 @@ BOS_Status SetButtonEvents(uint8_t port, ButtonState_e buttonState, uint8_t mode
 /* Private buttons function prototypes *************************************/
 BOS_Status CheckForTimedButtonPress(uint8_t port);
 BOS_Status CheckForTimedButtonRelease(uint8_t port);
-BOS_Status GetPortGPIOs(uint8_t port,uint32_t *TX_Port,uint16_t *TX_Pin,uint32_t *RX_Port,uint16_t *RX_Pin);
 void buttonPressedCallback(uint8_t port);
 void buttonReleasedCallback(uint8_t port);
 void buttonClickedCallback(uint8_t port);

@@ -24,7 +24,6 @@ void GPIO_Init(void){
 	__GPIOF_CLK_ENABLE();		/* for HSE and Boot0 */
 	
 	IND_LED_Init();
-	MEMS_GPIO_Init();
 }
 
 /***************************************************************************/
@@ -37,34 +36,6 @@ void IND_LED_Init(void){
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 	HAL_GPIO_Init(_IND_LED_PORT,&GPIO_InitStruct);
-}
-
-/***************************************************************************/
-void MEMS_GPIO_Init(void){
-// TODO: Enable INT pins and their interrupts.
-	GPIO_InitTypeDef GPIO_InitStruct;
-
-	/**I2C2 GPIO Configuration
-	 PB13     ------> I2C2_SCL
-	 PB14     ------> I2C2_SDA
-	 */
-
-	GPIO_InitStruct.Pin = _MEMS_I2C2_SCL_PIN;
-	GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
-	HAL_GPIO_Init(_MEMS_I2C2_SCL_PORT,&GPIO_InitStruct);
-
-	GPIO_InitStruct.Pin = _MEMS_I2C2_SDA_PIN;
-	HAL_GPIO_Init(_MEMS_I2C2_SDA_PORT,&GPIO_InitStruct);
-
-	/* Peripheral clock enable */
-	__HAL_RCC_I2C2_CLK_ENABLE();
-
-	/* I2C2 interrupt Init */
-	HAL_NVIC_SetPriority(I2C2_3_IRQn,0,0);
-	HAL_NVIC_EnableIRQ(I2C2_3_IRQn);
 }
 
 /***************************************************************************/

@@ -96,25 +96,23 @@
 #define	USART6_AF			GPIO_AF8_USART6
 
 /* Module-specific Hardware Definitions */
-#define _MEMS_I2C2_SDA_PORT       		  GPIOA
-#define _MEMS_I2C2_SDA_PIN                GPIO_PIN_6
-#define _MEMS_I2C2_SDA_GPIO_CLK()         __GPIOB_CLK_ENABLE();
-#define _MEMS_I2C2_SCL_PORT               GPIOA
-#define _MEMS_I2C2_SCL_PIN                GPIO_PIN_7
-#define _MEMS_I2C2_SCL_GPIO_CLK()         __GPIOB_CLK_ENABLE();
+#define MEMS_I2C_SDA_PORT   GPIOA
+#define MEMS_I2C_SDA_PIN    GPIO_PIN_6
+#define MEMS_I2C_SCL_PORT   GPIOA
+#define MEMS_I2C_SCL_PIN    GPIO_PIN_7
 
 /* Indicator LED */
-#define _IND_LED_PORT			GPIOB
-#define _IND_LED_PIN			GPIO_PIN_12
+#define _IND_LED_PORT		GPIOB
+#define _IND_LED_PIN		GPIO_PIN_12
 
 /* Module-specific Macro Definitions ***************************************/
-#define MOVEMENT_DETECTED       1    /* Macro for movement detected */
-#define INITIAL_IDLE_STATE      2    /* Macro for initial idle state */
-#define SENSITIVITY             0x03 /* Define the threshold for wake-up sensitivity */
+#define MOVEMENT_DETECTED        1    /* Macro for movement detected */
+#define INITIAL_IDLE_STATE       2    /* Macro for initial idle state */
+#define SENSITIVITY              0x03 /* Define the threshold for wake-up sensitivity */
 
-#define MIN_MEMS_PERIOD_MS		100
-#define MAX_MEMS_TIMEOUT_MS		0xFFFFFFFF
-#define NUM_MODULE_PARAMS		13
+#define MIN_MEMS_PERIOD_MS		 100
+#define MAX_MEMS_TIMEOUT_MS		 0xFFFFFFFF
+#define NUM_MODULE_PARAMS		 13
 
 /* Macros definitions */
 #define STREAM_MODE_TO_PORT      1

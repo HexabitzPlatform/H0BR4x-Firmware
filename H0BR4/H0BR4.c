@@ -529,8 +529,6 @@ void Module_Peripheral_Init(void){
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
 
-	GPIO_Init();
-	MEMS_GPIO_Init();
 	MX_I2C_Init();
 	LSM6DS3TR_C_Init();
 	LSM303MagInit();
@@ -567,22 +565,21 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 	uint32_t period =0, timeout =0;
 
 	switch(code){
-		case CODE_H0BR4_SAMPLE_GYRO: {
+		case CODE_H0BR4_SAMPLE_GYRO:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],GYRO);
 			break;
-		}
-		case CODE_H0BR4_SAMPLE_ACC: {
+
+		case CODE_H0BR4_SAMPLE_ACC:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],ACC);
 			break;
-		}
-		case CODE_H0BR4_SAMPLE_MAG: {
+
+		case CODE_H0BR4_SAMPLE_MAG:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],MAG);
 			break;
-		}
-		case CODE_H0BR4_SAMPLE_TEMP: {
+
+		case CODE_H0BR4_SAMPLE_TEMP:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],TEMP);
 			break;
-		}
 
 		default:
 			result =H0BR4_ERR_UnknownMessage;
@@ -627,6 +624,8 @@ void RegisterModuleCLICommands(void){
 Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
 	Module_Status status =BOS_OK;
 
+	int temp =0;
+
 	switch(paramIndex){
 		/* Sample gyroX */
 		case 1:
@@ -659,31 +658,25 @@ Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
 			break;
 
 			/* Sample magX (convert int to float) */
-		case 7: {
-			int temp =0;
+		case 7:
 			status =SampleMagMGauss(&temp,NULL,NULL);
 			if(status == BOS_OK)
 				*value =(float )temp;
 			break;
-		}
 
 			/* Sample magY (convert int to float) */
-		case 8: {
-			int temp =0;
+		case 8:
 			status =SampleMagMGauss(NULL,&temp,NULL);
 			if(status == BOS_OK)
 				*value =(float )temp;
 			break;
-		}
 
 			/* Sample magZ (convert int to float) */
-		case 9: {
-			int temp =0;
+		case 9:
 			status =SampleMagMGauss(NULL,NULL,&temp);
 			if(status == BOS_OK)
 				*value =(float )temp;
 			break;
-		}
 
 			/* Sample temperature in Celsius */
 		case 10:

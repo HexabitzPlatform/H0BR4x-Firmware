@@ -23,16 +23,8 @@ void MX_I2C2_Init(void);
 /***************************************************************************/
 /* Configure I2C ***********************************************************/
 /***************************************************************************/
-
-/** I2C Configuration
- */
+/* I2C Configuration */
 void MX_I2C_Init(void){
-	/* GPIO Ports Clock Enable */
-	__GPIOC_CLK_ENABLE();
-	__GPIOA_CLK_ENABLE();
-	__GPIOD_CLK_ENABLE();
-	__GPIOB_CLK_ENABLE();
-	__GPIOF_CLK_ENABLE();
 
 	MX_I2C2_Init();
 
@@ -59,6 +51,59 @@ void MX_I2C2_Init(void){
 
 	/** Configure Digital filter */
 	HAL_I2CEx_ConfigDigitalFilter(&hi2c2,0); // Digital filter set to 0 (disabled)
+}
+
+/***************************************************************************/
+
+void HAL_I2C_MspInit(I2C_HandleTypeDef *i2cHandle){
+
+	GPIO_InitTypeDef GPIO_InitStruct ={0};
+	RCC_PeriphCLKInitTypeDef PeriphClkInit ={0};
+	if(i2cHandle->Instance == I2C2){
+		PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C2;
+		PeriphClkInit.I2c2ClockSelection = RCC_I2C2CLKSOURCE_PCLK1;
+		HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
+
+		/* I2C2 GPIO Configuration
+		 PA7     ------> I2C2_SCL
+		 PA6     ------> I2C2_SDA
+		 */
+
+		GPIO_InitStruct.Pin = MEMS_I2C_SCL_PIN;
+		GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+		GPIO_InitStruct.Pull = GPIO_NOPULL;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+		GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
+		HAL_GPIO_Init(MEMS_I2C_SCL_PORT,&GPIO_InitStruct);
+
+		GPIO_InitStruct.Pin = MEMS_I2C_SDA_PIN;
+		HAL_GPIO_Init(MEMS_I2C_SDA_PORT,&GPIO_InitStruct);
+
+		/* Peripheral clock enable */
+		__HAL_RCC_I2C2_CLK_ENABLE();
+
+		/* I2C2 interrupt Init */
+		HAL_NVIC_SetPriority(I2C2_3_IRQn,0,0);
+		HAL_NVIC_EnableIRQ(I2C2_3_IRQn);
+	}
+}
+
+/***************************************************************************/
+
+void HAL_I2C_MspDeInit(I2C_HandleTypeDef *i2cHandle){
+
+	if(i2cHandle->Instance == I2C2){
+		/* Peripheral clock disable */
+		__HAL_RCC_I2C2_CLK_DISABLE();
+
+		/* I2C2 GPIO Configuration
+		 PA7     ------> I2C2_SCL
+		 PA6     ------> I2C2_SDA
+		 */
+		HAL_GPIO_DeInit(MEMS_I2C_SDA_PORT,MEMS_I2C_SDA_PIN);
+
+		HAL_GPIO_DeInit(MEMS_I2C_SCL_PORT,MEMS_I2C_SCL_PIN);
+	}
 }
 
 /***************************************************************************/

@@ -22,7 +22,7 @@
 extern I2C_HandleTypeDef hi2c2;
 
 /* Exported Functions ******************************************************/
-extern  void MX_I2C_Init(void);
+extern void MX_I2C_Init(void);
 extern void MX_I2C2_Init(void);
 
 #ifdef __cplusplus

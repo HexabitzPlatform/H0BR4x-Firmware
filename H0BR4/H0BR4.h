@@ -95,7 +95,7 @@
 #define	USART6_RX_PORT		GPIOA
 #define	USART6_AF			GPIO_AF8_USART6
 
-/* Module-specific Hardware Definitions */
+/* Module-specific Hardware Definitions ************************************/
 #define MEMS_I2C_SDA_PORT   GPIOA
 #define MEMS_I2C_SDA_PIN    GPIO_PIN_6
 #define MEMS_I2C_SCL_PORT   GPIOA

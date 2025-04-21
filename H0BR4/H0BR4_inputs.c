@@ -55,7 +55,6 @@ void buttonDblClickedCallback(uint8_t port);
 void MX_ADC_Init(void);
 void Error_Handler(void);
 uint8_t GetRank(uint8_t Port,char *side);
-uint16_t GetPIN(UART_HandleTypeDef *huart);
 uint32_t GetChannel(UART_HandleTypeDef *huart,char *side);
 
 /***************************************************************************/
@@ -156,15 +155,6 @@ uint8_t GetRank(uint8_t Port,char *side){
 	else if(Port == 3 && !strcmp(side,"bottom"))
 		adcChannelRank =3;
 	return adcChannelRank;
-}
-
-/***************************************************************************/
-uint16_t GetPIN(UART_HandleTypeDef *huart){
-
-	if(huart->Instance == USART2)
-		return GPIO_PIN_2;
-	else if(huart->Instance == USART6)
-		return GPIO_PIN_4;
 }
 
 /***************************************************************************/

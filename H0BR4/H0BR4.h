@@ -95,7 +95,7 @@
 #define	USART6_RX_PORT		GPIOA
 #define	USART6_AF			GPIO_AF8_USART6
 
-/* Module-specific Hardware Definitions ************************************/
+/* I2C Pin Definition */
 #define MEMS_I2C_SDA_PORT   GPIOA
 #define MEMS_I2C_SDA_PIN    GPIO_PIN_6
 #define MEMS_I2C_SCL_PORT   GPIOA
@@ -170,9 +170,6 @@ Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunc
 Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
-
-void SetupPortForRemoteBootloaderUpdate(uint8_t port);
-void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 
 #endif /* H0BR4_H */
 

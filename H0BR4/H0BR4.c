@@ -37,9 +37,8 @@ TaskHandle_t IMU_TaskTaskHandle = NULL;
 extern stmdev_ctx_t dev_ctx;
 
 /* Private Variables *******************************************************/
-static bool stopStream = false;
-
 /* Streaming variables */
+static bool stopStream = false;
 uint8_t PortModule =0u;
 uint8_t PortNumber =0u;
 uint8_t StreamMode =0u;
@@ -51,6 +50,7 @@ uint32_t TerminalTimeout =0u;
 uint32_t PortNumOfSamples =0u;
 uint32_t TerminalNumOfSamples =0u;
 
+/* Global variables for sensor data used in ModuleParam */
 int H0BR4_magX =0.0f;
 int H0BR4_magY =0.0f;
 int H0BR4_magZ =0.0f;
@@ -76,6 +76,10 @@ ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={
 	{.ParamPtr =&H0BR4_temp, .ParamFormat =FMT_FLOAT, .ParamName ="temp"},
 };
 
+/* Local Typedef related to stream functions */
+typedef void (*SampleToString)(char*,size_t);
+typedef void (*SampleMemsToBuffer)(float *buffer);
+
 /* Private function prototypes *********************************************/
 uint8_t ClearROtopology(void);
 void Module_Peripheral_Init(void);
@@ -84,6 +88,7 @@ void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_t dst,uint8_t shift);
 
 /* Local function prototypes ***********************************************/
+/* Stream Functions */
 void StreamTimeCallback(TimerHandle_t xTimerStream);
 
 void SampleGyroDPSToString(char *cstring,size_t maxLen);
@@ -95,9 +100,6 @@ void SampleTempBuff(float *buffer);
 void SampleMagBuf(float *buffer);
 void SampleAccBuf(float *buffer);
 void SampleGyroBuf(float *buffer);
-
-typedef void (*SampleToString)(char*,size_t);
-typedef void (*SampleMemsToBuffer)(float *buffer);
 
 Module_Status SampleToTerminal(uint8_t dstPort,All_Data dataFunction);
 static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples);

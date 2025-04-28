@@ -69,15 +69,15 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef *i2cHandle){
 		 PA6     ------> I2C2_SDA
 		 */
 
-		GPIO_InitStruct.Pin = MEMS_I2C_SCL_PIN;
+		GPIO_InitStruct.Pin = I2C_SCL_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 		GPIO_InitStruct.Alternate = GPIO_AF8_I2C2;
-		HAL_GPIO_Init(MEMS_I2C_SCL_PORT,&GPIO_InitStruct);
+		HAL_GPIO_Init(I2C_SCL_PORT,&GPIO_InitStruct);
 
-		GPIO_InitStruct.Pin = MEMS_I2C_SDA_PIN;
-		HAL_GPIO_Init(MEMS_I2C_SDA_PORT,&GPIO_InitStruct);
+		GPIO_InitStruct.Pin = I2C_SDA_PIN;
+		HAL_GPIO_Init(I2C_SDA_PORT,&GPIO_InitStruct);
 
 		/* Peripheral clock enable */
 		__HAL_RCC_I2C2_CLK_ENABLE();
@@ -100,9 +100,9 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef *i2cHandle){
 		 PA7     ------> I2C2_SCL
 		 PA6     ------> I2C2_SDA
 		 */
-		HAL_GPIO_DeInit(MEMS_I2C_SDA_PORT,MEMS_I2C_SDA_PIN);
+		HAL_GPIO_DeInit(I2C_SDA_PORT,I2C_SDA_PIN);
 
-		HAL_GPIO_DeInit(MEMS_I2C_SCL_PORT,MEMS_I2C_SCL_PIN);
+		HAL_GPIO_DeInit(I2C_SCL_PORT,I2C_SCL_PIN);
 	}
 }
 

@@ -190,7 +190,6 @@ void MX_USART6_UART_Init(void){
 
 /***************************************************************************/
 void HAL_UART_MspInit(UART_HandleTypeDef *huart){
-	
 	GPIO_InitTypeDef GPIO_InitStruct ={0};
 	RCC_PeriphCLKInitTypeDef PeriphClkInit ={0};
 
@@ -204,15 +203,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		__HAL_RCC_USART1_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 
-		GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_10;
+		GPIO_InitStruct.Pin = USART1_TX_PIN | USART1_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-		GPIO_InitStruct.Alternate = GPIO_AF1_USART1;
-		HAL_GPIO_Init(GPIOA,&GPIO_InitStruct);
+		GPIO_InitStruct.Alternate = USART1_AF;
+		HAL_GPIO_Init(USART1_TX_PORT,&GPIO_InitStruct);
 
 		/* USART1 DMA Init */
-		/* USART1_RX Init */
 		hdma_usart1_rx.Instance = DMA1_Channel1;
 		hdma_usart1_rx.Init.Request = DMA_REQUEST_USART1_RX;
 		hdma_usart1_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -223,14 +221,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart1_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart1_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[(GetPort(huart)-1)] =&hdma_usart1_rx;
+		UARTDMAHandler[(GetPort(huart) - 1)] =&hdma_usart1_rx;
 
 		HAL_DMA_Init(&hdma_usart1_rx);
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart1_rx);
 
 		HAL_NVIC_SetPriority(USART1_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART1_IRQn);
-
 #endif
 	}
 	else if(huart->Instance == USART2){
@@ -243,15 +240,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		__HAL_RCC_USART2_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 
-		GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+		GPIO_InitStruct.Pin = USART2_TX_PIN | USART2_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-		GPIO_InitStruct.Alternate = GPIO_AF1_USART2;
-		HAL_GPIO_Init(GPIOA,&GPIO_InitStruct);
+		GPIO_InitStruct.Alternate = USART2_AF;
+		HAL_GPIO_Init(USART2_TX_PORT,&GPIO_InitStruct);
 
 		/* USART2 DMA Init */
-		/* USART2_RX Init */
 		hdma_usart2_rx.Instance = DMA1_Channel2;
 		hdma_usart2_rx.Init.Request = DMA_REQUEST_USART2_RX;
 		hdma_usart2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -262,14 +258,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart2_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[(GetPort(huart)-1)] =&hdma_usart2_rx;
+		UARTDMAHandler[(GetPort(huart) - 1)] =&hdma_usart2_rx;
 
 		HAL_DMA_Init(&hdma_usart2_rx);
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart2_rx);
 
 		HAL_NVIC_SetPriority(USART2_LPUART2_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART2_LPUART2_IRQn);
-
 #endif
 	}
 	else if(huart->Instance == USART3){
@@ -282,15 +277,14 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		__HAL_RCC_USART3_CLK_ENABLE();
 		__HAL_RCC_GPIOB_CLK_ENABLE();
 
-		GPIO_InitStruct.Pin = GPIO_PIN_8 | GPIO_PIN_9;
+		GPIO_InitStruct.Pin = USART3_TX_PIN | USART3_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-		GPIO_InitStruct.Alternate = GPIO_AF4_USART3;
-		HAL_GPIO_Init(GPIOB,&GPIO_InitStruct);
+		GPIO_InitStruct.Alternate = USART3_AF;
+		HAL_GPIO_Init(USART3_TX_PORT,&GPIO_InitStruct);
 
 		/* USART3 DMA Init */
-		/* USART3_RX Init */
 		hdma_usart3_rx.Instance = DMA1_Channel3;
 		hdma_usart3_rx.Init.Request = DMA_REQUEST_USART3_RX;
 		hdma_usart3_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -301,32 +295,29 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart3_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart3_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[(GetPort(huart)-1)] =&hdma_usart3_rx;
+		UARTDMAHandler[(GetPort(huart) - 1)] =&hdma_usart3_rx;
 
 		HAL_DMA_Init(&hdma_usart3_rx);
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart3_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
-
 #endif
 	}
 	else if(huart->Instance == USART4){
 #ifdef _USART4
-
 		/* USART4 clock enable */
 		__HAL_RCC_USART4_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 
-		GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1;
+		GPIO_InitStruct.Pin = USART4_TX_PIN | USART4_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-		GPIO_InitStruct.Alternate = GPIO_AF4_USART4;
-		HAL_GPIO_Init(GPIOA,&GPIO_InitStruct);
+		GPIO_InitStruct.Alternate = USART4_AF;
+		HAL_GPIO_Init(USART4_TX_PORT,&GPIO_InitStruct);
 
 		/* USART4 DMA Init */
-		/* USART4_RX Init */
 		hdma_usart4_rx.Instance = DMA1_Channel4;
 		hdma_usart4_rx.Init.Request = DMA_REQUEST_USART4_RX;
 		hdma_usart4_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -337,32 +328,29 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart4_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart4_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[(GetPort(huart)-1)] =&hdma_usart4_rx;
+		UARTDMAHandler[(GetPort(huart) - 1)] =&hdma_usart4_rx;
 
 		HAL_DMA_Init(&hdma_usart4_rx);
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart4_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,1,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
-
 #endif
 	}
 	else if(huart->Instance == USART5){
 #ifdef _USART5
-
 		/* USART5 clock enable */
 		__HAL_RCC_USART5_CLK_ENABLE();
 		__HAL_RCC_GPIOD_CLK_ENABLE();
 
-		GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+		GPIO_InitStruct.Pin = USART5_TX_PIN | USART5_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-		GPIO_InitStruct.Alternate = GPIO_AF3_USART5;
-		HAL_GPIO_Init(GPIOD,&GPIO_InitStruct);
+		GPIO_InitStruct.Alternate = USART5_AF;
+		HAL_GPIO_Init(USART5_TX_PORT,&GPIO_InitStruct);
 
 		/* USART5 DMA Init */
-		/* USART5_RX Init */
 		hdma_usart5_rx.Instance = DMA1_Channel5;
 		hdma_usart5_rx.Init.Request = DMA_REQUEST_USART5_RX;
 		hdma_usart5_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -373,32 +361,29 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart5_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart5_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[(GetPort(huart)-1)] =&hdma_usart5_rx;
+		UARTDMAHandler[(GetPort(huart) - 1)] =&hdma_usart5_rx;
 
 		HAL_DMA_Init(&hdma_usart5_rx);
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart5_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
-
 #endif
 	}
 	else if(huart->Instance == USART6){
 #ifdef _USART6
-
 		/* USART6 clock enable */
 		__HAL_RCC_USART6_CLK_ENABLE();
 		__HAL_RCC_GPIOA_CLK_ENABLE();
 
-		GPIO_InitStruct.Pin = GPIO_PIN_4 | GPIO_PIN_5;
+		GPIO_InitStruct.Pin = USART6_TX_PIN | USART6_RX_PIN;
 		GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-		GPIO_InitStruct.Alternate = GPIO_AF3_USART6;
-		HAL_GPIO_Init(GPIOA,&GPIO_InitStruct);
+		GPIO_InitStruct.Alternate = USART6_AF;
+		HAL_GPIO_Init(USART6_TX_PORT,&GPIO_InitStruct);
 
 		/* USART6 DMA Init */
-		/* USART6_RX Init */
 		hdma_usart6_rx.Instance = DMA1_Channel6;
 		hdma_usart6_rx.Init.Request = DMA_REQUEST_USART6_RX;
 		hdma_usart6_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -409,18 +394,17 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart){
 		hdma_usart6_rx.Init.Mode = DMA_CIRCULAR;
 		hdma_usart6_rx.Init.Priority = DMA_PRIORITY_LOW;
 
-		UARTDMAHandler[(GetPort(huart)-1)] =&hdma_usart6_rx;
+		UARTDMAHandler[(GetPort(huart) - 1)] =&hdma_usart6_rx;
 
 		HAL_DMA_Init(&hdma_usart6_rx);
 		__HAL_LINKDMA(huart,hdmarx,hdma_usart6_rx);
 
 		HAL_NVIC_SetPriority(USART3_4_5_6_LPUART1_IRQn,0,0);
 		HAL_NVIC_EnableIRQ(USART3_4_5_6_LPUART1_IRQn);
-
 #endif
 	}
-}
 
+}
 /***************************************************************************/
 /* Blocking (polling-based) read protected with a semaphore */
 HAL_StatusTypeDef readPxMutex(uint8_t port,char *buffer,uint16_t n,uint32_t mutexTimeout,uint32_t portTimeout){

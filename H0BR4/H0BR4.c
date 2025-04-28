@@ -38,17 +38,15 @@ extern stmdev_ctx_t dev_ctx;
 
 /* Private Variables *******************************************************/
 /* Streaming variables */
-static bool stopStream = false;
-uint8_t PortModule =0u;
-uint8_t PortNumber =0u;
-uint8_t StreamMode =0u;
-uint8_t TerminalPort =0u;
-uint8_t StopeCliStreamFlag =0u;
-uint32_t PortSamples =0u;
-uint32_t SampleCount =0u;
-uint32_t TerminalTimeout =0u;
-uint32_t PortNumOfSamples =0u;
-uint32_t TerminalNumOfSamples =0u;
+static bool stopStream = false;         /* Flag to indicate whether to stop streaming process */
+uint8_t PortModule = 0u;                /* Module ID for the destination port */
+uint8_t PortNumber = 0u;                /* Physical port number used for streaming */
+uint8_t StreamMode = 0u;                /* Current active streaming mode (to port, terminal, etc.) */
+uint8_t TerminalPort = 0u;              /* Port number used to output data to a terminal */
+uint8_t StopeCliStreamFlag = 0u;        /* Flag to request stopping a CLI stream operation */
+uint32_t SampleCount = 0u;              /* Counter to track the number of samples streamed */
+uint32_t PortNumOfSamples = 0u;         /* Total number of samples to be sent through the port */
+uint32_t TerminalNumOfSamples = 0u;     /* Total number of samples to be streamed to the terminal */
 
 /* Global variables for sensor data used in ModuleParam */
 int H0BR4_magX =0.0f;
@@ -78,7 +76,7 @@ ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={
 
 /* Local Typedef related to stream functions */
 typedef void (*SampleToString)(char*,size_t);
-typedef void (*SampleMemsToBuffer)(float *buffer);
+typedef void (*SampleToBuffer)(float *buffer);
 
 /* Private function prototypes *********************************************/
 uint8_t ClearROtopology(void);
@@ -104,7 +102,7 @@ void SampleGyroBuf(float *buffer);
 Module_Status SampleToTerminal(uint8_t dstPort,All_Data dataFunction);
 static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples);
 static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function);
-static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function);
+static Module_Status StreamToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleToBuffer function);
 
 /* Create CLI commands *****************************************************/
 static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString);
@@ -699,27 +697,25 @@ Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
 /***************************************************************************/
 /****************************** Local Functions ****************************/
 /***************************************************************************/
-/* Streams MEMS sensor data to a buffer.
+/* Streams sensor data to a buffer.
  * buffer: Pointer to the buffer where data will be stored.
  * Numofsamples: Number of samples to take.
  * timeout: Timeout period for the operation.
  * function: Function pointer to the sampling function (e.g., SampleAccBuf, SampleGyroBuf).
  */
-static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function){
+static Module_Status StreamToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleToBuffer function){
 	Module_Status status =H0BR4_OK;
 	uint16_t StreamIndex =0;
 	uint32_t period =timeout / Numofsamples;
 
 	/* Check if the calculated period is valid */
-	if(period < MIN_MEMS_PERIOD_MS)
+	if(period < MIN_PERIOD_MS)
 		return H0BR4_ERR_WrongParams;
 
-	timeout =period;
-	long numTimes =timeout / period;
 	stopStream = false;
 
 	/* Stream data to buffer */
-	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+	while((Numofsamples-- > 0) || (timeout >= MAX_TIMEOUT_MS)){
 		if(function == SampleTempBuff){
 			float sample;
 			function(&sample);
@@ -795,7 +791,7 @@ void SampleTempBuff(float *buffer){
 }
 
 /***************************************************************************/
-/* Streams MEMS sensor data to the CLI (Command Line Interface).
+/* Streams sensor data to the CLI (Command Line Interface).
  * Numofsamples: Number of samples to take.
  * timeout: Timeout period for the operation.
  * function: Function pointer to the sampling function (e.g., SampleAccGToString, SampleGyroDPSToString).
@@ -806,7 +802,7 @@ static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleTo
 	uint32_t period =timeout / Numofsamples; /* Calculate the period for each sample */
 
 	/* Check if the calculated period is valid */
-	if(period < MIN_MEMS_PERIOD_MS)
+	if(period < MIN_PERIOD_MS)
 		return H0BR4_ERR_WrongParams;
 
 	/* Check if CLI is enabled */
@@ -832,7 +828,7 @@ static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleTo
 	stopStream = false;
 
 	/* Stream data to CLI */
-	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+	while((numTimes-- > 0) || (timeout >= MAX_TIMEOUT_MS)){
 		pcOutputString =FreeRTOS_CLIGetOutputBuffer(); /* Get output buffer for CLI */
 		function((char* )pcOutputString,100); /* Call the sampling function to get data */
 		writePxMutex(pcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY);
@@ -1355,16 +1351,16 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 Module_Status StreamToBuffer(float *buffer,All_Data function,uint32_t Numofsamples,uint32_t timeout){
 	switch(function){
 		case ACC:
-			return StreamMemsToBuf(buffer,Numofsamples,timeout,SampleAccBuf);
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleAccBuf);
 			break;
 		case GYRO:
-			return StreamMemsToBuf(buffer,Numofsamples,timeout,SampleGyroBuf);
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleGyroBuf);
 			break;
 		case MAG:
-			return StreamMemsToBuf(buffer,Numofsamples,timeout,SampleMagBuf);
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleMagBuf);
 			break;
 		case TEMP:
-			return StreamMemsToBuf(buffer,Numofsamples,timeout,SampleTempBuff);
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleTempBuff);
 			break;
 		default:
 			break;
@@ -1441,7 +1437,6 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 	StreamMode = STREAM_MODE_TO_TERMINAL;
 	TerminalPort =dstPort;
 	TerminalFunction =dataFunction;
-	TerminalTimeout =streamTimeout;
 	TerminalNumOfSamples =numOfSamples;
 
 	/* Calculate the period from timeout and number of samples */

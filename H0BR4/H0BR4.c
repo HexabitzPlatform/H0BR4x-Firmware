@@ -99,6 +99,7 @@ void SampleMagBuf(float *buffer);
 void SampleAccBuf(float *buffer);
 void SampleGyroBuf(float *buffer);
 
+/* CLI Stream related Functions */
 Module_Status SampleToTerminal(uint8_t dstPort,All_Data dataFunction);
 static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples);
 static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function);
@@ -1382,9 +1383,8 @@ Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 	uint32_t SamplePeriod =0u;
 
 	/* Check timer handle and timeout validity */
-	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)){
+	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples))
 		return H0BR4_ERROR; /* Assuming H0BR4_ERROR is defined in Module_Status */
-	}
 
 	/* Set streaming parameters */
 	StreamMode = STREAM_MODE_TO_PORT;
@@ -1398,20 +1398,17 @@ Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 
 	/* Stop (Reset) the TimerStream if it's already running */
 	if(xTimerIsTimerActive(xTimerStream)){
-		if(pdFAIL == xTimerStop(xTimerStream,100)){
+		if(pdFAIL == xTimerStop(xTimerStream,100))
 			return H0BR4_ERROR;
-		}
 	}
 
 	/* Start the stream timer */
-	if(pdFAIL == xTimerStart(xTimerStream,100)){
+	if(pdFAIL == xTimerStart(xTimerStream,100))
 		return H0BR4_ERROR;
-	}
 
 	/* Update timer timeout - This also restarts the timer */
-	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100)){
+	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100))
 		return H0BR4_ERROR;
-	}
 
 	return Status;
 }
@@ -1429,9 +1426,8 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 	Module_Status Status =H0BR4_OK;
 	uint32_t SamplePeriod =0u;
 	/* Check timer handle and timeout validity */
-	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)){
+	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples))
 		return H0BR4_ERROR; /* Assuming H0BR4_ERROR is defined in Module_Status */
-	}
 
 	/* Set streaming parameters */
 	StreamMode = STREAM_MODE_TO_TERMINAL;
@@ -1444,20 +1440,17 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 
 	/* Stop (Reset) the TimerStream if it's already running */
 	if(xTimerIsTimerActive(xTimerStream)){
-		if(pdFAIL == xTimerStop(xTimerStream,100)){
+		if(pdFAIL == xTimerStop(xTimerStream,100))
 			return H0BR4_ERROR;
-		}
 	}
 
 	/* Start the stream timer */
-	if(pdFAIL == xTimerStart(xTimerStream,100)){
+	if(pdFAIL == xTimerStart(xTimerStream,100))
 		return H0BR4_ERROR;
-	}
 
 	/* Update timer timeout - This also restarts the timer */
-	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100)){
+	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100))
 		return H0BR4_ERROR;
-	}
 
 	return Status;
 }

@@ -96,10 +96,10 @@
 #define	USART6_AF			GPIO_AF8_USART6
 
 /* I2C Pin Definition */
-#define I2C_SDA_PORT   GPIOA
-#define I2C_SDA_PIN    GPIO_PIN_6
-#define I2C_SCL_PORT   GPIOA
-#define I2C_SCL_PIN    GPIO_PIN_7
+#define I2C_SDA_PORT        GPIOA
+#define I2C_SDA_PIN         GPIO_PIN_6
+#define I2C_SCL_PORT        GPIOA
+#define I2C_SCL_PIN         GPIO_PIN_7
 
 /* Indicator LED */
 #define _IND_LED_PORT		GPIOB
@@ -110,8 +110,8 @@
 #define INITIAL_IDLE_STATE       2    /* Macro for initial idle state */
 #define SENSITIVITY              0x03 /* Define the threshold for wake-up sensitivity */
 
-#define MIN_PERIOD_MS		 100
-#define MAX_TIMEOUT_MS		 0xFFFFFFFF
+#define MIN_PERIOD_MS		     100
+#define MAX_TIMEOUT_MS		     0xFFFFFFFF
 #define NUM_MODULE_PARAMS		 13
 
 /* Macros definitions */

@@ -1,34 +1,35 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : main.c
  Description   : Main program body.
  */
-/* Includes ------------------------------------------------------------------*/
+
+/* Includes ****************************************************************/
 #include "BOS.h"
 
-/* Private variables ---------------------------------------------------------*/
+/* Private variables *******************************************************/
 uint8_t TempBuffer[100];
 uint16_t Index11;
 
 uint8_t var = 0;
-varFormat_t format;
-/* Private function prototypes -----------------------------------------------*/
+VariableFormat_t format;
+/* Private Function Prototypes *********************************************/
 
-/* Main function ------------------------------------------------------------*/
 
+/* Main Function ***********************************************************/
 int main(void) {
 
-	Module_Init();		//Initialize Module &  BitzOS
+	/* Initialize Module &  BitzOS */
+	Module_Init();
 
-	//Don't place your code here.
+	/* Don't place your code here */
 	for (;;) {
 	}
 }
 
-/*-----------------------------------------------------------*/
-
+/***************************************************************************/
 /* User Task */
 void UserTask(void *argument) {
 
@@ -40,10 +41,18 @@ void UserTask(void *argument) {
 //StreamMemoryToPort(3, 4, (uint8_t *)TempBuffer, 100, 0xffffff, 0); // ok
 //StreamMemoryToMemory(4, uint8_t *pBuffer, 100, 0xffffff, 0);
 
+//	SwapUartPins(GetUart(P1),REVERSED);
+//	SwapUartPins(GetUart(P2),REVERSED);
+//	SwapUartPins(GetUart(P3),REVERSED);
+//	SwapUartPins(GetUart(P4),REVERSED);
+//	SwapUartPins(GetUart(P5),REVERSED);
+//	SwapUartPins(GetUart(P6),REVERSED);
 
+//	AddButton(P3, MOMENTARY_NO, CLICKED);
 
 	// put your code here, to run repeatedly.
 	while (1) {
+
 /* Problem 1: */
 ///* when using 0xffffff for data count the module is being reset */
 //		for (uint8_t i = 1 ; i<= 100 ; i++) {
@@ -54,21 +63,17 @@ void UserTask(void *argument) {
 //
 //		}
 
-//		SendMessageToModule(2, CODE_PING, 0);
-//		HAL_Delay(500);
-
-
-//		SampleTempCelsius(&TempBuffer[Index11]);
-//		HAL_Delay(50);
-//		Index11++;
-//		if(Index11 > 100)
-//			Index11 =0;
-
-
-//	var = *(uint8_t *) ReadRemoteVar (2, 1, &format, 1000);
-//	HAL_Delay(500);
-
 	}
 }
 
-/*-----------------------------------------------------------*/
+//void buttonClickedCallback(uint8_t port){
+//	uint8_t A =0;
+//	A++;
+//}
+
+//void buttonDblClickedCallback(uint8_t port) {
+//	uint8_t A =0;
+//	A++;
+//}
+/***************************************************************************/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

@@ -1,5 +1,5 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
  
  File Name     : H0BR4.h
@@ -27,10 +27,10 @@
 #include "H0BR4_eeprom.h"
 
 /* Exported Macros *********************************************************/
-#define	modulePN		_H0BR4
+#define	MODULE_PN		_H0BR4
 
 /* Port-related Definitions */
-#define	NumOfPorts		6
+#define	NUM_OF_PORTS	6
 #define P_PROG 			P2		/* ST factory bootloader UART */
 
 /* Define Available Ports */
@@ -42,20 +42,20 @@
 #define _P6
 
 /* Define Available USARTs */
-#define _Usart1
-#define _Usart2
-#define _Usart3
-#define _Usart4
-#define _Usart5
-#define _Usart6
+#define _USART1
+#define _USART2
+#define _USART3
+#define _USART4
+#define _USART5
+#define _USART6
 
 /* Port-UART Mapping */
-#define P1uart &huart4
-#define P2uart &huart2
-#define P3uart &huart6
-#define P4uart &huart1
-#define P5uart &huart5
-#define P6uart &huart3
+#define UART_P1 &huart4
+#define UART_P2 &huart2
+#define UART_P3 &huart6
+#define UART_P4 &huart1
+#define UART_P5 &huart5
+#define UART_P6 &huart3
 
 /* Module-specific Hardware Definitions ************************************/
 /* Port Definitions */
@@ -95,30 +95,29 @@
 #define	USART6_RX_PORT		GPIOA
 #define	USART6_AF			GPIO_AF8_USART6
 
-/* Module-specific Hardware Definitions */
-#define _MEMS_I2C2_SDA_PORT       		  GPIOA
-#define _MEMS_I2C2_SDA_PIN                GPIO_PIN_6
-#define _MEMS_I2C2_SDA_GPIO_CLK()         __GPIOB_CLK_ENABLE();
-#define _MEMS_I2C2_SCL_PORT               GPIOA
-#define _MEMS_I2C2_SCL_PIN                GPIO_PIN_7
-#define _MEMS_I2C2_SCL_GPIO_CLK()         __GPIOB_CLK_ENABLE();
+/* I2C Pin Definition */
+#define I2C_SDA_PORT        GPIOA
+#define I2C_SDA_PIN         GPIO_PIN_6
+#define I2C_SCL_PORT        GPIOA
+#define I2C_SCL_PIN         GPIO_PIN_7
 
 /* Indicator LED */
-#define _IND_LED_PORT			GPIOB
-#define _IND_LED_PIN			GPIO_PIN_12
+#define _IND_LED_PORT		GPIOB
+#define _IND_LED_PIN		GPIO_PIN_12
 
 /* Module-specific Macro Definitions ***************************************/
-#define MOVEMENT_DETECTED       1    /* Macro for movement detected */
-#define INITIAL_IDLE_STATE      2    /* Macro for initial idle state */
-#define SENSITIVITY             0x03 /* Define the threshold for wake-up sensitivity */
+#define MOVEMENT_DETECTED        1    /* Macro for movement detected */
+#define INITIAL_IDLE_STATE       2    /* Macro for initial idle state */
+#define SENSITIVITY              0x03 /* Define the threshold for wake-up sensitivity */
 
-#define MIN_MEMS_PERIOD_MS		100
-#define MAX_MEMS_TIMEOUT_MS		0xFFFFFFFF
-#define NUM_MODULE_PARAMS		13
+#define MIN_PERIOD_MS		     100
+#define MAX_TIMEOUT_MS		     0xFFFFFFFF
+#define NUM_MODULE_PARAMS		 13
 
 /* Macros definitions */
 #define STREAM_MODE_TO_PORT      1
 #define STREAM_MODE_TO_TERMINAL  2
+
 /* Module-specific Type Definition *****************************************/
 /* Module-status Type Definition */
 typedef enum {
@@ -153,7 +152,6 @@ extern void MX_USART4_UART_Init(void);
 extern void MX_USART5_UART_Init(void);
 extern void MX_USART6_UART_Init(void);
 extern void SystemClock_Config(void);
-extern void ExecuteMonitor(void);
 
 /***************************************************************************/
 /***************************** General Functions ***************************/
@@ -173,17 +171,6 @@ Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t numOfSamples,uint32_t streamTimeout);
 Module_Status StreamToBuffer(float *buffer,All_Data function, uint32_t Numofsamples, uint32_t timeout);
 
-void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16_t *Z_offset);
-
-void SetupPortForRemoteBootloaderUpdate(uint8_t port);
-void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
-
-/* -----------------------------------------------------------------------
- |								Commands							      |															 	|
-/* -----------------------------------------------------------------------
- */
-
-
 #endif /* H0BR4_H */
 
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

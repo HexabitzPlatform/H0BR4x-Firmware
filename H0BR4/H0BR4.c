@@ -1,15 +1,15 @@
 /*
- BitzOS (BOS) V0.3.6 - Copyright (C) 2017-2024 Hexabitz
+ BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
  File Name     : H0BR4.c
  Description   : Source code for module H0BR4.
- 	 	 	 	 (Description_of_module)
+ (Description_of_module)
 
-(Description of Special module peripheral configuration):
->>
->>
->>
+ (Description of Special module peripheral configuration):
+ >>
+ >>
+ >>
  */
 
 /* Includes ****************************************************************/
@@ -19,6 +19,7 @@
 #include "LSM303AGR_APIS.h"
 #include <math.h>
 
+/* Exported Typedef ******************************************************/
 /* Define UART variables */
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -27,64 +28,65 @@ UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart6;
 
+All_Data PortFunction;
+All_Data TerminalFunction;
+
+TimerHandle_t xTimerStream = NULL;
+TaskHandle_t IMU_TaskTaskHandle = NULL;
+
 extern stmdev_ctx_t dev_ctx;
 
 /* Private Variables *******************************************************/
+/* Streaming variables */
+static bool stopStream = false;         /* Flag to indicate whether to stop streaming process */
+uint8_t PortModule = 0u;                /* Module ID for the destination port */
+uint8_t PortNumber = 0u;                /* Physical port number used for streaming */
+uint8_t StreamMode = 0u;                /* Current active streaming mode (to port, terminal, etc.) */
+uint8_t TerminalPort = 0u;              /* Port number used to output data to a terminal */
+uint8_t StopeCliStreamFlag = 0u;        /* Flag to request stopping a CLI stream operation */
+uint32_t SampleCount = 0u;              /* Counter to track the number of samples streamed */
+uint32_t PortNumOfSamples = 0u;         /* Total number of samples to be sent through the port */
+uint32_t TerminalNumOfSamples = 0u;     /* Total number of samples to be streamed to the terminal */
 
-/* Stream to port variables */
-uint32_t PortNumOfSamples = 0u;    /* Number of samples for port streaming */
-uint32_t PortSamples = 0u;         /* Current sample count for port (if needed separately) */
-uint8_t PortModule = 0u;           /* Module ID for port streaming */
-uint8_t PortNumber = 0u;           /* Port number for streaming */
-All_Data PortFunction;                    /* Function pointer or struct for port streaming */
-
-/* Stream to terminal variables */
-uint32_t TerminalNumOfSamples = 0u; /* Number of samples for terminal streaming */
-uint8_t TerminalPort = 0u;          /* Port number for terminal streaming */
-All_Data TerminalFunction;                   /* Function pointer or struct for terminal streaming */
-uint32_t TerminalTimeout = 0u;               /* Timeout value for terminal streaming */
-uint8_t StreamMode = 0u;                     /* Streaming mode selector (port or terminal) */
-uint8_t StopeCliStreamFlag = 0u;             /* Flag to stop CLI streaming */
-/* General streaming variable */
-uint32_t SampleCount = 0u;                   /* Total sample counter */
-
-
-static bool stopStream = false;
-
-float H0BR4_gyroX =0.0f;
-float H0BR4_gyroY =0.0f;
-float H0BR4_gyroZ =0.0f;
+/* Global variables for sensor data used in ModuleParam */
+int H0BR4_magX =0.0f;
+int H0BR4_magY =0.0f;
+int H0BR4_magZ =0.0f;
 float H0BR4_accX =0.0f;
 float H0BR4_accY =0.0f;
 float H0BR4_accZ =0.0f;
 float H0BR4_temp =0.0f;
-int H0BR4_magX =0.0f;
-int H0BR4_magY =0.0f;
-int H0BR4_magZ =0.0f;
+float H0BR4_gyroX =0.0f;
+float H0BR4_gyroY =0.0f;
+float H0BR4_gyroZ =0.0f;
 
+/* Module Parameters */
+ModuleParam_t ModuleParam[NUM_MODULE_PARAMS] ={
+	{.ParamPtr =&H0BR4_gyroX, .ParamFormat =FMT_FLOAT, .ParamName ="gyrox"},
+	{.ParamPtr =&H0BR4_gyroY, .ParamFormat =FMT_FLOAT, .ParamName ="gyroy"},
+	{.ParamPtr =&H0BR4_gyroZ, .ParamFormat =FMT_FLOAT, .ParamName ="gyroz"},
+	{.ParamPtr =&H0BR4_accX, .ParamFormat =FMT_FLOAT, .ParamName ="accx"},
+	{.ParamPtr =&H0BR4_accY, .ParamFormat =FMT_FLOAT, .ParamName ="accy"},
+	{.ParamPtr =&H0BR4_accZ, .ParamFormat =FMT_FLOAT, .ParamName ="accz"},
+	{.ParamPtr =&H0BR4_magX, .ParamFormat =FMT_INT32, .ParamName ="magx"},
+	{.ParamPtr =&H0BR4_magY, .ParamFormat =FMT_INT32, .ParamName ="magy"},
+	{.ParamPtr =&H0BR4_magZ, .ParamFormat =FMT_INT32, .ParamName ="magz"},
+	{.ParamPtr =&H0BR4_temp, .ParamFormat =FMT_FLOAT, .ParamName ="temp"},
+};
 
-TaskHandle_t IMU_TaskTaskHandle = NULL;
-TimerHandle_t xTimerStream = NULL;
-
-/* Exported Typedef */
-module_param_t modParam[NUM_MODULE_PARAMS] ={
-	{.paramPtr =&H0BR4_gyroX, .paramFormat =FMT_FLOAT, .paramName ="gyrox"},
-	{.paramPtr =&H0BR4_gyroY, .paramFormat =FMT_FLOAT, .paramName ="gyroy"},
-	{.paramPtr =&H0BR4_gyroZ, .paramFormat =FMT_FLOAT, .paramName ="gyroz"},
-	{.paramPtr =&H0BR4_accX, .paramFormat =FMT_FLOAT, .paramName ="accx"},
-	{.paramPtr =&H0BR4_accY, .paramFormat =FMT_FLOAT, .paramName ="accy"},
-	{.paramPtr =&H0BR4_accZ, .paramFormat =FMT_FLOAT, .paramName ="accz"},
-	{.paramPtr =&H0BR4_magX, .paramFormat =FMT_INT32, .paramName ="magx"},
-	{.paramPtr =&H0BR4_magY, .paramFormat =FMT_INT32, .paramName ="magy"},
-	{.paramPtr =&H0BR4_magZ, .paramFormat =FMT_INT32, .paramName ="magz"},
-	{.paramPtr =&H0BR4_temp, .paramFormat =FMT_FLOAT, .paramName ="temp"}, };
+/* Local Typedef related to stream functions */
+typedef void (*SampleToString)(char*,size_t);
+typedef void (*SampleToBuffer)(float *buffer);
 
 /* Private function prototypes *********************************************/
 uint8_t ClearROtopology(void);
 void Module_Peripheral_Init(void);
+void SetupPortForRemoteBootloaderUpdate(uint8_t port);
+void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport);
 Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_t dst,uint8_t shift);
 
 /* Local function prototypes ***********************************************/
+/* Stream Functions */
 void StreamTimeCallback(TimerHandle_t xTimerStream);
 
 void SampleGyroDPSToString(char *cstring,size_t maxLen);
@@ -97,46 +99,32 @@ void SampleMagBuf(float *buffer);
 void SampleAccBuf(float *buffer);
 void SampleGyroBuf(float *buffer);
 
-void FLASH_Page_Eras(uint32_t Addr);
-void ExecuteMonitor(void);
-
-typedef void (*SampleToString)(char*,size_t);
-typedef void (*SampleMemsToBuffer)(float *buffer);
-
-Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction);
+/* CLI Stream related Functions */
+Module_Status SampleToTerminal(uint8_t dstPort,All_Data dataFunction);
 static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples);
 static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function);
-static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function);
-
+static Module_Status StreamToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleToBuffer function);
 
 /* Create CLI commands *****************************************************/
-static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
-static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer, size_t xWriteBufferLen, const int8_t *pcCommandString);
+static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString);
+static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBufferLen,const int8_t *pcCommandString);
 
 /* CLI command structure ***************************************************/
 /* CLI command structure : sample */
-const CLI_Command_Definition_t SampleCommandDefinition = {
-	(const int8_t *) "sample",
-	(const int8_t *) "sample:\r\n Syntax: sample [Gyro]/[Acc]/[Mag]/[Temp].\r\n\r\n",
-	SampleSensorCommand,
-	1
-};
+const CLI_Command_Definition_t SampleCommandDefinition ={(const int8_t* )"sample",
+	(const int8_t* )"sample:\r\n Syntax: sample [Gyro]/[Acc]/[Mag]/[Temp].\r\n\r\n",
+	SampleSensorCommand, 1};
 
 /***************************************************************************/
 /* CLI command structure : stream */
-const CLI_Command_Definition_t StreamCommandDefinition = {
-	(const int8_t *) "stream",
-	(const int8_t *) "stream:\r\n Syntax: stream [Gyro]/[Acc]/[Mag]/[Temp] ( Numofsamples ) (timeout) .\r\n\r\n",
-	StreamSensorCommand,
-	-1
-};
+const CLI_Command_Definition_t StreamCommandDefinition ={(const int8_t* )"stream",
+	(const int8_t* )"stream:\r\n Syntax: stream [Gyro]/[Acc]/[Mag]/[Temp] ( Numofsamples ) (timeout) .\r\n\r\n",
+	StreamSensorCommand, -1};
 
 /***************************************************************************/
 /************************ Private function Definitions *********************/
 /***************************************************************************/
-
-/*
- * @brief  System Clock Configuration
+/* @brief  System Clock Configuration
  *         This function configures the system clock as follows:
  *            - System Clock source            = PLL (HSE)
  *            - SYSCLK(Hz)                     = 64000000
@@ -149,40 +137,168 @@ const CLI_Command_Definition_t StreamCommandDefinition = {
  *            - PLLP                           = 2
  *            - Flash Latency(WS)              = 2
  *            - Clock Source for UART1,UART2,UART3 = 16MHz (HSI)
- * @param  None
- * @retval None
  */
 void SystemClock_Config(void){
-    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+	RCC_OscInitTypeDef RCC_OscInitStruct ={0};
+	RCC_ClkInitTypeDef RCC_ClkInitStruct ={0};
 
-    /** Configure the main internal regulator output voltage */
-    HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
+	/** Configure the main internal regulator output voltage */
+	HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-    /** Initializes the RCC Oscillators according to the specified parameters
-     * in the RCC_OscInitTypeDef structure.
-     */
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSE; // Enable both HSI and HSE oscillators
-    RCC_OscInitStruct.HSEState = RCC_HSE_ON; // Enable HSE (External High-Speed Oscillator)
-    RCC_OscInitStruct.HSIState = RCC_HSI_ON; // Enable HSI (Internal High-Speed Oscillator)
-    RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1; // No division on HSI
-    RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT; // Default calibration value for HSI
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON; // Enable PLL
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE; // Set PLL source to HSE
-    RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1; // Prescaler for PLL input
-    RCC_OscInitStruct.PLL.PLLN = 16; // Multiplication factor for PLL
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2; // PLLP division factor
-    RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2; // PLLQ division factor
-    RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2; // PLLR division factor
-    HAL_RCC_OscConfig(&RCC_OscInitStruct);
+	/* Initializes the RCC Oscillators according to the specified parameters
+	 * in the RCC_OscInitTypeDef structure.
+	 */
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSE; // Enable both HSI and HSE oscillators
+	RCC_OscInitStruct.HSEState = RCC_HSE_ON; // Enable HSE (External High-Speed Oscillator)
+	RCC_OscInitStruct.HSIState = RCC_HSI_ON; // Enable HSI (Internal High-Speed Oscillator)
+	RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1; // No division on HSI
+	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT; // Default calibration value for HSI
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON; // Enable PLL
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE; // Set PLL source to HSE
+	RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1; // Prescaler for PLL input
+	RCC_OscInitStruct.PLL.PLLN =16; // Multiplication factor for PLL
+	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2; // PLLP division factor
+	RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2; // PLLQ division factor
+	RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2; // PLLR division factor
+	HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-    /** Initializes the CPU, AHB and APB buses clocks */
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK; // Select PLL as the system clock source
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1; // AHB Prescaler set to 1
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1; // APB1 Prescaler set to 1
+	/** Initializes the CPU, AHB and APB buses clocks */
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK; // Select PLL as the system clock source
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1; // AHB Prescaler set to 1
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1; // APB1 Prescaler set to 1
 
-    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2); // Configure system clocks with flash latency of 2 WS
+	HAL_RCC_ClockConfig(&RCC_ClkInitStruct,FLASH_LATENCY_2); // Configure system clocks with flash latency of 2 WS
+}
+
+/***************************************************************************/
+/* enable stop mode regarding only UART1 , UART2 , and UART3 */
+BOS_Status EnableStopModebyUARTx(uint8_t port){
+
+	UART_WakeUpTypeDef WakeUpSelection;
+	UART_HandleTypeDef *huart =GetUart(port);
+
+	if((huart->Instance == USART1) || (huart->Instance == USART2) || (huart->Instance == USART3)){
+
+		/* make sure that no UART transfer is on-going */
+		while(__HAL_UART_GET_FLAG(huart, USART_ISR_BUSY) == SET);
+
+		/* make sure that UART is ready to receive */
+		while(__HAL_UART_GET_FLAG(huart, USART_ISR_REACK) == RESET);
+
+		/* set the wake-up event:
+		 * specify wake-up on start-bit detection */
+		WakeUpSelection.WakeUpEvent = UART_WAKEUP_ON_STARTBIT;
+		HAL_UARTEx_StopModeWakeUpSourceConfig(huart,WakeUpSelection);
+
+		/* Enable the UART Wake UP from stop mode Interrupt */
+		__HAL_UART_ENABLE_IT(huart,UART_IT_WUF);
+
+		/* enable MCU wake-up by LPUART */
+		HAL_UARTEx_EnableStopMode(huart);
+
+		/* enter STOP mode */
+		HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFI);
+	}
+	else
+		return BOS_ERROR;
+
+}
+
+/***************************************************************************/
+/* Enable standby mode regarding wake-up pins:
+ * WKUP1: PA0  pin
+ * WKUP4: PA2  pin
+ * WKUP6: PB5  pin
+ * WKUP2: PC13 pin
+ * NRST pin
+ *  */
+BOS_Status EnableStandbyModebyWakeupPinx(WakeupPins_t wakeupPins){
+
+	/* Clear the WUF FLAG */
+	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WUF);
+
+	/* Enable the WAKEUP PIN */
+	switch(wakeupPins){
+
+		case PA0_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1); /* PA0 */
+			break;
+
+		case PA2_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4); /* PA2 */
+			break;
+
+		case PB5_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN6); /* PB5 */
+			break;
+
+		case PC13_PIN:
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN2); /* PC13 */
+			break;
+
+		case NRST_PIN:
+			/* do no thing*/
+			break;
+	}
+
+	/* Enable SRAM content retention in Standby mode */
+	HAL_PWREx_EnableSRAMRetention();
+
+	/* Finally enter the standby mode */
+	HAL_PWR_EnterSTANDBYMode();
+
+	return BOS_OK;
+}
+
+/***************************************************************************/
+/* Disable standby mode regarding wake-up pins:
+ * WKUP1: PA0  pin
+ * WKUP4: PA2  pin
+ * WKUP6: PB5  pin
+ * WKUP2: PC13 pin
+ * NRST pin
+ *  */
+BOS_Status DisableStandbyModeWakeupPinx(WakeupPins_t wakeupPins){
+
+	/* The standby wake-up is same as a system RESET:
+	 * The entire code runs from the beginning just as if it was a RESET.
+	 * The only difference between a reset and a STANDBY wake-up is that, when the MCU wakes-up,
+	 * The SBF status flag in the PWR power control/status register (PWR_CSR) is set */
+	if(__HAL_PWR_GET_FLAG(PWR_FLAG_SB) != RESET){
+		/* clear the flag */
+		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+
+		/* Disable  Wake-up Pinx */
+		switch(wakeupPins){
+
+			case PA0_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN1); /* PA0 */
+				break;
+
+			case PA2_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); /* PA2 */
+				break;
+
+			case PB5_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN6); /* PB5 */
+				break;
+
+			case PC13_PIN:
+				HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN2); /* PC13 */
+				break;
+
+			case NRST_PIN:
+				/* do no thing*/
+				break;
+		}
+
+		IND_blink(1000);
+
+	}
+	else
+		return BOS_OK;
+
 }
 
 /***************************************************************************/
@@ -239,13 +355,13 @@ uint8_t SaveTopologyToRO(void){
 
 		/* Save topology */
 		for(uint8_t row =1; row <= N; row++){
-			for(uint8_t column =0; column <= MaxNumOfPorts; column++){
+			for(uint8_t column =0; column <= MAX_NUM_OF_PORTS; column++){
 				/* Check the module serial number
 				 * Note: there isn't a module has serial number 0
 				 */
-				if(array[row - 1][0]){
-					/* Save each element in topology array in Flash memory */
-					HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,TOPOLOGY_START_ADDRESS + flashAdd,array[row - 1][column]);
+				if(Array[row - 1][0]){
+					/* Save each element in topology Array in Flash memory */
+					HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,TOPOLOGY_START_ADDRESS + flashAdd,Array[row - 1][column]);
 					/* Wait for a Write operation to complete */
 					flashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
 					if(flashStatus != HAL_OK){
@@ -270,7 +386,7 @@ uint8_t SaveTopologyToRO(void){
 /* Save Command Snippets in Flash RO */
 uint8_t SaveSnippetsToRO(void){
 	HAL_StatusTypeDef FlashStatus =HAL_OK;
-	uint8_t snipBuffer[sizeof(snippet_t) + 1] ={0};
+	uint8_t snipBuffer[sizeof(Snippet_t) + 1] ={0};
 
 	/* Unlock the FLASH control register access */
 	HAL_FLASH_Unlock();
@@ -290,14 +406,14 @@ uint8_t SaveSnippetsToRO(void){
 
 	/* Save Command Snippets */
 	int currentAdd = SNIPPETS_START_ADDRESS;
-	for(uint8_t index =0; index < numOfRecordedSnippets; index++){
+	for(uint8_t index =0; index < NumOfRecordedSnippets; index++){
 		/* Check if Snippet condition is true or false */
-		if(snippets[index].cond.conditionType){
+		if(Snippets[index].Condition.ConditionType){
 			/* A marker to separate Snippets */
 			snipBuffer[0] =0xFE;
-			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&snippets[index],sizeof(snippet_t));
-			/* Copy the snippet struct buffer (20 x numOfRecordedSnippets). Note this is assuming sizeof(snippet_t) is even */
-			for(uint8_t j =0; j < (sizeof(snippet_t) / 4); j++){
+			memcpy((uint32_t* )&snipBuffer[1],(uint8_t* )&Snippets[index],sizeof(Snippet_t));
+			/* Copy the snippet struct buffer (20 x NumOfRecordedSnippets). Note this is assuming sizeof(Snippet_t) is even */
+			for(uint8_t j =0; j < (sizeof(Snippet_t) / 4); j++){
 				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )&snipBuffer[j * 8]);
 				FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
 				if(FlashStatus != HAL_OK){
@@ -310,8 +426,8 @@ uint8_t SaveSnippetsToRO(void){
 				}
 			}
 			/* Copy the snippet commands buffer. Always an even number. Note the string termination char might be skipped */
-			for(uint8_t j =0; j < ((strlen(snippets[index].cmd) + 1) / 4); j++){
-				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )(snippets[index].cmd + j * 4));
+			for(uint8_t j =0; j < ((strlen(Snippets[index].CMD) + 1) / 4); j++){
+				HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD,currentAdd,*(uint64_t* )(Snippets[index].CMD + j * 4));
 				FlashStatus =FLASH_WaitForLastOperation((uint32_t ) HAL_FLASH_TIMEOUT_VALUE);
 				if(FlashStatus != HAL_OK){
 					return pFlash.ErrorCode;
@@ -329,10 +445,10 @@ uint8_t SaveSnippetsToRO(void){
 }
 
 /***************************************************************************/
-/* Clear array topology in SRAM and Flash RO */
+/* Clear Array topology in SRAM and Flash RO */
 uint8_t ClearROtopology(void){
-	/* Clear the array */
-	memset(array,0,sizeof(array));
+	/* Clear the Array */
+	memset(Array,0,sizeof(Array));
 	N =1;
 	myID =0;
 	
@@ -341,12 +457,12 @@ uint8_t ClearROtopology(void){
 
 /***************************************************************************/
 /* Trigger ST factory bootloader update for a remote module */
-void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport){
+void RemoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outport){
 
 	uint8_t myOutport =0, lastModule =0;
 	int8_t *pcOutputString;
 
-	/* 1. Get route to destination module */
+	/* 1. Get Route to destination module */
 	myOutport =FindRoute(myID,dst);
 	if(outport && dst == myID){ /* This is a 'via port' update and I'm the last module */
 		myOutport =outport;
@@ -356,14 +472,14 @@ void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 		if(NumberOfHops(dst)== 1)
 		lastModule = myID;
 		else
-		lastModule = route[NumberOfHops(dst)-1]; /* previous module = route[Number of hops - 1] */
+		lastModule = Route[NumberOfHops(dst)-1]; /* previous module = Route[Number of hops - 1] */
 	}
 
 	/* 2. If this is the source of the message, show status on the CLI */
 	if(src == myID){
 		/* Obtain the address of the output buffer.  Note there is no mutual
-		 exclusion on this buffer as it is assumed only one command console
-		 interface will be used at any one time. */
+		 * exclusion on this buffer as it is assumed only one command console
+		 * interface will be used at any one time. */
 		pcOutputString =FreeRTOS_CLIGetOutputBuffer();
 
 		if(outport == 0)		// This is a remote module update
@@ -386,10 +502,10 @@ void remoteBootloaderUpdate(uint8_t src,uint8_t dst,uint8_t inport,uint8_t outpo
 }
 
 /***************************************************************************/
-/* --- Setup a port for remote ST factory bootloader update:
- - Set baudrate to 57600
- - Enable even parity
- - Set datasize to 9 bits
+/* Setup a port for remote ST factory bootloader update:
+ * Set baudrate to 57600
+ * Enable even parity
+ * Set datasize to 9 bits
  */
 void SetupPortForRemoteBootloaderUpdate(uint8_t port){
 
@@ -415,31 +531,29 @@ void Module_Peripheral_Init(void){
 	MX_USART5_UART_Init();
 	MX_USART6_UART_Init();
 
-	GPIO_Init();
-	MEMS_GPIO_Init();
 	MX_I2C_Init();
 	LSM6DS3TR_C_Init();
 	LSM303MagInit();
 
 	/* Circulating DMA Channels ON All Module */
-	for(int i =1; i <= NumOfPorts; i++){
+	for(int i =1; i <= NUM_OF_PORTS; i++){
 		if(GetUart(i) == &huart1){
-			index_dma[i - 1] =&(DMA1_Channel1->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel1->CNDTR);
 		}
 		else if(GetUart(i) == &huart2){
-			index_dma[i - 1] =&(DMA1_Channel2->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel2->CNDTR);
 		}
 		else if(GetUart(i) == &huart3){
-			index_dma[i - 1] =&(DMA1_Channel3->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel3->CNDTR);
 		}
 		else if(GetUart(i) == &huart4){
-			index_dma[i - 1] =&(DMA1_Channel4->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel4->CNDTR);
 		}
 		else if(GetUart(i) == &huart5){
-			index_dma[i - 1] =&(DMA1_Channel5->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel5->CNDTR);
 		}
 		else if(GetUart(i) == &huart6){
-			index_dma[i - 1] =&(DMA1_Channel6->CNDTR);
+			dmaIndex[i - 1] =&(DMA1_Channel6->CNDTR);
 		}
 	}
 	/* Create a timeout software timer StreamSamplsToPort() API */
@@ -453,22 +567,21 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 	uint32_t period =0, timeout =0;
 
 	switch(code){
-		case CODE_H0BR4_SAMPLE_GYRO: {
+		case CODE_H0BR4_SAMPLE_GYRO:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],GYRO);
 			break;
-		}
-		case CODE_H0BR4_SAMPLE_ACC: {
+
+		case CODE_H0BR4_SAMPLE_ACC:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],ACC);
 			break;
-		}
-		case CODE_H0BR4_SAMPLE_MAG: {
+
+		case CODE_H0BR4_SAMPLE_MAG:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],MAG);
 			break;
-		}
-		case CODE_H0BR4_SAMPLE_TEMP: {
+
+		case CODE_H0BR4_SAMPLE_TEMP:
 			SampleToPort(cMessage[port - 1][shift],cMessage[port - 1][1 + shift],TEMP);
 			break;
-		}
 
 		default:
 			result =H0BR4_ERR_UnknownMessage;
@@ -476,13 +589,6 @@ Module_Status Module_MessagingTask(uint16_t code,uint8_t port,uint8_t src,uint8_
 	}
 	
 	return result;
-}
-
-/***************************************************************************/
-/* Register this module CLI Commands */
-void RegisterModuleCLICommands(void){
-	FreeRTOS_CLIRegisterCommand(&SampleCommandDefinition);
-	FreeRTOS_CLIRegisterCommand(&StreamCommandDefinition);
 }
 
 /***************************************************************************/
@@ -504,16 +610,23 @@ uint8_t GetPort(UART_HandleTypeDef *huart){
 	
 	return 0;
 }
+/***************************************************************************/
+/* Register this module CLI Commands */
+void RegisterModuleCLICommands(void){
+	FreeRTOS_CLIRegisterCommand(&SampleCommandDefinition);
+	FreeRTOS_CLIRegisterCommand(&StreamCommandDefinition);
+}
 
 /***************************************************************************/
 /* This functions is useful only for input (sensors) modules.
- * @brief: Samples a module parameter value based on parameter index.
- * @param paramIndex: Index of the parameter (1-based index).
- * @param value: Pointer to store the sampled float value.
- * @retval: Module_Status indicating success or failure.
+ * Samples a module parameter value based on parameter index.
+ * paramIndex: Index of the parameter (1-based index).
+ * value: Pointer to store the sampled float value.
  */
 Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
 	Module_Status status =BOS_OK;
+
+	int temp =0;
 
 	switch(paramIndex){
 		/* Sample gyroX */
@@ -521,64 +634,58 @@ Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
 			status =SampleGyroDPS(value,NULL,NULL);
 			break;
 
-		/* Sample gyroY */
+			/* Sample gyroY */
 		case 2:
 			status =SampleGyroDPS(NULL,value,NULL);
 			break;
 
-		/* Sample gyroZ */
+			/* Sample gyroZ */
 		case 3:
 			status =SampleGyroDPS(NULL,NULL,value);
 			break;
 
-		/* Sample accX */
+			/* Sample accX */
 		case 4:
 			status =SampleAccG(value,NULL,NULL);
 			break;
 
-		/* Sample accY */
+			/* Sample accY */
 		case 5:
 			status =SampleAccG(NULL,value,NULL);
 			break;
 
-		/* Sample accZ */
+			/* Sample accZ */
 		case 6:
 			status =SampleAccG(NULL,NULL,value);
 			break;
 
-		/* Sample magX (convert int to float) */
-		case 7: {
-			int temp =0;
+			/* Sample magX (convert int to float) */
+		case 7:
 			status =SampleMagMGauss(&temp,NULL,NULL);
 			if(status == BOS_OK)
 				*value =(float )temp;
 			break;
-		}
 
-		/* Sample magY (convert int to float) */
-		case 8: {
-			int temp =0;
+			/* Sample magY (convert int to float) */
+		case 8:
 			status =SampleMagMGauss(NULL,&temp,NULL);
 			if(status == BOS_OK)
 				*value =(float )temp;
 			break;
-		}
 
-		/* Sample magZ (convert int to float) */
-		case 9: {
-			int temp =0;
+			/* Sample magZ (convert int to float) */
+		case 9:
 			status =SampleMagMGauss(NULL,NULL,&temp);
 			if(status == BOS_OK)
 				*value =(float )temp;
 			break;
-		}
 
-		/* Sample temperature in Celsius */
+			/* Sample temperature in Celsius */
 		case 10:
 			status =SampleTempCelsius(value);
 			break;
 
-		/* Invalid parameter index */
+			/* Invalid parameter index */
 		default:
 			status =BOS_ERR_WrongParam;
 			break;
@@ -590,29 +697,25 @@ Module_Status GetModuleParameter(uint8_t paramIndex,float *value){
 /***************************************************************************/
 /****************************** Local Functions ****************************/
 /***************************************************************************/
-/**
- * @brief: Streams MEMS sensor data to a buffer.
- * @param1: Pointer to the buffer where data will be stored.
- * @param2: Number of samples to take.
- * @param3: Timeout period for the operation.
- * @param4: Function pointer to the sampling function (e.g., SampleAccBuf, SampleGyroBuf).
- * @retval: Module status indicating success or error.
+/* Streams sensor data to a buffer.
+ * buffer: Pointer to the buffer where data will be stored.
+ * Numofsamples: Number of samples to take.
+ * timeout: Timeout period for the operation.
+ * function: Function pointer to the sampling function (e.g., SampleAccBuf, SampleGyroBuf).
  */
-static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleMemsToBuffer function){
+static Module_Status StreamToBuf(float *buffer,uint32_t Numofsamples,uint32_t timeout,SampleToBuffer function){
 	Module_Status status =H0BR4_OK;
 	uint16_t StreamIndex =0;
 	uint32_t period =timeout / Numofsamples;
 
 	/* Check if the calculated period is valid */
-	if(period < MIN_MEMS_PERIOD_MS)
+	if(period < MIN_PERIOD_MS)
 		return H0BR4_ERR_WrongParams;
 
-	timeout =period;
-	long numTimes =timeout / period;
 	stopStream = false;
 
 	/* Stream data to buffer */
-	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
+	while((Numofsamples-- > 0) || (timeout >= MAX_TIMEOUT_MS)){
 		if(function == SampleTempBuff){
 			float sample;
 			function(&sample);
@@ -642,10 +745,8 @@ static Module_Status StreamMemsToBuf(float *buffer,uint32_t Numofsamples,uint32_
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples accelerometer data into a buffer.
- * @param buffer: Pointer to the buffer where accelerometer data will be stored.
- * @retval: None
+/* Samples accelerometer data into a buffer.
+ * buffer: Pointer to the buffer where accelerometer data will be stored.
  */
 void SampleAccBuf(float *buffer){
 	float Acc[3];
@@ -656,10 +757,8 @@ void SampleAccBuf(float *buffer){
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples gyroscope data into a buffer.
- * @param buffer: Pointer to the buffer where gyroscope data will be stored.
- * @retval: None
+/* Samples gyroscope data into a buffer.
+ * buffer: Pointer to the buffer where gyroscope data will be stored.
  */
 void SampleGyroBuf(float *buffer){
 	float Gyro[3];
@@ -670,10 +769,8 @@ void SampleGyroBuf(float *buffer){
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples magnetometer data into a buffer.
- * @param buffer: Pointer to the buffer where magnetometer data will be stored.
- * @retval: None
+/* Samples magnetometer data into a buffer.
+ * buffer: Pointer to the buffer where magnetometer data will be stored.
  */
 void SampleMagBuf(float *buffer){
 	int Mag[3];
@@ -684,10 +781,8 @@ void SampleMagBuf(float *buffer){
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples temperature data into a buffer.
- * @param buffer: Pointer to the buffer where temperature data will be stored.
- * @retval: None
+/* Samples temperature data into a buffer.
+ * buffer: Pointer to the buffer where temperature data will be stored.
  */
 void SampleTempBuff(float *buffer){
 	float Temp;
@@ -696,34 +791,32 @@ void SampleTempBuff(float *buffer){
 }
 
 /***************************************************************************/
-/*
- * @brief: Streams MEMS sensor data to the CLI (Command Line Interface).
- * @param1: Number of samples to take.
- * @param2: Timeout period for the operation.
- * @param3: Function pointer to the sampling function (e.g., SampleAccGToString, SampleGyroDPSToString).
- * @retval: Module status indicating success or error.
+/* Streams sensor data to the CLI (Command Line Interface).
+ * Numofsamples: Number of samples to take.
+ * timeout: Timeout period for the operation.
+ * function: Function pointer to the sampling function (e.g., SampleAccGToString, SampleGyroDPSToString).
  */
 static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleToString function){
-	Module_Status status =H0BR4_OK; // Initialize status to OK
-	int8_t *pcOutputString = NULL; // Pointer to output string
-	uint32_t period =timeout / Numofsamples; // Calculate the period for each sample
+	Module_Status status =H0BR4_OK; /* Initialize status to OK */
+	int8_t *pcOutputString = NULL;  /* Pointer to output string */
+	uint32_t period =timeout / Numofsamples; /* Calculate the period for each sample */
 
 	/* Check if the calculated period is valid */
-	if(period < MIN_MEMS_PERIOD_MS)
+	if(period < MIN_PERIOD_MS)
 		return H0BR4_ERR_WrongParams;
 
 	/* Check if CLI is enabled */
 	for(uint8_t chr =0; chr < MSG_RX_BUF_SIZE; chr++){
-		if(UARTRxBuf[PcPort - 1][chr] == '\r'){
-			UARTRxBuf[PcPort - 1][chr] =0; // Null-terminate the buffer
+		if(UARTRxBuf[pcPort - 1][chr] == '\r'){
+			UARTRxBuf[pcPort - 1][chr] =0; /* Null-terminate the buffer */
 		}
 	}
 
 	/* Check if streaming should be stopped */
 	if(1 == StopeCliStreamFlag){
 		StopeCliStreamFlag =0;
-		static char *pcOKMessage =(int8_t* )"Stop stream!\n\r"; // Message to indicate stopping stream
-		writePxITMutex(PcPort,pcOKMessage,strlen(pcOKMessage),10); // Write the stop message to CLI
+		static char *pcOKMessage =(int8_t* )"Stop stream!\n\r";
+		writePxITMutex(pcPort,pcOKMessage,strlen(pcOKMessage),10);
 		return status;
 	}
 
@@ -735,78 +828,68 @@ static Module_Status StreamToCLI(uint32_t Numofsamples,uint32_t timeout,SampleTo
 	stopStream = false;
 
 	/* Stream data to CLI */
-	while((numTimes-- > 0) || (timeout >= MAX_MEMS_TIMEOUT_MS)){
-		pcOutputString =FreeRTOS_CLIGetOutputBuffer(); // Get output buffer for CLI
-		function((char* )pcOutputString,100); // Call the sampling function to get data
-		writePxMutex(PcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY); // Write data to CLI
+	while((numTimes-- > 0) || (timeout >= MAX_TIMEOUT_MS)){
+		pcOutputString =FreeRTOS_CLIGetOutputBuffer(); /* Get output buffer for CLI */
+		function((char* )pcOutputString,100); /* Call the sampling function to get data */
+		writePxMutex(pcPort,(char* )pcOutputString,strlen((char* )pcOutputString),cmd500ms,HAL_MAX_DELAY);
 
 		if(PollingSleepCLISafe(period,Numofsamples) != H0BR4_OK)
 			break;
 	}
 
-	memset((char* )pcOutputString,0,configCOMMAND_INT_MAX_OUTPUT_SIZE); // Clear the output buffer
-	sprintf((char* )pcOutputString,"\r\n"); // Add newline to output buffer
+	memset((char* )pcOutputString,0,configCOMMAND_INT_MAX_OUTPUT_SIZE); /* Clear the output buffer */
+	sprintf((char* )pcOutputString,"\r\n"); /* Add newline to output buffer */
 
 	return status; /* Return the status of the operation */
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples temperature data and converts it to a string.
- * @param cstring: Pointer to the string where temperature data will be stored.
- * @param maxLen: Maximum length of the string.
- * @retval: None
+/* Samples temperature data and converts it to a string.
+ * cstring: Pointer to the string where temperature data will be stored.
+ * maxLen: Maximum length of the string.
  */
 void SampleTempCToString(char *cstring,size_t maxLen){
 	float temp;
-	SampleTempCelsius(&temp); // Sample the temperature in Celsius
-	snprintf(cstring,maxLen,"Temp(Celsius) | %0.2f\r\n",temp); // Convert to string
+	SampleTempCelsius(&temp);
+	snprintf(cstring,maxLen,"Temp(Celsius) | %0.2f\r\n",temp); /* Convert to string */
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples magnetometer data and converts it to a string.
- * @param cstring: Pointer to the string where magnetometer data will be stored.
- * @param maxLen: Maximum length of the string.
- * @retval: None
+/* Samples magnetometer data and converts it to a string.
+ * cstring: Pointer to the string where magnetometer data will be stored.
+ * maxLen: Maximum length of the string.
  */
 void SampleMagMGaussToString(char *cstring,size_t maxLen){
 	int x =0, y =0, z =0;
-	SampleMagMGauss(&x,&y,&z); // Sample the magnetometer data
-	snprintf(cstring,maxLen,"Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n",x,y,z); // Convert to string
+	SampleMagMGauss(&x,&y,&z);
+	snprintf(cstring,maxLen,"Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n",x,y,z); /* Convert to string */
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples accelerometer data and converts it to a string.
- * @param cstring: Pointer to the string where accelerometer data will be stored.
- * @param maxLen: Maximum length of the string.
- * @retval: None
+/* @brief: Samples accelerometer data and converts it to a string.
+ * cstring: Pointer to the string where accelerometer data will be stored.
+ * maxLen: Maximum length of the string.
  */
 void SampleAccGToString(char *cstring,size_t maxLen){
 	float x =0, y =0, z =0;
-	SampleAccG(&x,&y,&z); // Sample the accelerometer data
-	snprintf(cstring,maxLen,"Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z); // Convert to string
+	SampleAccG(&x,&y,&z);
+	snprintf(cstring,maxLen,"Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z); /* Convert to string */
 }
 
 /***************************************************************************/
-/*
- * @brief: Samples gyroscope data and converts it to a string.
- * @param cstring: Pointer to the string where gyroscope data will be stored.
- * @param maxLen: Maximum length of the string.
- * @retval: None
+/* Samples gyroscope data and converts it to a string.
+ * cstring: Pointer to the string where gyroscope data will be stored.
+ * maxLen: Maximum length of the string.
  */
-void SampleGyroDPSToString(char *cstring, size_t maxLen) {
-    float x = 0, y = 0, z = 0;
-    SampleGyroDPS(&x, &y, &z); // Sample the gyroscope data
-    snprintf(cstring, maxLen, "Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n", x, y, z); // Convert to string
+void SampleGyroDPSToString(char *cstring,size_t maxLen){
+	float x =0, y =0, z =0;
+	SampleGyroDPS(&x,&y,&z);
+	snprintf(cstring,maxLen,"Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n",x,y,z); /* Convert to string */
 }
 
 /***************************************************************************/
-/*
- * brief: Callback function triggered by a timer to manage data streaming.
- * param xTimerStream: Handle of the timer that triggered the callback.
- * retval: None
+/* Callback function triggered by a timer to manage data streaming.
+ * xTimerStream: Handle of the timer that triggered the callback.
  */
 void StreamTimeCallback(TimerHandle_t xTimerStream){
 	/* Increment sample counter */
@@ -835,98 +918,86 @@ void StreamTimeCallback(TimerHandle_t xTimerStream){
 }
 
 /***************************************************************************/
-/*
- * brief: Streams a single sensor data sample to the terminal.
- * param dstPort: Port number to stream data to.
- * param dataFunction: Function to sample data (e.g., ACC, GYRO, MAG, TEMP).
- * param numOfSamples: Number of samples (kept for compatibility, not used for repetition).
- * param streamTimeout: Timeout period for the operation (in milliseconds).
- * retval: of type Module_Status indicating the success or failure of the operation.
+/* Streams a single sensor data sample to the terminal.
+ * dstPort: Port number to stream data to.
+ * dataFunction: Function to sample data (e.g., ACC, GYRO, MAG, TEMP).
  */
-Module_Status SampleToTerminal(uint8_t dstPort, All_Data dataFunction)
-{
-  Module_Status Status = H0BR4_OK;      /* Initialize operation status as success */
-  int8_t* PcOutputString = NULL;        /* Pointer to CLI output buffer */
-  uint32_t Period = 0u;                 /* Calculated period for the operation */
-  char CString[100] = {0};              /* Buffer for formatted output string */
-  float X = 0.0f, Y = 0.0f, Z = 0.0f;   /* Variables for accelerometer and gyroscope data */
-  int Xm = 0, Ym = 0, Zm = 0;           /* Variables for magnetometer data */
-  float TempCelsius = 0.0f;             /* Variable for temperature data */
+Module_Status SampleToTerminal(uint8_t dstPort,All_Data dataFunction){
+	Module_Status Status =H0BR4_OK; /* Initialize operation status as success */
+	int8_t *PcOutputString = NULL; /* Pointer to CLI output buffer */
+	uint32_t Period =0u; /* Calculated period for the operation */
+	char CString[100] ={0}; /* Buffer for formatted output string */
+	float X =0.0f, Y =0.0f, Z =0.0f; /* Variables for accelerometer and gyroscope data */
+	int Xm =0, Ym =0, Zm =0; /* Variables for magnetometer data */
+	float TempCelsius =0.0f; /* Variable for temperature data */
 
-  /* Process data based on the requested sensor function */
-  switch (dataFunction)
-  {
-    case ACC:
-      /* Get the CLI output buffer for writing */
-      PcOutputString = FreeRTOS_CLIGetOutputBuffer();
-      /* Sample accelerometer data in G units */
-      if (SampleAccG(&X, &Y, &Z) != H0BR4_OK)
-      {
-        return H0BR4_ERROR;             /* Return error if sampling fails */
-      }
-      /* Format accelerometer data into a string */
-      snprintf(CString, 50, "Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n", X, Y, Z);
-      /* Send the formatted string to the specified port */
-      writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
-      break;
+	/* Process data based on the requested sensor function */
+	switch(dataFunction){
+		case ACC:
+			/* Get the CLI output buffer for writing */
+			PcOutputString =FreeRTOS_CLIGetOutputBuffer();
+			/* Sample accelerometer data in G units */
+			if(SampleAccG(&X,&Y,&Z) != H0BR4_OK){
+				return H0BR4_ERROR; /* Return error if sampling fails */
+			}
+			/* Format accelerometer data into a string */
+			snprintf(CString,50,"Acc(G) | X: %.2f, Y: %.2f, Z: %.2f\r\n",X,Y,Z);
+			/* Send the formatted string to the specified port */
+			writePxMutex(dstPort,(char* )CString,strlen((char* )CString),cmd500ms,HAL_MAX_DELAY);
+			break;
 
-    case GYRO:
-      /* Get the CLI output buffer for writing */
-      PcOutputString = FreeRTOS_CLIGetOutputBuffer();
-      /* Sample gyroscope data in degrees per second */
-      if (SampleGyroDPS(&X, &Y, &Z) != H0BR4_OK)
-      {
-        return H0BR4_ERROR;             /* Return error if sampling fails */
-      }
-      /* Format gyroscope data into a string */
-      snprintf(CString, 50, "Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n", X, Y, Z);
-      /* Send the formatted string to the specified port */
-      writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
-      break;
+		case GYRO:
+			/* Get the CLI output buffer for writing */
+			PcOutputString =FreeRTOS_CLIGetOutputBuffer();
+			/* Sample gyroscope data in degrees per second */
+			if(SampleGyroDPS(&X,&Y,&Z) != H0BR4_OK){
+				return H0BR4_ERROR; /* Return error if sampling fails */
+			}
+			/* Format gyroscope data into a string */
+			snprintf(CString,50,"Gyro(DPS) | X: %.2f, Y: %.2f, Z: %.2f\r\n",X,Y,Z);
+			/* Send the formatted string to the specified port */
+			writePxMutex(dstPort,(char* )CString,strlen((char* )CString),cmd500ms,HAL_MAX_DELAY);
+			break;
 
-    case MAG:
-      /* Get the CLI output buffer for writing */
-      PcOutputString = FreeRTOS_CLIGetOutputBuffer();
-      /* Sample magnetometer data in milliGauss */
-      if (SampleMagMGauss(&Xm, &Ym, &Zm) != H0BR4_OK)
-      {
-        return H0BR4_ERROR;             /* Return error if sampling fails */
-      }
-      /* Format magnetometer data into a string */
-      snprintf(CString, 50, "Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n", Xm, Ym, Zm);
-      /* Send the formatted string to the specified port */
-      writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
-      break;
+		case MAG:
+			/* Get the CLI output buffer for writing */
+			PcOutputString =FreeRTOS_CLIGetOutputBuffer();
+			/* Sample magnetometer data in milliGauss */
+			if(SampleMagMGauss(&Xm,&Ym,&Zm) != H0BR4_OK){
+				return H0BR4_ERROR; /* Return error if sampling fails */
+			}
+			/* Format magnetometer data into a string */
+			snprintf(CString,50,"Mag(mGauss) | X: %d, Y: %d, Z: %d\r\n",Xm,Ym,Zm);
+			/* Send the formatted string to the specified port */
+			writePxMutex(dstPort,(char* )CString,strlen((char* )CString),cmd500ms,HAL_MAX_DELAY);
+			break;
 
-    case TEMP:
-      /* Get the CLI output buffer for writing */
-      PcOutputString = FreeRTOS_CLIGetOutputBuffer();
-      /* Sample temperature data in Celsius */
-      if (SampleTempCelsius(&TempCelsius) != H0BR4_OK)
-      {
-        return H0BR4_ERROR;             /* Return error if sampling fails */
-      }
-      /* Format temperature data into a string */
-      snprintf(CString, 50, "Temp(Celsius) | %0.2f\r\n", TempCelsius);
-      /* Send the formatted string to the specified port */
-      writePxMutex(dstPort, (char*)CString, strlen((char*)CString), cmd500ms, HAL_MAX_DELAY);
-      break;
+		case TEMP:
+			/* Get the CLI output buffer for writing */
+			PcOutputString =FreeRTOS_CLIGetOutputBuffer();
+			/* Sample temperature data in Celsius */
+			if(SampleTempCelsius(&TempCelsius) != H0BR4_OK){
+				return H0BR4_ERROR; /* Return error if sampling fails */
+			}
+			/* Format temperature data into a string */
+			snprintf(CString,50,"Temp(Celsius) | %0.2f\r\n",TempCelsius);
+			/* Send the formatted string to the specified port */
+			writePxMutex(dstPort,(char* )CString,strlen((char* )CString),cmd500ms,HAL_MAX_DELAY);
+			break;
 
-    default:
-      /* Return error for invalid sensor function */
-      return H0BR4_ERR_WrongParams;
-  }
+		default:
+			/* Return error for invalid sensor function */
+			return H0BR4_ERR_WrongParams;
+	}
 
-  /* Return final status indicating success or prior error */
-  return Status;
+	/* Return final status indicating success or prior error */
+	return Status;
 }
 
 /***************************************************************************/
-/*
- * @brief: Polling and sleep function to safely manage CLI stream.
- * @param period: The period to sleep in milliseconds.
- * @param Numofsamples: The number of samples to take.
- * @retval: Module status indicating success or error.
+/* Polling and sleep function to safely manage CLI stream.
+ * period: The period to sleep in milliseconds.
+ * Numofsamples: The number of samples to take.
  */
 static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples){
 	const unsigned DELTA_SLEEP_MS =100; // milliseconds
@@ -939,8 +1010,8 @@ static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples){
 
 		/* Look for ENTER key to stop the stream */
 		for(uint8_t chr =1; chr < MSG_RX_BUF_SIZE; chr++){
-			if(UARTRxBuf[PcPort - 1][chr] == '\r'){
-				UARTRxBuf[PcPort - 1][chr] =0;
+			if(UARTRxBuf[pcPort - 1][chr] == '\r'){
+				UARTRxBuf[pcPort - 1][chr] =0;
 				StopeCliStreamFlag =1;
 				return H0BR4_ERR_TERMINATED;
 			}
@@ -958,70 +1029,6 @@ static Module_Status PollingSleepCLISafe(uint32_t period,long Numofsamples){
 }
 
 /***************************************************************************/
-/*
- * @brief: Calculates the average of an array of readings.
- * @param1: Pointer to an array of float readings.
- * @param2: Number of readings in the array.
- * @retval: The average value of the readings.
- */
-float calculate_average(float *readings, int num_readings) {
-    float sum = 0; // Initialize sum to 0
-    for (int i = 0; i < num_readings; i++) {
-        sum += readings[i]; // Add each reading to the sum
-    }
-    return (float)(sum / num_readings); // Return the average value
-}
-
-/***************************************************************************/
-/*
- * @brief: Calibrates the sensor by calculating offsets for X, Y, and Z axes.
- * @param1: Number of readings to take for calibration.
- * @param2: Pointer to store the X-axis offset.
- * @param3: Pointer to store the Y-axis offset.
- * @param4: Pointer to store the Z-axis offset.
- * @note: This function assumes the Z-axis is aligned with gravity (1G).
- *        It should be called to determine the optimal offset values.
- * @note: This function writes the offset values to the registers. Once you get the desired output,
- *        take the appropriate offset values for your sensor and write them to the registers using the set_offsets function.
- *        Then, stop calling this function.
- * @note: It is recommended to keep the number of samples between 50 and 200.
- * @retval: None
- */
-
-void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16_t *Z_offset) {
-    float accx, accy, accz;
-    float z_avg, y_avg, x_avg;
-    float x_readings[num_readings], y_readings[num_readings], z_readings[num_readings];
-    HAL_Delay(1000); // Initial delay before starting the calibration
-
-    // Collect data
-    for (int i = 0; i < num_readings; i++) {
-        HAL_Delay(10); // Delay between each reading
-        SampleAccG(&accx, &accy, &accz); // Sample accelerometer data
-        x_readings[i] = accx;
-        y_readings[i] = accy;
-        z_readings[i] = accz;
-    }
-
-    // Calculate average values
-    x_avg = calculate_average(x_readings, num_readings);
-    y_avg = calculate_average(y_readings, num_readings);
-    z_avg = calculate_average(z_readings, num_readings);
-
-    // Calculate offsets
-    int16_t x_offset = 0 - (x_avg * 1000);
-    int16_t y_offset = 0 - (y_avg * 1000);
-    int16_t z_offset = 1000 - (z_avg * 1000);
-
-    *X_offset = x_offset;
-    *Y_offset = y_offset;
-    *Z_offset = -z_offset;
-
-    // Apply offsets
-    set_offsets(&dev_ctx, x_offset, y_offset, -z_offset);
-}
-
-/***************************************************************************/
 /***************************** General Functions ***************************/
 /***************************************************************************/
 /*
@@ -1031,11 +1038,11 @@ void ACC_SetOffset(int num_readings, int16_t *X_offset, int16_t *Y_offset, int16
  * @param accZ: Pointer to store Z-axis accelerometer data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleAccG(float *accX, float *accY, float *accZ) {
-    Module_Status status = H0BR4_OK;
-    if ((status = LSM6DS3TR_C_SampleAccG(accX, accY, accZ)) != LSM6DS3TR_C_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleAccG(float *accX,float *accY,float *accZ){
+	Module_Status status =H0BR4_OK;
+	if((status =LSM6DS3TR_C_SampleAccG(accX,accY,accZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1046,11 +1053,11 @@ Module_Status SampleAccG(float *accX, float *accY, float *accZ) {
  * @param gyroZ: Pointer to store Z-axis gyroscope data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleGyroDPS(float *gyroX, float *gyroY, float *gyroZ) {
-    Module_Status status = H0BR4_OK;
-    if ((status = LSM6DS3TR_C_SampleGyroDPS(gyroX, gyroY, gyroZ)) != LSM6DS3TR_C_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleGyroDPS(float *gyroX,float *gyroY,float *gyroZ){
+	Module_Status status =H0BR4_OK;
+	if((status =LSM6DS3TR_C_SampleGyroDPS(gyroX,gyroY,gyroZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1061,11 +1068,11 @@ Module_Status SampleGyroDPS(float *gyroX, float *gyroY, float *gyroZ) {
  * @param magZ: Pointer to store Z-axis magnetometer data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleMagMGauss(int *magX, int *magY, int *magZ) {
-    Module_Status status = H0BR4_OK;
-    if ((LSM303SampleMagMGauss(magX, magY, magZ)) != LSM303AGR_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleMagMGauss(int *magX,int *magY,int *magZ){
+	Module_Status status =H0BR4_OK;
+	if((LSM303SampleMagMGauss(magX,magY,magZ)) != LSM303AGR_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1074,11 +1081,11 @@ Module_Status SampleMagMGauss(int *magX, int *magY, int *magZ) {
  * @param temp: Pointer to store temperature data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleTempCelsius(float *temp) {
-    Module_Status status = H0BR4_OK;
-    if ((LSM6DS3TR_C_SampleTempCelsius(temp)) != LSM6DS3TR_C_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleTempCelsius(float *temp){
+	Module_Status status =H0BR4_OK;
+	if((LSM6DS3TR_C_SampleTempCelsius(temp)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1087,11 +1094,11 @@ Module_Status SampleTempCelsius(float *temp) {
  * @param temp: Pointer to store temperature data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleTempFahrenheit(float *temp) {
-    Module_Status status = H0BR4_OK;
-    if ((LSM6DS3TR_C_SampleTempFahrenheit(temp)) != LSM6DS3TR_C_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleTempFahrenheit(float *temp){
+	Module_Status status =H0BR4_OK;
+	if((LSM6DS3TR_C_SampleTempFahrenheit(temp)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1102,11 +1109,11 @@ Module_Status SampleTempFahrenheit(float *temp) {
  * @param gyroZ: Pointer to store Z-axis raw gyroscope data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ) {
-    Module_Status status = H0BR4_OK;
-    if ((status = LSM6DS3TR_C_SampleGyroRaw(gyroX, gyroY, gyroZ)) != LSM6DS3TR_C_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleGyroRaw(int16_t *gyroX,int16_t *gyroY,int16_t *gyroZ){
+	Module_Status status =H0BR4_OK;
+	if((status =LSM6DS3TR_C_SampleGyroRaw(gyroX,gyroY,gyroZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1117,11 +1124,11 @@ Module_Status SampleGyroRaw(int16_t *gyroX, int16_t *gyroY, int16_t *gyroZ) {
  * @param accZ: Pointer to store Z-axis raw accelerometer data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ) {
-    Module_Status status = H0BR4_OK;
-    if ((status = LSM6DS3TR_C_SampleAccRaw(accX, accY, accZ)) != LSM6DS3TR_C_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleAccRaw(int16_t *accX,int16_t *accY,int16_t *accZ){
+	Module_Status status =H0BR4_OK;
+	if((status =LSM6DS3TR_C_SampleAccRaw(accX,accY,accZ)) != LSM6DS3TR_C_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1132,11 +1139,11 @@ Module_Status SampleAccRaw(int16_t *accX, int16_t *accY, int16_t *accZ) {
  * @param magZ: Pointer to store Z-axis raw magnetometer data.
  * @retval: Module status indicating success or error.
  */
-Module_Status SampleMagRaw(int16_t *magX, int16_t *magY, int16_t *magZ) {
-    Module_Status status = H0BR4_OK;
-    if ((status = LSM303SampleMagRaw(magX, magY, magZ)) != LSM303AGR_OK)
-        return status = H0BR4_ERROR;
-    return status;
+Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
+	Module_Status status =H0BR4_OK;
+	if((status =LSM303SampleMagRaw(magX,magY,magZ)) != LSM303AGR_OK)
+		return status =H0BR4_ERROR;
+	return status;
 }
 
 /***************************************************************************/
@@ -1186,21 +1193,21 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_FLOAT;
-				messageParams[2] =3;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&AccX) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&AccX) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&AccX) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&AccX) >> 24);
-				messageParams[7] =(uint8_t )((*(uint32_t* )&AccY) >> 0);
-				messageParams[8] =(uint8_t )((*(uint32_t* )&AccY) >> 8);
-				messageParams[9] =(uint8_t )((*(uint32_t* )&AccY) >> 16);
-				messageParams[10] =(uint8_t )((*(uint32_t* )&AccY) >> 24);
-				messageParams[11] =(uint8_t )((*(uint32_t* )&AccZ) >> 0);
-				messageParams[12] =(uint8_t )((*(uint32_t* )&AccZ) >> 8);
-				messageParams[13] =(uint8_t )((*(uint32_t* )&AccZ) >> 16);
-				messageParams[14] =(uint8_t )((*(uint32_t* )&AccZ) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_FLOAT;
+				MessageParams[2] =3;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&AccX) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&AccX) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&AccX) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&AccX) >> 24);
+				MessageParams[7] =(uint8_t )((*(uint32_t* )&AccY) >> 0);
+				MessageParams[8] =(uint8_t )((*(uint32_t* )&AccY) >> 8);
+				MessageParams[9] =(uint8_t )((*(uint32_t* )&AccY) >> 16);
+				MessageParams[10] =(uint8_t )((*(uint32_t* )&AccY) >> 24);
+				MessageParams[11] =(uint8_t )((*(uint32_t* )&AccZ) >> 0);
+				MessageParams[12] =(uint8_t )((*(uint32_t* )&AccZ) >> 8);
+				MessageParams[13] =(uint8_t )((*(uint32_t* )&AccZ) >> 16);
+				MessageParams[14] =(uint8_t )((*(uint32_t* )&AccZ) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
 			}
@@ -1230,21 +1237,21 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_FLOAT;
-				messageParams[2] =3;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&GyroX) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&GyroX) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&GyroX) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&GyroX) >> 24);
-				messageParams[7] =(uint8_t )((*(uint32_t* )&GyroY) >> 0);
-				messageParams[8] =(uint8_t )((*(uint32_t* )&GyroY) >> 8);
-				messageParams[9] =(uint8_t )((*(uint32_t* )&GyroY) >> 16);
-				messageParams[10] =(uint8_t )((*(uint32_t* )&GyroY) >> 24);
-				messageParams[11] =(uint8_t )((*(uint32_t* )&GyroZ) >> 0);
-				messageParams[12] =(uint8_t )((*(uint32_t* )&GyroZ) >> 8);
-				messageParams[13] =(uint8_t )((*(uint32_t* )&GyroZ) >> 16);
-				messageParams[14] =(uint8_t )((*(uint32_t* )&GyroZ) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_FLOAT;
+				MessageParams[2] =3;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&GyroX) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&GyroX) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&GyroX) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&GyroX) >> 24);
+				MessageParams[7] =(uint8_t )((*(uint32_t* )&GyroY) >> 0);
+				MessageParams[8] =(uint8_t )((*(uint32_t* )&GyroY) >> 8);
+				MessageParams[9] =(uint8_t )((*(uint32_t* )&GyroY) >> 16);
+				MessageParams[10] =(uint8_t )((*(uint32_t* )&GyroY) >> 24);
+				MessageParams[11] =(uint8_t )((*(uint32_t* )&GyroZ) >> 0);
+				MessageParams[12] =(uint8_t )((*(uint32_t* )&GyroZ) >> 8);
+				MessageParams[13] =(uint8_t )((*(uint32_t* )&GyroZ) >> 16);
+				MessageParams[14] =(uint8_t )((*(uint32_t* )&GyroZ) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
 			}
@@ -1274,21 +1281,21 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_INT32;
-				messageParams[2] =3;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&MagX) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&MagX) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&MagX) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&MagX) >> 24);
-				messageParams[7] =(uint8_t )((*(uint32_t* )&MagY) >> 0);
-				messageParams[8] =(uint8_t )((*(uint32_t* )&MagY) >> 8);
-				messageParams[9] =(uint8_t )((*(uint32_t* )&MagY) >> 16);
-				messageParams[10] =(uint8_t )((*(uint32_t* )&MagY) >> 24);
-				messageParams[11] =(uint8_t )((*(uint32_t* )&MagZ) >> 0);
-				messageParams[12] =(uint8_t )((*(uint32_t* )&MagZ) >> 8);
-				messageParams[13] =(uint8_t )((*(uint32_t* )&MagZ) >> 16);
-				messageParams[14] =(uint8_t )((*(uint32_t* )&MagZ) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_INT32;
+				MessageParams[2] =3;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&MagX) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&MagX) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&MagX) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&MagX) >> 24);
+				MessageParams[7] =(uint8_t )((*(uint32_t* )&MagY) >> 0);
+				MessageParams[8] =(uint8_t )((*(uint32_t* )&MagY) >> 8);
+				MessageParams[9] =(uint8_t )((*(uint32_t* )&MagY) >> 16);
+				MessageParams[10] =(uint8_t )((*(uint32_t* )&MagY) >> 24);
+				MessageParams[11] =(uint8_t )((*(uint32_t* )&MagZ) >> 0);
+				MessageParams[12] =(uint8_t )((*(uint32_t* )&MagZ) >> 8);
+				MessageParams[13] =(uint8_t )((*(uint32_t* )&MagZ) >> 16);
+				MessageParams[14] =(uint8_t )((*(uint32_t* )&MagZ) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(int) * 3) + 3);
 			}
@@ -1310,13 +1317,13 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 			}
 			else{
 				/* LSB first */
-				messageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				messageParams[0] =FMT_FLOAT;
-				messageParams[2] =1;
-				messageParams[3] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 0);
-				messageParams[4] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 8);
-				messageParams[5] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 16);
-				messageParams[6] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 24);
+				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
+				MessageParams[0] =FMT_FLOAT;
+				MessageParams[2] =1;
+				MessageParams[3] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 0);
+				MessageParams[4] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 8);
+				MessageParams[5] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 16);
+				MessageParams[6] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 24);
 
 				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 1) + 3);
 			}
@@ -1341,23 +1348,23 @@ Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
  * @param timeout: Timeout period for the operation.
  * @retval: Module status indicating success or error.
  */
-Module_Status StreamToBuffer(float *buffer, All_Data function, uint32_t Numofsamples, uint32_t timeout) {
-    switch (function) {
-        case ACC:
-            return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleAccBuf);
-            break;
-        case GYRO:
-            return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleGyroBuf);
-            break;
-        case MAG:
-            return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleMagBuf);
-            break;
-        case TEMP:
-            return StreamMemsToBuf(buffer, Numofsamples, timeout, SampleTempBuff);
-            break;
-        default:
-            break;
-    }
+Module_Status StreamToBuffer(float *buffer,All_Data function,uint32_t Numofsamples,uint32_t timeout){
+	switch(function){
+		case ACC:
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleAccBuf);
+			break;
+		case GYRO:
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleGyroBuf);
+			break;
+		case MAG:
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleMagBuf);
+			break;
+		case TEMP:
+			return StreamToBuf(buffer,Numofsamples,timeout,SampleTempBuff);
+			break;
+		default:
+			break;
+	}
 }
 
 /***************************************************************************/
@@ -1375,9 +1382,8 @@ Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 	uint32_t SamplePeriod =0u;
 
 	/* Check timer handle and timeout validity */
-	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)){
+	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples))
 		return H0BR4_ERROR; /* Assuming H0BR4_ERROR is defined in Module_Status */
-	}
 
 	/* Set streaming parameters */
 	StreamMode = STREAM_MODE_TO_PORT;
@@ -1391,20 +1397,17 @@ Module_Status StreamtoPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFuncti
 
 	/* Stop (Reset) the TimerStream if it's already running */
 	if(xTimerIsTimerActive(xTimerStream)){
-		if(pdFAIL == xTimerStop(xTimerStream,100)){
+		if(pdFAIL == xTimerStop(xTimerStream,100))
 			return H0BR4_ERROR;
-		}
 	}
 
 	/* Start the stream timer */
-	if(pdFAIL == xTimerStart(xTimerStream,100)){
+	if(pdFAIL == xTimerStart(xTimerStream,100))
 		return H0BR4_ERROR;
-	}
 
 	/* Update timer timeout - This also restarts the timer */
-	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100)){
+	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100))
 		return H0BR4_ERROR;
-	}
 
 	return Status;
 }
@@ -1422,15 +1425,13 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 	Module_Status Status =H0BR4_OK;
 	uint32_t SamplePeriod =0u;
 	/* Check timer handle and timeout validity */
-	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples)){
-	return H0BR4_ERROR; /* Assuming H0BR4_ERROR is defined in Module_Status */
-	}
+	if((NULL == xTimerStream) || (0 == streamTimeout) || (0 == numOfSamples))
+		return H0BR4_ERROR; /* Assuming H0BR4_ERROR is defined in Module_Status */
 
 	/* Set streaming parameters */
 	StreamMode = STREAM_MODE_TO_TERMINAL;
 	TerminalPort =dstPort;
 	TerminalFunction =dataFunction;
-	TerminalTimeout =streamTimeout;
 	TerminalNumOfSamples =numOfSamples;
 
 	/* Calculate the period from timeout and number of samples */
@@ -1438,20 +1439,17 @@ Module_Status StreamToTerminal(uint8_t dstPort,All_Data dataFunction,uint32_t nu
 
 	/* Stop (Reset) the TimerStream if it's already running */
 	if(xTimerIsTimerActive(xTimerStream)){
-		if(pdFAIL == xTimerStop(xTimerStream,100)){
+		if(pdFAIL == xTimerStop(xTimerStream,100))
 			return H0BR4_ERROR;
-		}
 	}
 
 	/* Start the stream timer */
-	if(pdFAIL == xTimerStart(xTimerStream,100)){
+	if(pdFAIL == xTimerStart(xTimerStream,100))
 		return H0BR4_ERROR;
-	}
 
 	/* Update timer timeout - This also restarts the timer */
-	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100)){
+	if(pdFAIL == xTimerChangePeriod(xTimerStream,SamplePeriod,100))
 		return H0BR4_ERROR;
-	}
 
 	return Status;
 }
@@ -1480,20 +1478,19 @@ static portBASE_TYPE SampleSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBuff
 
 	do{
 		if(!strncmp(pSensName,AccCmdName,strlen(AccCmdName))){
-			SampleToTerminal(PcPort,ACC);
-
+			SampleToTerminal(pcPort,ACC);
 
 		}
 		else if(!strncmp(pSensName,GyroCmdName,strlen(GyroCmdName))){
-			SampleToTerminal(PcPort,GYRO);
+			SampleToTerminal(pcPort,GYRO);
 
 		}
 		else if(!strncmp(pSensName,MagCmdName,strlen(MagCmdName))){
-			SampleToTerminal(PcPort,MAG);
+			SampleToTerminal(pcPort,MAG);
 
 		}
 		else if(!strncmp(pSensName,TempCmdName,strlen(TempCmdName))){
-			SampleToTerminal(PcPort,TEMP);
+			SampleToTerminal(pcPort,TEMP);
 
 		}
 		else{
@@ -1615,5 +1612,4 @@ static portBASE_TYPE StreamSensorCommand(int8_t *pcWriteBuffer,size_t xWriteBuff
 	return pdFALSE;
 }
 /***************************************************************************/
-
-/************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/
+/***************** (C) COPYRIGHT HEXABITZ ***** END OF FILE ****************/

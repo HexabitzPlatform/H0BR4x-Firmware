@@ -1148,195 +1148,199 @@ Module_Status SampleMagRaw(int16_t *magX,int16_t *magY,int16_t *magZ){
 
 /***************************************************************************/
 /*
- * brief: Samples data and exports it to a specified port.
- * param dstModule: The module number to export data from.
- * param dstPort: The port number to export data to.
- * param dataFunction: Function to sample data (e.g., ACC, GYRO, MAG, TEMP).
- * retval: of type Module_Status indicating the success or failure of the operation.
+ * @brief: Samples data and exports it to a specified port.
+ * @param dstModule: The module number to export data from.
+ * @param dstPort: The port number to export data to.
+ * @param dataFunction: Function to sample data (e.g., ACC, GYRO, MAG, TEMP).
+ * @retval: Module status indicating success or failure of the operation.
  */
-Module_Status SampleToPort(uint8_t dstModule,uint8_t dstPort,All_Data dataFunction){
-	Module_Status Status =H0BR4_OK;
-	static uint8_t Temp[12] ={0}; /* Buffer for data transmission */
-	float AccX =0.0f, AccY =0.0f, AccZ =0.0f;
-	float GyroX =0.0f, GyroY =0.0f, GyroZ =0.0f;
-	int MagX =0, MagY =0, MagZ =0;
-	float TempCelsius =0.0f;
+Module_Status SampleToPort(uint8_t dstModule, uint8_t dstPort, All_Data dataFunction) {
+    Module_Status Status = H0BR4_OK;
+    static uint8_t Temp[12] = {0}; /* Buffer for data transmission */
+    float AccX = 0.0f, AccY = 0.0f, AccZ = 0.0f;
+    float GyroX = 0.0f, GyroY = 0.0f, GyroZ = 0.0f;
+    int MagX = 0, MagY = 0, MagZ = 0;
+    float TempCelsius = 0.0f;
 
-	/* Check if the port and module ID are valid */
-	if((dstPort == 0) && (dstModule == myID)){
-		return H0BR4_ERR_WrongParams;
-	}
+    /* Check if the port and module ID are valid */
+    if ((dstPort == 0) && (dstModule == myID)) {
+        return H0BR4_ERR_WrongParams;
+    }
 
-	/* Sample and export data based on function type */
-	switch(dataFunction){
-		case ACC:
-			if(SampleAccG(&AccX,&AccY,&AccZ) != H0BR4_OK){
-				return H0BR4_ERROR;
-			}
+    /* Sample and export data based on function type */
+    switch (dataFunction) {
+        case ACC:
+            if (SampleAccG(&AccX, &AccY, &AccZ) != H0BR4_OK) {
+                return H0BR4_ERROR;
+            }
 
-			if(dstModule == myID || dstModule == 0){
-				/* LSB first */
-				Temp[0] =(uint8_t )((*(uint32_t* )&AccX) >> 0);
-				Temp[1] =(uint8_t )((*(uint32_t* )&AccX) >> 8);
-				Temp[2] =(uint8_t )((*(uint32_t* )&AccX) >> 16);
-				Temp[3] =(uint8_t )((*(uint32_t* )&AccX) >> 24);
-				Temp[4] =(uint8_t )((*(uint32_t* )&AccY) >> 0);
-				Temp[5] =(uint8_t )((*(uint32_t* )&AccY) >> 8);
-				Temp[6] =(uint8_t )((*(uint32_t* )&AccY) >> 16);
-				Temp[7] =(uint8_t )((*(uint32_t* )&AccY) >> 24);
-				Temp[8] =(uint8_t )((*(uint32_t* )&AccZ) >> 0);
-				Temp[9] =(uint8_t )((*(uint32_t* )&AccZ) >> 8);
-				Temp[10] =(uint8_t )((*(uint32_t* )&AccZ) >> 16);
-				Temp[11] =(uint8_t )((*(uint32_t* )&AccZ) >> 24);
+            if (dstModule == myID) {
+                /* LSB first */
+                Temp[0] = (uint8_t)(*(uint32_t*)&AccX);         /* AccX byte 0 */
+                Temp[1] = (uint8_t)((*(uint32_t*)&AccX) >> 8);  /* AccX byte 1 */
+                Temp[2] = (uint8_t)((*(uint32_t*)&AccX) >> 16); /* AccX byte 2 */
+                Temp[3] = (uint8_t)((*(uint32_t*)&AccX) >> 24); /* AccX byte 3 */
+                Temp[4] = (uint8_t)(*(uint32_t*)&AccY);         /* AccY byte 0 */
+                Temp[5] = (uint8_t)((*(uint32_t*)&AccY) >> 8);  /* AccY byte 1 */
+                Temp[6] = (uint8_t)((*(uint32_t*)&AccY) >> 16); /* AccY byte 2 */
+                Temp[7] = (uint8_t)((*(uint32_t*)&AccY) >> 24); /* AccY byte 3 */
+                Temp[8] = (uint8_t)(*(uint32_t*)&AccZ);         /* AccZ byte 0 */
+                Temp[9] = (uint8_t)((*(uint32_t*)&AccZ) >> 8);  /* AccZ byte 1 */
+                Temp[10] = (uint8_t)((*(uint32_t*)&AccZ) >> 16); /* AccZ byte 2 */
+                Temp[11] = (uint8_t)((*(uint32_t*)&AccZ) >> 24); /* AccZ byte 3 */
 
-				writePxITMutex(dstPort,(char* )&Temp[0],12 * sizeof(uint8_t),10);
-			}
-			else{
-				/* LSB first */
-				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				MessageParams[0] =FMT_FLOAT;
-				MessageParams[2] =3;
-				MessageParams[3] =(uint8_t )((*(uint32_t* )&AccX) >> 0);
-				MessageParams[4] =(uint8_t )((*(uint32_t* )&AccX) >> 8);
-				MessageParams[5] =(uint8_t )((*(uint32_t* )&AccX) >> 16);
-				MessageParams[6] =(uint8_t )((*(uint32_t* )&AccX) >> 24);
-				MessageParams[7] =(uint8_t )((*(uint32_t* )&AccY) >> 0);
-				MessageParams[8] =(uint8_t )((*(uint32_t* )&AccY) >> 8);
-				MessageParams[9] =(uint8_t )((*(uint32_t* )&AccY) >> 16);
-				MessageParams[10] =(uint8_t )((*(uint32_t* )&AccY) >> 24);
-				MessageParams[11] =(uint8_t )((*(uint32_t* )&AccZ) >> 0);
-				MessageParams[12] =(uint8_t )((*(uint32_t* )&AccZ) >> 8);
-				MessageParams[13] =(uint8_t )((*(uint32_t* )&AccZ) >> 16);
-				MessageParams[14] =(uint8_t )((*(uint32_t* )&AccZ) >> 24);
+                writePxITMutex(dstPort, (char*)&Temp[0], 12 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[0] = FMT_FLOAT;                                    /* Data format: float */
+                MessageParams[1] = (H0BR4_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 3;                                           /* Number of elements (AccX, AccY, AccZ) */
+                MessageParams[3] = (uint8_t)(CODE_H0BR4_SAMPLE_ACC >> 0);       /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0BR4_SAMPLE_ACC >> 8);       /* Command code MSB */
+                MessageParams[5] = (uint8_t)(*(uint32_t*)&AccX);                /* AccX byte 0 */
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&AccX) >> 8);         /* AccX byte 1 */
+                MessageParams[7] = (uint8_t)((*(uint32_t*)&AccX) >> 16);        /* AccX byte 2 */
+                MessageParams[8] = (uint8_t)((*(uint32_t*)&AccX) >> 24);        /* AccX byte 3 */
+                MessageParams[9] = (uint8_t)(*(uint32_t*)&AccY);                /* AccY byte 0 */
+                MessageParams[10] = (uint8_t)((*(uint32_t*)&AccY) >> 8);        /* AccY byte 1 */
+                MessageParams[11] = (uint8_t)((*(uint32_t*)&AccY) >> 16);       /* AccY byte 2 */
+                MessageParams[12] = (uint8_t)((*(uint32_t*)&AccY) >> 24);       /* AccY byte 3 */
+                MessageParams[13] = (uint8_t)(*(uint32_t*)&AccZ);               /* AccZ byte 0 */
+                MessageParams[14] = (uint8_t)((*(uint32_t*)&AccZ) >> 8);        /* AccZ byte 1 */
+                MessageParams[15] = (uint8_t)((*(uint32_t*)&AccZ) >> 16);       /* AccZ byte 2 */
+                MessageParams[16] = (uint8_t)((*(uint32_t*)&AccZ) >> 24);       /* AccZ byte 3 */
 
-				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
-			}
-			break;
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 3) + 5);
+            }
+            break;
 
-		case GYRO:
-			if(SampleGyroDPS(&GyroX,&GyroY,&GyroZ) != H0BR4_OK){
-				return H0BR4_ERROR;
-			}
+        case GYRO:
+            if (SampleGyroDPS(&GyroX, &GyroY, &GyroZ) != H0BR4_OK) {
+                return H0BR4_ERROR;
+            }
 
-			if(dstModule == myID || dstModule == 0){
-				/* LSB first */
-				Temp[0] =(uint8_t )((*(uint32_t* )&GyroX) >> 0);
-				Temp[1] =(uint8_t )((*(uint32_t* )&GyroX) >> 8);
-				Temp[2] =(uint8_t )((*(uint32_t* )&GyroX) >> 16);
-				Temp[3] =(uint8_t )((*(uint32_t* )&GyroX) >> 24);
-				Temp[4] =(uint8_t )((*(uint32_t* )&GyroY) >> 0);
-				Temp[5] =(uint8_t )((*(uint32_t* )&GyroY) >> 8);
-				Temp[6] =(uint8_t )((*(uint32_t* )&GyroY) >> 16);
-				Temp[7] =(uint8_t )((*(uint32_t* )&GyroY) >> 24);
-				Temp[8] =(uint8_t )((*(uint32_t* )&GyroZ) >> 0);
-				Temp[9] =(uint8_t )((*(uint32_t* )&GyroZ) >> 8);
-				Temp[10] =(uint8_t )((*(uint32_t* )&GyroZ) >> 16);
-				Temp[11] =(uint8_t )((*(uint32_t* )&GyroZ) >> 24);
+            if (dstModule == myID) {
+                /* LSB first */
+                Temp[0] = (uint8_t)(*(uint32_t*)&GyroX);         /* GyroX byte 0 */
+                Temp[1] = (uint8_t)((*(uint32_t*)&GyroX) >> 8);  /* GyroX byte 1 */
+                Temp[2] = (uint8_t)((*(uint32_t*)&GyroX) >> 16); /* GyroX byte 2 */
+                Temp[3] = (uint8_t)((*(uint32_t*)&GyroX) >> 24); /* GyroX byte 3 */
+                Temp[4] = (uint8_t)(*(uint32_t*)&GyroY);         /* GyroY byte 0 */
+                Temp[5] = (uint8_t)((*(uint32_t*)&GyroY) >> 8);  /* GyroY byte 1 */
+                Temp[6] = (uint8_t)((*(uint32_t*)&GyroY) >> 16); /* GyroY byte 2 */
+                Temp[7] = (uint8_t)((*(uint32_t*)&GyroY) >> 24); /* GyroY byte 3 */
+                Temp[8] = (uint8_t)(*(uint32_t*)&GyroZ);         /* GyroZ byte 0 */
+                Temp[9] = (uint8_t)((*(uint32_t*)&GyroZ) >> 8);  /* GyroZ byte 1 */
+                Temp[10] = (uint8_t)((*(uint32_t*)&GyroZ) >> 16); /* GyroZ byte 2 */
+                Temp[11] = (uint8_t)((*(uint32_t*)&GyroZ) >> 24); /* GyroZ byte 3 */
 
-				writePxITMutex(dstPort,(char* )&Temp[0],12 * sizeof(uint8_t),10);
-			}
-			else{
-				/* LSB first */
-				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				MessageParams[0] =FMT_FLOAT;
-				MessageParams[2] =3;
-				MessageParams[3] =(uint8_t )((*(uint32_t* )&GyroX) >> 0);
-				MessageParams[4] =(uint8_t )((*(uint32_t* )&GyroX) >> 8);
-				MessageParams[5] =(uint8_t )((*(uint32_t* )&GyroX) >> 16);
-				MessageParams[6] =(uint8_t )((*(uint32_t* )&GyroX) >> 24);
-				MessageParams[7] =(uint8_t )((*(uint32_t* )&GyroY) >> 0);
-				MessageParams[8] =(uint8_t )((*(uint32_t* )&GyroY) >> 8);
-				MessageParams[9] =(uint8_t )((*(uint32_t* )&GyroY) >> 16);
-				MessageParams[10] =(uint8_t )((*(uint32_t* )&GyroY) >> 24);
-				MessageParams[11] =(uint8_t )((*(uint32_t* )&GyroZ) >> 0);
-				MessageParams[12] =(uint8_t )((*(uint32_t* )&GyroZ) >> 8);
-				MessageParams[13] =(uint8_t )((*(uint32_t* )&GyroZ) >> 16);
-				MessageParams[14] =(uint8_t )((*(uint32_t* )&GyroZ) >> 24);
+                writePxITMutex(dstPort, (char*)&Temp[0], 12 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[0] = FMT_FLOAT;                                    /* Data format: float */
+                MessageParams[1] = (H0BR4_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 3;                                           /* Number of elements (GyroX, GyroY, GyroZ) */
+                MessageParams[3] = (uint8_t)(CODE_H0BR4_SAMPLE_GYRO >> 0);      /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0BR4_SAMPLE_GYRO >> 8);      /* Command code MSB */
+                MessageParams[5] = (uint8_t)(*(uint32_t*)&GyroX);               /* GyroX byte 0 */
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&GyroX) >> 8);        /* GyroX byte 1 */
+                MessageParams[7] = (uint8_t)((*(uint32_t*)&GyroX) >> 16);       /* GyroX byte 2 */
+                MessageParams[8] = (uint8_t)((*(uint32_t*)&GyroX) >> 24);       /* GyroX byte 3 */
+                MessageParams[9] = (uint8_t)(*(uint32_t*)&GyroY);               /* GyroY byte 0 */
+                MessageParams[10] = (uint8_t)((*(uint32_t*)&GyroY) >> 8);       /* GyroY byte 1 */
+                MessageParams[11] = (uint8_t)((*(uint32_t*)&GyroY) >> 16);      /* GyroY byte 2 */
+                MessageParams[12] = (uint8_t)((*(uint32_t*)&GyroY) >> 24);      /* GyroY byte 3 */
+                MessageParams[13] = (uint8_t)(*(uint32_t*)&GyroZ);              /* GyroZ byte 0 */
+                MessageParams[14] = (uint8_t)((*(uint32_t*)&GyroZ) >> 8);       /* GyroZ byte 1 */
+                MessageParams[15] = (uint8_t)((*(uint32_t*)&GyroZ) >> 16);      /* GyroZ byte 2 */
+                MessageParams[16] = (uint8_t)((*(uint32_t*)&GyroZ) >> 24);      /* GyroZ byte 3 */
 
-				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 3) + 3);
-			}
-			break;
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 3) + 5);
+            }
+            break;
 
-		case MAG:
-			if(SampleMagMGauss(&MagX,&MagY,&MagZ) != H0BR4_OK){
-				return H0BR4_ERROR;
-			}
+        case MAG:
+            if (SampleMagMGauss(&MagX, &MagY, &MagZ) != H0BR4_OK) {
+                return H0BR4_ERROR;
+            }
 
-			if(dstModule == myID || dstModule == 0){
-				/* LSB first */
-				Temp[0] =(uint8_t )((*(uint32_t* )&MagX) >> 0);
-				Temp[1] =(uint8_t )((*(uint32_t* )&MagX) >> 8);
-				Temp[2] =(uint8_t )((*(uint32_t* )&MagX) >> 16);
-				Temp[3] =(uint8_t )((*(uint32_t* )&MagX) >> 24);
-				Temp[4] =(uint8_t )((*(uint32_t* )&MagY) >> 0);
-				Temp[5] =(uint8_t )((*(uint32_t* )&MagY) >> 8);
-				Temp[6] =(uint8_t )((*(uint32_t* )&MagY) >> 16);
-				Temp[7] =(uint8_t )((*(uint32_t* )&MagY) >> 24);
-				Temp[8] =(uint8_t )((*(uint32_t* )&MagZ) >> 0);
-				Temp[9] =(uint8_t )((*(uint32_t* )&MagZ) >> 8);
-				Temp[10] =(uint8_t )((*(uint32_t* )&MagZ) >> 16);
-				Temp[11] =(uint8_t )((*(uint32_t* )&MagZ) >> 24);
+            if (dstModule == myID) {
+                /* LSB first */
+                Temp[0] = (uint8_t)(*(uint32_t*)&MagX);         /* MagX byte 0 */
+                Temp[1] = (uint8_t)((*(uint32_t*)&MagX) >> 8);  /* MagX byte 1 */
+                Temp[2] = (uint8_t)((*(uint32_t*)&MagX) >> 16); /* MagX byte 2 */
+                Temp[3] = (uint8_t)((*(uint32_t*)&MagX) >> 24); /* MagX byte 3 */
+                Temp[4] = (uint8_t)(*(uint32_t*)&MagY);         /* MagY byte 0 */
+                Temp[5] = (uint8_t)((*(uint32_t*)&MagY) >> 8);  /* MagY byte 1 */
+                Temp[6] = (uint8_t)((*(uint32_t*)&MagY) >> 16); /* MagY byte 2 */
+                Temp[7] = (uint8_t)((*(uint32_t*)&MagY) >> 24); /* MagY byte 3 */
+                Temp[8] = (uint8_t)(*(uint32_t*)&MagZ);         /* MagZ byte 0 */
+                Temp[9] = (uint8_t)((*(uint32_t*)&MagZ) >> 8);  /* MagZ byte 1 */
+                Temp[10] = (uint8_t)((*(uint32_t*)&MagZ) >> 16); /* MagZ byte 2 */
+                Temp[11] = (uint8_t)((*(uint32_t*)&MagZ) >> 24); /* MagZ byte 3 */
 
-				writePxITMutex(dstPort,(char* )&Temp[0],12 * sizeof(uint8_t),10);
-			}
-			else{
-				/* LSB first */
-				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				MessageParams[0] =FMT_INT32;
-				MessageParams[2] =3;
-				MessageParams[3] =(uint8_t )((*(uint32_t* )&MagX) >> 0);
-				MessageParams[4] =(uint8_t )((*(uint32_t* )&MagX) >> 8);
-				MessageParams[5] =(uint8_t )((*(uint32_t* )&MagX) >> 16);
-				MessageParams[6] =(uint8_t )((*(uint32_t* )&MagX) >> 24);
-				MessageParams[7] =(uint8_t )((*(uint32_t* )&MagY) >> 0);
-				MessageParams[8] =(uint8_t )((*(uint32_t* )&MagY) >> 8);
-				MessageParams[9] =(uint8_t )((*(uint32_t* )&MagY) >> 16);
-				MessageParams[10] =(uint8_t )((*(uint32_t* )&MagY) >> 24);
-				MessageParams[11] =(uint8_t )((*(uint32_t* )&MagZ) >> 0);
-				MessageParams[12] =(uint8_t )((*(uint32_t* )&MagZ) >> 8);
-				MessageParams[13] =(uint8_t )((*(uint32_t* )&MagZ) >> 16);
-				MessageParams[14] =(uint8_t )((*(uint32_t* )&MagZ) >> 24);
+                writePxITMutex(dstPort, (char*)&Temp[0], 12 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[0] = FMT_INT32;                                    /* Data format: int32 */
+                MessageParams[1] = (uint8_t)((H0BR4_OK == Status) ? BOS_OK : BOS_ERROR);   /* Operation status */
+                MessageParams[2] = 3;                                           /* Number of elements (MagX, MagY, MagZ) */
+                MessageParams[3] = (uint8_t)(CODE_H0BR4_SAMPLE_MAG >> 0);       /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0BR4_SAMPLE_MAG >> 8);       /* Command code MSB */
+                MessageParams[5] = (uint8_t)(*(uint32_t*)&MagX);                /* MagX byte 0 */
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&MagX) >> 8);         /* MagX byte 1 */
+                MessageParams[7] = (uint8_t)((*(uint32_t*)&MagX) >> 16);        /* MagX byte 2 */
+                MessageParams[8] = (uint8_t)((*(uint32_t*)&MagX) >> 24);        /* MagX byte 3 */
+                MessageParams[9] = (uint8_t)(*(uint32_t*)&MagY);                /* MagY byte 0 */
+                MessageParams[10] = (uint8_t)((*(uint32_t*)&MagY) >> 8);        /* MagY byte 1 */
+                MessageParams[11] = (uint8_t)((*(uint32_t*)&MagY) >> 16);       /* MagY byte 2 */
+                MessageParams[12] = (uint8_t)((*(uint32_t*)&MagY) >> 24);       /* MagY byte 3 */
+                MessageParams[13] = (uint8_t)(*(uint32_t*)&MagZ);               /* MagZ byte 0 */
+                MessageParams[14] = (uint8_t)((*(uint32_t*)&MagZ) >> 8);        /* MagZ byte 1 */
+                MessageParams[15] = (uint8_t)((*(uint32_t*)&MagZ) >> 16);       /* MagZ byte 2 */
+                MessageParams[16] = (uint8_t)((*(uint32_t*)&MagZ) >> 24);       /* MagZ byte 3 */
 
-				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(int) * 3) + 3);
-			}
-			break;
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(int) * 3) + 5);
+            }
+            break;
 
-		case TEMP:
-			if(SampleTempCelsius(&TempCelsius) != H0BR4_OK){
-				return H0BR4_ERROR;
-			}
+        case TEMP:
+            if (SampleTempCelsius(&TempCelsius) != H0BR4_OK) {
+                return H0BR4_ERROR;
+            }
 
-			if(dstModule == myID || dstModule == 0){
-				/* LSB first */
-				Temp[0] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 0);
-				Temp[1] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 8);
-				Temp[2] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 16);
-				Temp[3] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 24);
+            if (dstModule == myID) {
+                /* LSB first */
+                Temp[0] = (uint8_t)(*(uint32_t*)&TempCelsius);         /* TempCelsius byte 0 */
+                Temp[1] = (uint8_t)((*(uint32_t*)&TempCelsius) >> 8);  /* TempCelsius byte 1 */
+                Temp[2] = (uint8_t)((*(uint32_t*)&TempCelsius) >> 16); /* TempCelsius byte 2 */
+                Temp[3] = (uint8_t)((*(uint32_t*)&TempCelsius) >> 24); /* TempCelsius byte 3 */
 
-				writePxITMutex(dstPort,(char* )&Temp[0],4 * sizeof(uint8_t),10);
-			}
-			else{
-				/* LSB first */
-				MessageParams[1] =(H0BR4_OK == Status) ?BOS_OK: BOS_ERROR;
-				MessageParams[0] =FMT_FLOAT;
-				MessageParams[2] =1;
-				MessageParams[3] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 0);
-				MessageParams[4] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 8);
-				MessageParams[5] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 16);
-				MessageParams[6] =(uint8_t )((*(uint32_t* )&TempCelsius) >> 24);
+                writePxITMutex(dstPort, (char*)&Temp[0], 4 * sizeof(uint8_t), 10);
+            } else {
+                /* LSB first */
+                MessageParams[0] = FMT_FLOAT;                                    /* Data format: float */
+                MessageParams[1] = (H0BR4_OK == Status) ? BOS_OK : BOS_ERROR;   /* Operation status */
+                MessageParams[2] = 1;                                           /* Number of elements (TempCelsius) */
+                MessageParams[3] = (uint8_t)(CODE_H0BR4_SAMPLE_TEMP >> 0);      /* Command code LSB */
+                MessageParams[4] = (uint8_t)(CODE_H0BR4_SAMPLE_TEMP >> 8);      /* Command code MSB */
+                MessageParams[5] = (uint8_t)(*(uint32_t*)&TempCelsius);         /* TempCelsius byte 0 */
+                MessageParams[6] = (uint8_t)((*(uint32_t*)&TempCelsius) >> 8);  /* TempCelsius byte 1 */
+                MessageParams[7] = (uint8_t)((*(uint32_t*)&TempCelsius) >> 16); /* TempCelsius byte 2 */
+                MessageParams[8] = (uint8_t)((*(uint32_t*)&TempCelsius) >> 24); /* TempCelsius byte 3 */
 
-				SendMessageToModule(dstModule,CODE_READ_RESPONSE,(sizeof(float) * 1) + 3);
-			}
-			break;
+                SendMessageToModule(dstModule, CODE_READ_RESPONSE, (sizeof(float) * 1) + 5);
+            }
+            break;
 
-		default:
-			return H0BR4_ERR_WrongParams;
-	}
+        default:
+            return H0BR4_ERR_WrongParams;
+    }
 
-	/* Clear the temp buffer */
-	memset(&Temp[0],0,sizeof(Temp));
+    /* Clear the temp buffer */
+    memset(&Temp[0], 0, sizeof(Temp));
 
-	return Status;
+    return Status;
 }
 
 /***************************************************************************/

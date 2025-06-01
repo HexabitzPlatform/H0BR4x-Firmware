@@ -1,10 +1,12 @@
 /*
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
- 
- File Name     : H0BR4_dma.h
- Description   : Header file contains Peripheral DMA setup.
 
+ File Name  : H0BR4_dma.h
+ Description: Declares functions and variables for initializing and managing DMA for UART (P1-P6) data transfer in messaging and streaming modes,
+ with CRC8 initialization and calculation for message validation.
+ Includes DMA setup, start/stop, mode switching, and CRC8 computation.
+ Enabled Peripherals: DMA1, UART (P1-P6), CRC.
  */
 
 /* Define to prevent recursive inclusion ***********************************/

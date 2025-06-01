@@ -1,10 +1,11 @@
 /*
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
- 
- File Name     : H0BR4_MemoryMap.h
- Description   : Module MCU memory map header file.
 
+ File Name  : H0BR4_MemoryMap.h
+ Description: Defines memory map for STM32G0B0, including addresses for application (500 KB),
+ topology (2 KB), command snippets (2 KB), and emulated EEPROM (8 KB) for storing 1000 16-bit variables.
+ Enabled Peripherals: Flash.
  */
 
 /* Define to prevent recursive inclusion************************************/

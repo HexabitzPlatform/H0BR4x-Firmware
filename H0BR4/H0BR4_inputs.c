@@ -3,8 +3,10 @@
  All rights reserved
 
  File Name     : H0BR4_inputs.c
- Description   : Source code for Bitz digital and analog inputs.
-
+ Description: Provides functions to manage buttons
+ (add, remove, detect events like press, release, click, double-click) and ADC channels on ports 2 and 3 for analog input,
+ temperature, and voltage reference readings. Includes GPIO and UART port handling for button detection.
+ Enabled Peripherals: ADC1, GPIO (Port A), UART (P2, P3).
  */
 
 /* Includes ****************************************************************/

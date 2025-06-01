@@ -3,8 +3,10 @@
  All rights reserved
 
  File Name     : H0BR4_gpio.h
- Description   : Header file contains all the functions prototypes for
- the GPIO .
+ Description: Declares functions for initializing GPIO pins,
+ configuring indicator LED, checking factory reset condition via UART port connections (P1 TX to last port RX),
+ and retrieving GPIO port/pin details for UART interfaces.
+ Enabled Peripherals: GPIO (Ports A, B, C, D, F), UART (P1-P8).
 
  */
 

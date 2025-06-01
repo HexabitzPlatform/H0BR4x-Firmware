@@ -3,9 +3,10 @@
  All rights reserved
 
  File Name     : H0BR4_inputs.h
- Description   : header file for Bitz digital and analog inputs.
- 
-*/
+ Description: Declares functions and macros for managing ADC channels on ports 1 and 2 for analog input,
+ temperature, and voltage reference readings. Defines GPIO pin mappings and ADC channel configurations for ports P1 and P2.
+ Enabled Peripherals: ADC1, GPIO (Port A), UART (P1, P2).
+ */
 
 /* Includes ****************************************************************/
 #include "BOS.h"

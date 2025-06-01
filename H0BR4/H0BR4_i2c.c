@@ -2,10 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name          : H0BR4_i2c.c
- Description        : This file provides code for the configuration
- of the I2C instances.
-
+ File Name     : H0BR4_i2c.c
+ Description: Provides functions to initialize and configure I2C2 peripheral in fast mode (400 kHz) for communication,
+ including GPIO setup (SCL, SDA), analog/digital filter configuration, and interrupt handling.
+ Enabled Peripherals: I2C2, GPIO (Port A).
  */
 
 /* Includes ****************************************************************/
@@ -17,19 +17,12 @@
 I2C_HandleTypeDef hi2c2;
 
 /* Exported Functions ******************************************************/
-void MX_I2C_Init(void);
+
 void MX_I2C2_Init(void);
 
 /***************************************************************************/
 /* Configure I2C ***********************************************************/
 /***************************************************************************/
-/* I2C Configuration */
-void MX_I2C_Init(void){
-
-	MX_I2C2_Init();
-
-}
-
 /***************************************************************************/
 /* I2C2 init function */
 void MX_I2C2_Init(void){

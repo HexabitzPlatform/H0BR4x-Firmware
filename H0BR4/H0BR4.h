@@ -1,16 +1,18 @@
 /*
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
- 
- File Name     : H0BR4.h
- Description   : Header file for module H0BR4.
- 	 	 	 	 (Description_of_module)
 
-(Description of Special module peripheral configuration):
->>
->>
->>
- */
+ File Name  : H0BR4.h
+ Description: Declares hardware configurations for UART (USART1-6), I2C2, and GPIO, provides macros for module-specific settings,
+ and defines functions for sampling and streaming data from accelerometer, gyroscope, magnetometer, and temperature sensors.
+ Supports six communication ports and integrates with LSM6DS3TR_C and LSM303AGR sensors.
+ Enabled Peripherals: USART1-6, I2C2, GPIO (Ports A, B, D).
+
+ Special Module Peripheral Configuration:
+ >> UART Ports: Six ports (P1-P6) mapped to USART4, USART2, USART6, USART1, USART5, and USART3 respectively, with specific GPIO pin assignments and alternate functions for communication.
+ >> I2C2: Configured with SDA on PA6 and SCL on PA7 for interfacing with LSM6DS3TR_C (IMU) and LSM303AGR (magnetometer).
+ >> Indicator LED: Defined on GPIOB, Pin 12 for status indication.
+*/
 
 /* Define to prevent recursive inclusion ***********************************/
 #ifndef H0BR4_H

@@ -2,9 +2,11 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_gpio.c
- Description   : Source code provides code for the configuration of all used GPIO pins .
-
+ File Name  : H0BR4_gpio.c
+ Description: Provides functions to initialize GPIO pins,
+ configure indicator LED, and check factory reset condition by testing UART port connections (P1 TX to last port RX).
+ Includes GPIO port/pin retrieval for UART interfaces.
+ Enabled Peripherals: GPIO (Ports A, B, C, D, F), UART (P1-P8).
  */
 
 /* Includes ****************************************************************/
@@ -47,10 +49,14 @@ uint8_t IsFactoryReset(void){
 	uint16_t P1_TX_Pin, P1_RX_Pin, P_last_TX_Pin, P_last_RX_Pin;
 
 	/* Enable all GPIO Ports Clocks */
-	__GPIOA_CLK_ENABLE();
-	__GPIOB_CLK_ENABLE();
-	__GPIOC_CLK_ENABLE();
-	__GPIOD_CLK_ENABLE();
+	__GPIOA_CLK_ENABLE()
+	;
+	__GPIOB_CLK_ENABLE()
+	;
+	__GPIOC_CLK_ENABLE()
+	;
+	__GPIOD_CLK_ENABLE()
+	;
 	
 	/* Get GPIOs */
 	GetPortGPIOs(P1,&P1_TX_Port,&P1_TX_Pin,&P1_RX_Port,&P1_RX_Pin);

@@ -2,9 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_eeprom.c
- Description   : EEPROM emulator library (Source file).
-
+ File Name  : H0BR4_eeprom.c
+ Description: Provides functions to initialize, read, write, and format an emulated EEPROM in Flash memory.
+ Supports variable data storage, page management, sector erasure, and factory reset formatting.
+ Enabled Peripherals: Flash.
  */
 
 /* Includes ****************************************************************/

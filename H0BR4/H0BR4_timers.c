@@ -3,13 +3,10 @@
  All rights reserved
 
  File Name     : H0BR4_timers.c
- Description   : Peripheral timers setup source file.
-
- Required MCU resources :
-
- >> Timer 14 for micro-sec delay.
- >> Timer 15 for milli-sec delay.
-
+ Description: Provides functions to initialize and manage TIM16 for microsecond delays,
+ TIM17 for millisecond delays, and IWDG for watchdog timer with 500ms timeout.
+ Includes delay counter start functions.
+ Enabled Peripherals: TIM16, TIM17, IWDG.
  */
 
 /* Includes ****************************************************************/

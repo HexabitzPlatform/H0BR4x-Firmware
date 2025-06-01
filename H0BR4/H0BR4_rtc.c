@@ -2,9 +2,12 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_rtc.c
- Description   : Peripheral RTC setup source file.
-
+ File Name  : H0BR4_rtc.c
+ Description: Provides functions to initialize and configure the internal RTC,
+ set and get time/date, and manage 12/24-hour formats. S
+ upports calendar setup using compile-time or user-defined values,
+ with backup register and EEPROM storage.
+ Enabled Peripherals: RTC.
  */
 
 /* Includes ****************************************************************/

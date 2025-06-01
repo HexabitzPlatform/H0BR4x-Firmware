@@ -2,12 +2,11 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name          : H0BR4_i2c.h
- Description        : This file contains all the functions prototypes for
- the i2c
-
+ File Name     : H0BR4_i2c.h
+ Description: Declares functions and variables for initializing I2C2 peripheral,
+ supporting fast mode (400 kHz) communication with GPIO (SCL, SDA) setup.
+ Enabled Peripherals: I2C2, GPIO (Port A).
  */
-
 /* Define to prevent recursive inclusion ***********************************/
 #ifndef __i2c_H
 #define __i2c_H
@@ -22,7 +21,7 @@
 extern I2C_HandleTypeDef hi2c2;
 
 /* Exported Functions ******************************************************/
-extern void MX_I2C_Init(void);
+
 extern void MX_I2C2_Init(void);
 
 #ifdef __cplusplus

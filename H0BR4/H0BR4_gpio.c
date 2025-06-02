@@ -3,10 +3,9 @@
  All rights reserved
 
  File Name  : H0BR4_gpio.c
- Description: Provides functions to initialize GPIO pins,
- configure indicator LED, and check factory reset condition by testing UART port connections (P1 TX to last port RX).
- Includes GPIO port/pin retrieval for UART interfaces.
- Enabled Peripherals: GPIO (Ports A, B, C, D, F), UART (P1-P8).
+ Description: Manages GPIO pin configuration and factory reset check.
+ GPIO: Initialize pins, configure indicator LED, retrieve UART port/pin.
+ UART: Test P1 TX to last port RX for factory reset condition.
  */
 
 /* Includes ****************************************************************/

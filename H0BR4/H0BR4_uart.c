@@ -2,11 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_uart.c
- Description: Provides functions to initialize USART1-6 with DMA for RX,
- configure baudrate, and manage UART pin swapping (normal/reversed).
- Includes mutex-protected read/write operations (polling and interrupt-based) and port direction management.
- Enabled Peripherals: USART1-6, DMA1 (Channels 1-6), GPIO (Ports A, B, D).
+ File Name  : H0BR4_uart.c
+ Description: Initializes and manages USART1-6.
+ UART: Configure DMA RX, baudrate, pin swapping.
+ Operations: Mutex-protected read/write (polling/interrupt), port direction.
  */
 /* Includes ****************************************************************/
 #include "BOS.h"

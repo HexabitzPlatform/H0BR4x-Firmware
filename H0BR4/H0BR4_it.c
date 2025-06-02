@@ -3,12 +3,10 @@
  All rights reserved
 
  File Name  : H0BR4_it.c
- Description: Provides interrupt handlers for system tick, UART (USART1-6),
- DMA (channels 1-7), and error conditions (hard fault, stack overflow, heap allocation failure).
- Manages UART reception callbacks, DMA transfers, and system reset on errors.
- Enabled Peripherals: UART (P1-P6), DMA1, System Tick.
+ Description: Handles interrupts for system and peripherals.
+ Interrupts: System tick, UART (USART1-6), DMA (channels 1-7), error handling.
+ Callbacks: Manage UART reception, DMA transfers, system reset on faults.
  */
-
 /* Includes ****************************************************************/
 #include "BOS.h"
 

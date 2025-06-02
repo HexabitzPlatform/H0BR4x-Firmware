@@ -3,9 +3,9 @@
  All rights reserved
 
  File Name  : H0BR4_eeprom.c
- Description: Provides functions to initialize, read, write, and format an emulated EEPROM in Flash memory.
- Supports variable data storage, page management, sector erasure, and factory reset formatting.
- Enabled Peripherals: Flash.
+ Description: Manages emulated EEPROM in Flash memory.
+ EEPROM: Initialize, read, write, format, and manage variable data.
+ Flash: Page management, sector erasure, factory reset.
  */
 
 /* Includes ****************************************************************/

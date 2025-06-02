@@ -3,9 +3,8 @@
  All rights reserved
 
  File Name  : H0BR4_uart.h
- Description: Declares functions for mutex-protected UART read/write operations (polling and interrupt-based)
- and port direction messaging for USART1-6.
- Enabled Peripherals: USART1-6.
+ Description: Declares UART operation functions.
+ UART: Mutex-protected read/write (polling/interrupt), port direction messaging.
  */
 
 /* Define to prevent recursive inclusion ***********************************/

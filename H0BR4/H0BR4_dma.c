@@ -3,10 +3,9 @@
  All rights reserved
 
  File Name  : H0BR4_dma.c
- Description: Provides functions to initialize and manage DMA for UART (P1-P6) data transfer in messaging and streaming modes,
- with functions to initialize and calculate CRC8 for message validation.
- Supports DMA setup, start/stop, mode switching, and CRC8 computation.
- Enabled Peripherals: DMA1 , UART (P1-P6), CRC.
+ Description: Initialize and manage DMA for UART (P1-P6).
+ DMA: Setup, start/stop, mode switching for UART RX (Channels 1-6).
+ CRC8: Compute CRC8 for message validation.
  */
 
 /* Includes ****************************************************************/

@@ -2,11 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_inputs.c
- Description: Provides functions to manage buttons
- (add, remove, detect events like press, release, click, double-click) and ADC channels on ports 2 and 3 for analog input,
- temperature, and voltage reference readings. Includes GPIO and UART port handling for button detection.
- Enabled Peripherals: ADC1, GPIO (Port A), UART (P2, P3).
+ File Name  : H0BR4_inputs.c
+ Description: Manages buttons and ADC channels for analog inputs.
+ Buttons: Add, remove, detect events (press, release, click, double-click).
+ ADC: Read analog input, temperature, voltage on ports 2, 3.
  */
 
 /* Includes ****************************************************************/

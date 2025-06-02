@@ -2,14 +2,11 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_gpio.h
- Description: Declares functions for initializing GPIO pins,
- configuring indicator LED, checking factory reset condition via UART port connections (P1 TX to last port RX),
- and retrieving GPIO port/pin details for UART interfaces.
- Enabled Peripherals: GPIO (Ports A, B, C, D, F), UART (P1-P8).
-
+ File Name  : H0BR4_gpio.h
+ Description: Declares functions for GPIO and factory reset management.
+ GPIO: Initialize pins, configure LED, retrieve UART port/pin details.
+ UART: Check P1 TX to last port RX for factory reset.
  */
-
 
 /* Define to prevent recursive inclusion ***********************************/
 #ifndef __gpio_H

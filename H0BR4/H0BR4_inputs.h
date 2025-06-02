@@ -2,10 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_inputs.h
- Description: Declares functions and macros for managing ADC channels on ports 1 and 2 for analog input,
- temperature, and voltage reference readings. Defines GPIO pin mappings and ADC channel configurations for ports P1 and P2.
- Enabled Peripherals: ADC1, GPIO (Port A), UART (P1, P2).
+ File Name  : H0BR4_inputs.h
+ Description: Declares functions for ADC channel management.
+ ADC: Configure channels for analog input, temperature, voltage on ports 1, 2.
+ GPIO: Define pin mappings for ports P1, P2.
  */
 
 /* Includes ****************************************************************/

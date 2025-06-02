@@ -3,11 +3,8 @@
  All rights reserved
 
  File Name  : H0BR4_rtc.c
- Description: Provides functions to initialize and configure the internal RTC,
- set and get time/date, and manage 12/24-hour formats. S
- upports calendar setup using compile-time or user-defined values,
- with backup register and EEPROM storage.
- Enabled Peripherals: RTC.
+ Description: Manages internal RTC configuration.
+ RTC: Initialize, set/get time/date, manage 12/24-hour formats, backup storage.
  */
 
 /* Includes ****************************************************************/

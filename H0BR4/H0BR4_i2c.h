@@ -2,10 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_i2c.h
- Description: Declares functions and variables for initializing I2C2 peripheral,
- supporting fast mode (400 kHz) communication with GPIO (SCL, SDA) setup.
- Enabled Peripherals: I2C2, GPIO (Port A).
+ File Name  : H0BR4_i2c.h
+ Description: Declares functions for I2C2 peripheral setup.
+ I2C2: Initialize in fast mode (400 kHz).
+ GPIO: Configure SCL, SDA pins on Port A.
  */
 /* Define to prevent recursive inclusion ***********************************/
 #ifndef __i2c_H

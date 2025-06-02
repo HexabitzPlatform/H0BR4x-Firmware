@@ -2,13 +2,11 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_timers.c
- Description: Provides functions to initialize and manage TIM16 for microsecond delays,
- TIM17 for millisecond delays, and IWDG for watchdog timer with 500ms timeout.
- Includes delay counter start functions.
- Enabled Peripherals: TIM16, TIM17, IWDG.
+ File Name  : H0BR4_timers.c
+ Description: Manages timers and watchdog.
+ Timers: TIM16 (microsecond delays), TIM17 (millisecond delays).
+ IWDG: Watchdog with 500ms timeout.
  */
-
 /* Includes ****************************************************************/
 #include "BOS.h"
 

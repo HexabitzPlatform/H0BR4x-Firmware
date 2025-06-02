@@ -2,13 +2,10 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4_eeprom.h
- Description   : Header file for H0BR4 EEPROM emulation.
- Brief Description: Declares functions and macros for managing an emulated EEPROM in Flash memory,
- supporting storage of up to 1000 16-bit variables.
- Includes initialization, formatting, reading, writing, and sector erasure,
- with dual-group page swapping for reliable data storage.
- Enabled Peripherals: Flash.
+ File Name  : H0BR4_eeprom.h
+ Description: Declares functions for emulated EEPROM in Flash memory.
+ EEPROM: Initialize, format, read, write up to 1000 16-bit variables.
+ Flash: Dual-group page swapping, sector erasure.
 
  * EEPROM Emulation Description:
  * -----------------------------

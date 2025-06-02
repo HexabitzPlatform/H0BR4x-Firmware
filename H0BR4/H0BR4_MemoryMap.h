@@ -3,9 +3,8 @@
  All rights reserved
 
  File Name  : H0BR4_MemoryMap.h
- Description: Defines memory map for STM32G0B0, including addresses for application (500 KB),
- topology (2 KB), command snippets (2 KB), and emulated EEPROM (8 KB) for storing 1000 16-bit variables.
- Enabled Peripherals: Flash.
+ Description: Defines STM32G0B0 memory map.
+ Flash: Application (500 KB), topology (2 KB), snippets (2 KB), EEPROM (8 KB, 1000 16-bit variables).
  */
 
 /* Define to prevent recursive inclusion************************************/

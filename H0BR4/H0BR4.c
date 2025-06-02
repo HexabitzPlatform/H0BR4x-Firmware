@@ -2,20 +2,13 @@
  BitzOS (BOS) V0.4.0 - Copyright (C) 2017-2025 Hexabitz
  All rights reserved
 
- File Name     : H0BR4.c
- Description: Implements system clock setup at 64 MHz using PLL with HSE,
- initializes UART (USART1-6) and I2C2 for communication, samples data from sensors (accelerometer, gyroscope, magnetometer, temperature)
- via LSM6DS3TR_C and LSM303AGR, streams data to ports or terminals, registers CLI commands for sensor interaction, and manages power modes (stop and standby).
- Enabled Peripherals: UART (USART1-6), I2C2, TIM16, TIM17, IWDG, Flash, RTC, DMA1, GPIO (Ports A, B, D).
-
- Special Module Peripheral Configuration:
- >> System Clock: Configured to 64 MHz using PLL with HSE (8 MHz) as the source, HCLK and APB1 prescalers set to 1, Flash latency of 2 wait states.
- >> UART: Six instances (USART1-6) initialized for multi-port communication, with special bootloader update support at 57600 baud, even parity, and 9-bit data.
- >> I2C2: Initialized for sensor interfacing, specifically with LSM6DS3TR_C (IMU) and LSM303AGR (magnetometer).
- >> Power Management: Stop mode enabled for UART1-3 with wake-up on start bit; standby mode supported with wake-up pins (PA0, PA2, PB5, PC13, NRST) and SRAM retention.
- >> Flash: Used for storing topology and command snippets with erase and write operations.
+ File Name  : H0BR4.c
+ Description: Manages sensors and the system.
+ Module_Peripheral_Init: Initialization of UART1-6, I2C2, TIM16-17, IWDG, Flash, RTC, DMA1, GPIO ports A-B-D.
+ CLI: "sample" and "stream" commands for sensor interaction.
+ Messages: Processes sampling requests from sensors (acceleration, gyroscope, magnetometer, temperature).
+ Module-specific functions: Sampling and data streaming.
  */
-
 /* Includes ****************************************************************/
 #include "BOS.h"
 #include "H0BR4_inputs.h"

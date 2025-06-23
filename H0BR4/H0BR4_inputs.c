@@ -50,8 +50,8 @@ void buttonDblClickedCallback(uint8_t port);
 /* Private ADC function prototypes *****************************************/
 void MX_ADC_Init(void);
 void Error_Handler(void);
-uint8_t GetRank(uint8_t Port,char *side);
-uint32_t GetChannel(UART_HandleTypeDef *huart,char *side);
+uint8_t GetRank(uint8_t Port,ModuleLayer_t side);
+uint32_t GetChannel(UART_HandleTypeDef *huart,ModuleLayer_t side);
 
 /***************************************************************************/
 /* Private Functions *******************************************************/
@@ -124,28 +124,28 @@ void Error_Handler(void){
 
 /***************************************************************************/
 /*  Get the ADC_channel Number for a given UART */
-uint32_t GetChannel(UART_HandleTypeDef *huart,char *side){
+uint32_t GetChannel(UART_HandleTypeDef *huart,ModuleLayer_t side){
 
-	if(huart->Instance == ADC_CH1_USART && !strcmp(side,"top"))
+	if(huart->Instance == ADC_CH1_USART && side == TOP)
 		return ADC_CH1_CHANNEL;
-	else if(huart->Instance == ADC_CH2_USART && !strcmp(side,"bottom"))
+	else if(huart->Instance == ADC_CH2_USART && side == BOTTOM)
 		return ADC_CH2_CHANNEL;
-	else if(huart->Instance == ADC_CH3_USART && !strcmp(side,"top"))
+	else if(huart->Instance == ADC_CH3_USART && side == TOP)
 		return ADC_CH3_CHANNEL;
-	else if(huart->Instance == ADC_CH3_USART && !strcmp(side,"bottom"))
+	else if(huart->Instance == ADC_CH3_USART && side == BOTTOM)
 		return ADC_CH4_CHANNEL;
 }
 
 /***************************************************************************/
-uint8_t GetRank(uint8_t Port,char *side){
+uint8_t GetRank(uint8_t Port,ModuleLayer_t side){
 
-	if(Port == 2 && !strcmp(side,"top"))
+	if(Port == ADC34_PORT && side == TOP)
 		adcChannelRank =0;
-	else if(Port == 2 && !strcmp(side,"bottom"))
+	else if(Port == ADC34_PORT && side == BOTTOM)
 		adcChannelRank =1;
-	else if(Port == 3 && !strcmp(side,"top"))
+	else if(Port == ADC12_PORT && side == TOP)
 		adcChannelRank =2;
-	else if(Port == 3 && !strcmp(side,"bottom"))
+	else if(Port == ADC12_PORT && side == BOTTOM)
 		adcChannelRank =3;
 	return adcChannelRank;
 }
@@ -548,8 +548,10 @@ BOS_Status ADCSelectPort(uint8_t ADC_port){
 }
 
 /***************************************************************************/
-BOS_Status ReadADCChannel(uint8_t Port,char *side,float *ADC_Value){
+BOS_Status ReadADCChannel(uint8_t Port, ModuleLayer_t side,float *ADC_Value){
 	BOS_Status Status =BOS_OK;
+    uint8_t count = 0u;
+    uint32_t adcAverValue =0;
 
 	if(Port == ADC12_PORT || Port == ADC34_PORT){
 		if(adcEnableFlag == 1){
@@ -562,20 +564,27 @@ BOS_Status ReadADCChannel(uint8_t Port,char *side,float *ADC_Value){
 			sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
 			sConfig.SamplingTime = ADC_SAMPLETIME_79CYCLES_5;
 			HAL_ADC_ConfigChannel(&hadc,&sConfig);
-
+			HAL_ADCEx_Calibration_Start(&hadc);
+			while (count < 10){
 			HAL_ADC_Start(&hadc);
 			HAL_ADC_PollForConversion(&hadc,100);
-			adcChannelValue[adcChannelRank] =HAL_ADC_GetValue(&hadc);
+			adcChannelValue[adcChannelRank] = HAL_ADC_GetValue(&hadc);
 			HAL_ADC_Stop(&hadc);
+			adcAverValue += adcChannelValue[adcChannelRank];
+			count++;
+			}
+
+			/* calculate the average of measured samples */
+			adcChannelValue[adcChannelRank] = adcAverValue / count;
 
 			/* Disable chosen channel */
 			sConfig.Channel =Channel;
 			sConfig.Rank = ADC_RANK_NONE;
-			sConfig.SamplingTime = ADC_SAMPLETIME_79CYCLES_5;
+			sConfig.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
 			HAL_ADC_ConfigChannel(&hadc,&sConfig);
 
 		}
-		*ADC_Value =(float )(adcChannelValue[adcChannelRank] * 3.3 / 4095);
+		*ADC_Value =(float )(adcChannelValue[adcChannelRank] * 3300 / 4095);
 	}
 	else
 		return BOS_ERR_ADC_WRONG_PORT;
@@ -629,12 +638,12 @@ void ReadTempAndVref(float *temp,float *Vref){
 }
 
 /***************************************************************************/
-BOS_Status GetReadPercentage(uint8_t port,char *side,float *precentageValue){
+BOS_Status GetReadPercentage(uint8_t port,ModuleLayer_t side,float *precentageValue){
 	BOS_Status Status =BOS_OK;
 	float ADC_Value =0.0f;
 
 	if(BOS_OK == ReadADCChannel(port,side,&ADC_Value))
-		*precentageValue =(ADC_Value * 100) / 3.3;
+		*precentageValue =(ADC_Value * 100) / 3300;
 	else
 		return BOS_ERR_ADC_WRONG_PORT;
 

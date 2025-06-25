@@ -548,7 +548,7 @@ BOS_Status ADCSelectPort(uint8_t ADC_port){
 }
 
 /***************************************************************************/
-BOS_Status ReadADCChannel(uint8_t Port, ModuleLayer_t side,float *ADC_Value){
+BOS_Status ReadADCChannel(uint8_t Port, ModuleLayer_t side,float *adcVoltage){
 	BOS_Status Status =BOS_OK;
     uint8_t count = 0u;
     uint32_t adcAverValue =0;
@@ -584,7 +584,7 @@ BOS_Status ReadADCChannel(uint8_t Port, ModuleLayer_t side,float *ADC_Value){
 			HAL_ADC_ConfigChannel(&hadc,&sConfig);
 
 		}
-		*ADC_Value =(float )(adcChannelValue[adcChannelRank] * 3300 / 4095);
+		*adcVoltage =(float )(adcChannelValue[adcChannelRank] * 3300 / 4095);
 	}
 	else
 		return BOS_ERR_ADC_WRONG_PORT;
@@ -638,12 +638,12 @@ void ReadTempAndVref(float *temp,float *Vref){
 }
 
 /***************************************************************************/
-BOS_Status GetReadPercentage(uint8_t port,ModuleLayer_t side,float *precentageValue){
+BOS_Status GetReadPercentage(uint8_t port,ModuleLayer_t side,float *precentageadcVoltage){
 	BOS_Status Status =BOS_OK;
-	float ADC_Value =0.0f;
+	float adcVoltageValue =0.0f;
 
-	if(BOS_OK == ReadADCChannel(port,side,&ADC_Value))
-		*precentageValue =(ADC_Value * 100) / 3300;
+	if(BOS_OK == ReadADCChannel(port,side,&adcVoltageValue))
+		*precentageadcVoltage =(adcVoltageValue * 100) / 3300;
 	else
 		return BOS_ERR_ADC_WRONG_PORT;
 

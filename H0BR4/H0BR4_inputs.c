@@ -137,15 +137,15 @@ uint32_t GetChannel(UART_HandleTypeDef *huart,ModuleLayer_t side){
 }
 
 /***************************************************************************/
-uint8_t GetRank(uint8_t Port,ModuleLayer_t side){
+uint8_t GetRank(uint8_t adcPort,ModuleLayer_t side){
 
-	if(Port == ADC34_PORT && side == TOP)
+	if(adcPort == ADC34_PORT && side == TOP)
 		adcChannelRank =0;
-	else if(Port == ADC34_PORT && side == BOTTOM)
+	else if(adcPort == ADC34_PORT && side == BOTTOM)
 		adcChannelRank =1;
-	else if(Port == ADC12_PORT && side == TOP)
+	else if(adcPort == ADC12_PORT && side == TOP)
 		adcChannelRank =2;
-	else if(Port == ADC12_PORT && side == BOTTOM)
+	else if(adcPort == ADC12_PORT && side == BOTTOM)
 		adcChannelRank =3;
 	return adcChannelRank;
 }
@@ -527,17 +527,17 @@ BOS_Status SetButtonEvents(uint8_t port,ButtonState_e buttonState,uint8_t mode){
 /* Exported Functions ******************************************************/
 /***************************************************************************/
 /* select port 2 & port 3 for the selected ADC regular channel to be converted */
-BOS_Status ADCSelectPort(uint8_t ADC_port){
+BOS_Status ADCSelectPort(uint8_t adcPort){
 	BOS_Status Status =BOS_OK;
 
-	if(ADC_port == ADC12_PORT || ADC_port == ADC34_PORT){
-		if(ADC_port == ADC12_PORT)
+	if(adcPort == ADC12_PORT || adcPort == ADC34_PORT){
+		if(adcPort == ADC12_PORT)
 			adcSelectFlag[0] =1;
 		else
 			adcSelectFlag[1] =1;
 
-		HAL_UART_DeInit(GetUart(ADC_port));
-		PortStatus[ADC_port] =CUSTOM;
+		HAL_UART_DeInit(GetUart(adcPort));
+		PortStatus[adcPort] =CUSTOM;
 		if(adcEnableFlag == 0)
 			MX_ADC_Init();
 	}
@@ -548,17 +548,17 @@ BOS_Status ADCSelectPort(uint8_t ADC_port){
 }
 
 /***************************************************************************/
-BOS_Status ReadADCChannel(uint8_t Port, ModuleLayer_t side,float *adcVoltage){
+BOS_Status ReadADCChannel(uint8_t adcPort, ModuleLayer_t side,float *adcVoltage){
 	BOS_Status Status =BOS_OK;
     uint8_t count = 0u;
     uint32_t adcAverValue =0;
 
-	if(Port == ADC12_PORT || Port == ADC34_PORT){
+	if(adcPort == ADC12_PORT || adcPort == ADC34_PORT){
 		if(adcEnableFlag == 1){
 
 			/* Enable chosen channel to be read */
-			Channel =GetChannel(GetUart(Port),side);
-			adcChannelRank =GetRank(Port,side);
+			Channel =GetChannel(GetUart(adcPort),side);
+			adcChannelRank =GetRank(adcPort,side);
 
 			sConfig.Channel =Channel;
 			sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
@@ -580,7 +580,7 @@ BOS_Status ReadADCChannel(uint8_t Port, ModuleLayer_t side,float *adcVoltage){
 			/* Disable chosen channel */
 			sConfig.Channel =Channel;
 			sConfig.Rank = ADC_RANK_NONE;
-			sConfig.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
+			sConfig.SamplingTime = ADC_SAMPLETIME_79CYCLES_5;
 			HAL_ADC_ConfigChannel(&hadc,&sConfig);
 
 		}
@@ -638,11 +638,11 @@ void ReadTempAndVref(float *temp,float *Vref){
 }
 
 /***************************************************************************/
-BOS_Status GetReadPercentage(uint8_t port,ModuleLayer_t side,float *precentageadcVoltage){
+BOS_Status GetReadPercentage(uint8_t adcPort,ModuleLayer_t side,float *precentageadcVoltage){
 	BOS_Status Status =BOS_OK;
 	float adcVoltageValue =0.0f;
 
-	if(BOS_OK == ReadADCChannel(port,side,&adcVoltageValue))
+	if(BOS_OK == ReadADCChannel(adcPort,side,&adcVoltageValue))
 		*precentageadcVoltage =(adcVoltageValue * 100) / 3300;
 	else
 		return BOS_ERR_ADC_WRONG_PORT;
@@ -651,13 +651,13 @@ BOS_Status GetReadPercentage(uint8_t port,ModuleLayer_t side,float *precentagead
 }
 
 /***************************************************************************/
-BOS_Status ADCDeinitChannel(uint8_t port){
+BOS_Status ADCDeinitChannel(uint8_t adcPort){
 	BOS_Status Status =BOS_OK;
 
-	if(port == ADC12_PORT || port == ADC34_PORT){
+	if(adcPort == ADC12_PORT || adcPort == ADC34_PORT){
 		HAL_ADC_DeInit(&hadc);
-		HAL_UART_Init(GetUart(port));
-		PortStatus[port] =FREE;
+		HAL_UART_Init(GetUart(adcPort));
+		PortStatus[adcPort] =FREE;
 		adcEnableFlag =0;
 	}
 	else

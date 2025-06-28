@@ -42,9 +42,9 @@
 /* Exported Functions Prototypes *******************************************/
 /***************************************************************************/
 extern void ReadTempAndVref(float *temp,float *Vref);
-extern BOS_Status ReadADCChannel(uint8_t Port, ModuleLayer_t side,float *adcVoltage);
-extern BOS_Status ADCSelectPort(uint8_t ADC_port);
-extern BOS_Status GetReadPercentage(uint8_t port,ModuleLayer_t side,float *precentageadcVoltage);
-extern BOS_Status ADCDeinitChannel(uint8_t port);
+extern BOS_Status ReadADCChannel(uint8_t adcPort, ModuleLayer_t side,float *adcVoltage);
+extern BOS_Status ADCSelectPort(uint8_t adcPort);
+extern BOS_Status GetReadPercentage(uint8_t adcPort,ModuleLayer_t side,float *precentageadcVoltage);
+extern BOS_Status ADCDeinitChannel(uint8_t adcPort);
 
 /************************ (C) COPYRIGHT HEXABITZ *****END OF FILE****/

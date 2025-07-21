@@ -33,6 +33,7 @@ uint16_t adcValueTemp =0;
 uint16_t adcValueVref =0;
 float Percentage =0.0f;
 float Current =0.0f;
+uint8_t adcDeInitFlag;
 
 ADC_HandleTypeDef hadc;
 ADC_ChannelConfTypeDef sConfig ={0};
@@ -529,7 +530,10 @@ BOS_Status ADCSelectPort(uint8_t adcPort){
 		HAL_UART_DeInit(GetUart(adcPort));
 		PortStatus[adcPort] =CUSTOM;
 		if(adcEnableFlag == 0)
+		{
 			MX_ADC_Init();
+			adcDeInitFlag = 0;
+		}
 	}
 	else
 		return Status =BOS_ERR_ADC_WRONG_PORT;
@@ -587,7 +591,10 @@ BOS_Status ReadADCChannel(uint8_t adcPort, ModuleLayer_t side,float *adcVoltage)
 void ReadTempAndVref(float *temp,float *Vref){
 
 	if(0 == adcEnableFlag)
+	{
 		MX_ADC_Init();
+		adcDeInitFlag = 0;
+	}
 
 	/* Enable internal temperature channel */
 	sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
